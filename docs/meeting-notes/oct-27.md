@@ -22,3 +22,6 @@ This upholds the vertical slice of:
 
 ## Group contract
 See [group-contract.md](../group-contract.md)
+
+## Requirements
+For our requirements we follow the framework that Paulo introduced us to.
