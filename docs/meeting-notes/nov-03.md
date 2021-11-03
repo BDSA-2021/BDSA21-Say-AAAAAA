@@ -6,8 +6,9 @@
 
 ## Today
 - Meeting with Paolo
+- Rethink the vertical slice
 
-### Questions for Paolo
+### Meeting with Paolo 
 - Are moderators a different type of user?
 	- It would be a role that can be assigned to a user.
 	- It could be something like StackOverflow where a user with a lot of points, are more credible and therefore get access to moderator permissions.
@@ -45,7 +46,7 @@
 	- A data set should be provided inside a docker container.
 	- The data set could also be mocked
 
-### Scenario comments
+#### Vertical slice comments
 - The credibility system would check the box of creativity and would be very interesting
 - The system should show being dynamic
 - The uploading of a video could be a vertical slice in itself
@@ -53,10 +54,50 @@
 - What would be interesting to show would be uploading 10 files and now being a premium member and level 1 of the system, in terms of the credibility score. 
 - Think ALOT about what we want to focus on.
 - Think about the demo, how do you make it exciting
+
+#### Scenario comments
 - There should not be an "and" in the name
 - Focus on the needs of the users, that should be fulfilled by the system
 	- Such as "Find high quality tutorial material of C#"
 - Scenario 1:
 	- There should not be an "and" in the name
 
+### Rethink vertical slice
+- Andreas
+	- CRUD is dry, but it's what we've been taught, so it would make sense to focus heavily on it no matter what Paolo is saying.
+	- We shouldnt adhere from the vertical slice we have already done.
+	- Fuck the presentation.
+- Joachim
+	- CRUD is just the minimum, to get creativity points we have to adhere  from the vertical slice.
+	- Would like to work with the credibility
+- Adrian
+	- We should not work just with uploading and managing materials.
+	- We should add something more than just CRUD operations to our vertical slice.
+- Amalie
+	- Comments and ratings IS expanding on the default CRUD operations on the material.
+	- Having a point system would be a vertical slice in itself. This would be really small though.
+- Albert
+- Asger
+	- Could we make a wireframe of the presentation and show that to him, to ensure the product we are about to make is what he actually wants.
+
+#### Variations of the vertical slice
+- Remove comments from the original
+- ONLY the credibility system
+- Complete 180 into focusing on a search algorithm
+- Mix of moderation system and credibility system
+
+- Uploading videos (Easy implementation)
+- Comments to videos
+- Upvoting of comments
+- Upvoting of material
+- Credibility system
+	- Some amount of points add a moderation feature
+- Role management through credibility system
+	- Moderation role
+- Authentication
+	- Register
+	- Login
+
 ## Until next time
+- The 2 groups (Amalie, Asger, Alber) and (Andres, Adrian, Joachim) read what the others wrote.
+- Each group member creates the use case they have been assigned by Adrian on discord
