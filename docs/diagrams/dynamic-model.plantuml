@@ -1,0 +1,60 @@
+@startuml
+title UpvoteComment
+
+actor ":User" as User
+participant ":UpvoteButton" as UpvoteButton
+participant ":CommentScoreLabel" as CommentScoreLabel
+participant ":CommentManager" as CommentManager
+participant ":CredibilityManager" as CredibilityManager
+
+activate User
+User -> UpvoteButton : press()
+deactivate User
+
+activate UpvoteButton
+UpvoteButton -> UpvoteButton : fillInColor()
+UpvoteButton -> CommentManager : upvote()
+deactivate UpvoteButton
+
+activate CommentManager
+CommentManager -> CredibilityManager : increaseCredibility(author)
+activate CredibilityManager
+CredibilityManager -> CommentManager : newCredibility()
+deactivate CredibilityManager
+
+CommentManager -> CommentScoreLabel : refreshView(newScore)
+deactivate CommentManager
+activate CommentScoreLabel
+@enduml
+
+
+@startuml
+title RateContent
+|sauron:User|
+start
+:RateContent;
+
+|ContentManager|
+if () then ([upvote])
+    :Increase score;
+    -> \n;
+    |CredibilityManager|
+    :Increase authors credibility score;
+    if (credibilityScore >= moderatorScore) then (yes)
+        :Add moderator privileges;
+    else (no)
+    endif
+    stop
+    
+else ([downvote])
+    |ContentManager|
+    :Decrease score;
+    |CredibilityManager|
+    :Decrease authors credibility score;
+    if (credibilityScore < moderatorScore) then (yes)
+        :Remove moderator privileges;
+    else (no)
+    endif 
+    stop
+endif
+@enduml
