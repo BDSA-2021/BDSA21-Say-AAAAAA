@@ -1,6 +1,7 @@
 # November xth
 ## Since last time
 
+
 ### Challenges
 
 ## Today
@@ -14,4 +15,11 @@
 - In the SDD the introduction and Current software architecture is the same as in the RAD, should we write it again?
 
 ## Until next time
+- Hardware software mapping and persitent data management (Andreas)
+- Expand subsystems with class diagrams see chapter 6
+  - Content (Albert)
+  - Comment (Amalie)
+  - User (Adrian)
+  - Credibility (Joachim)
+  - Permission (Asger)
 
