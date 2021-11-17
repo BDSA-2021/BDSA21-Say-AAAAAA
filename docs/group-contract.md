@@ -78,7 +78,7 @@
     - Friday:
        - Scrum meeting, 12:45-13:00
        - TA-meeting, 13:05-13:25
-       - Work, 10:00-15:00
+       - Work, 13:30:00-15:00
 - Scrum meetings have the following structure:
     1. What have we done since last time?
     2. Have we had any challenges?

@@ -1,0 +1,66 @@
+@startuml
+skinparam componentStyle rectangle
+
+package ContentSubsystem {
+    component Content
+    component Section
+    component Repository
+
+    Content -- Section
+    Section -- Repository
+
+    interface ContentService
+    Content -- ContentService
+}
+
+package CommentSubsystem {
+    component Comment
+
+    interface CommentService
+    CommentService -- Comment
+}
+
+CommentService -- ContentService
+
+package UserSubSystem {
+    package AuthSubSystem {
+
+    }
+
+    component User
+
+    AuthSubSystem -- User
+
+    interface UserService
+    UserService -- User
+}
+
+UserService -- ContentService
+UserService -- CommentService
+
+package CredibilitySubSystem {
+    component CredibilityCalculator
+
+    interface CredibilityService as CredibilityInterface
+    CredibilityInterface -- CredibilityCalculator
+}
+
+CredibilityInterface -- CommentService
+CredibilityInterface -- ContentService
+CredibilityInterface -- UserService
+
+package PermissionSubSystem {
+    component Permission
+    component Rule
+
+    Permission -- Rule
+
+    interface PermissionService
+    PermissionService -- Permission
+}
+
+CredibilityInterface .. Rule : May be used
+UserService .. Rule : May be used
+
+AuthSubSystem -- PermissionService : Authenticate requests
+@enduml
