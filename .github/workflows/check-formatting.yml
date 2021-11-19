@@ -1,0 +1,22 @@
+name: Check formatting
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-formatting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup git repo
+        uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+          include_prerelease: true
+      - name: Check formatting
+        run: dotnet format --verbosity detailed --verify-no-changes
