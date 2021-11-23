@@ -1,4 +1,4 @@
-namespace SELearning.Api;
+namespace SELearning.Infrastructure;
 
 public class WeatherForecast
 {

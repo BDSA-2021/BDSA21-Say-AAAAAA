@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SELearning.Data;
 using Microsoft.Graph;
 
 namespace SELearning
@@ -52,7 +51,9 @@ namespace SELearning
             services.AddRazorPages();
             services.AddServerSideBlazor()
                 .AddMicrosoftIdentityConsentHandler();
+
             services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
