@@ -44,9 +44,12 @@ builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseDeveloperExceptionPage();
-} else {
+}
+else
+{
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }

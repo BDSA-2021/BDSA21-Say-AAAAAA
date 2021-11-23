@@ -1,6 +1,7 @@
 namespace SELearning.Infrastructure;
 
-public class WeatherForecastRepository : IWeatherForecastRepository {
+public class WeatherForecastRepository : IWeatherForecastRepository
+{
     private static readonly string[] Summaries = new[]
     {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
