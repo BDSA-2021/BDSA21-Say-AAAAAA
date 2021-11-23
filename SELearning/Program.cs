@@ -22,7 +22,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 
-if (builder.Environment.IsDevelopment()) {
+if (builder.Environment.IsDevelopment())
+{
     builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SELearning")));
 }
 builder.Services.AddScoped<IWeatherContext, WeatherContext>();

@@ -9,14 +9,16 @@ public class WeatherForecastRepository : IWeatherForecastRepository
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    public WeatherForecastRepository(IWeatherContext context) {
+    public WeatherForecastRepository(IWeatherContext context)
+    {
         _context = context;
     }
 
     public async Task<WeatherForecastDTO[]> ReadAsync(DateTime startDate)
     {
         return await _context.WeatherForecasts
-            .Select(w => new WeatherForecastDTO {
+            .Select(w => new WeatherForecastDTO
+            {
                 Id = w.Id,
                 Date = w.Date,
                 TemperatureC = w.TemperatureC,
@@ -49,7 +51,7 @@ public class WeatherForecastRepository : IWeatherForecastRepository
     public async Task<WeatherForecastDTO> Generate()
     {
         var rng = new Random();
-        
+
         return await this.CreateAsync(new WeatherForecastCreateDTO
         {
             Date = DateTime.Now.AddDays(rng.Next(50)),

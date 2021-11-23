@@ -18,7 +18,8 @@ public class WeatherForecastService
         return await _repository.ReadAsync(DateTime.Now);
     }
 
-    public async Task<WeatherForecastDTO> Generate() {
+    public async Task<WeatherForecastDTO> Generate()
+    {
         return await _repository.Generate();
     }
 }
