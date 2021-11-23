@@ -1,21 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Graph;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
@@ -24,7 +8,6 @@ var initialScopes = builder.Configuration.GetValue<string>("DownstreamApi:Scopes
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
         .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-            .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
             .AddInMemoryTokenCaches();
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
@@ -39,8 +22,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 
-builder.Services.AddSingleton<WeatherForecastService>();
+if (builder.Environment.IsDevelopment()) {
+    builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SELearning")));
+}
+builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
+
+builder.Services.AddScoped<WeatherForecastService>();
 
 var app = builder.Build();
 

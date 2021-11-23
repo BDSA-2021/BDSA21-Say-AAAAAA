@@ -13,6 +13,9 @@
 }
 else
 {
+    <button @onclick="generate">
+        Generate
+    </button>
     <table class="table">
         <thead>
             <tr>
@@ -36,10 +39,19 @@ else
 }
 
 @code {
-    private WeatherForecastDTO[] forecasts;
+    private WeatherForecastDTO[] forecasts = {};
 
     protected override async Task OnInitializedAsync()
     {
+        await this.fetchData();
+    }
+
+    protected async Task generate() {
+        await ForecastService.Generate();
+        await fetchData();
+    }
+
+    protected async Task fetchData() {
         forecasts = await ForecastService.Get();
     }
 }
