@@ -1,64 +1,27 @@
+using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Text;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
-var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
-#region configuration
-var initialScopes = builder.Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<SELearning.App>("#app");
 
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-        .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-            .AddInMemoryTokenCaches();
-builder.Services.AddControllersWithViews()
-    .AddMicrosoftIdentityUI();
+builder.Services.AddHttpClient("SELearning.API", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddAuthorization(options =>
+// Supply HttpClient instances that include access tokens when making requests to the server project
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("SELearning.API"));
+
+builder.Services.AddMsalAuthentication(options =>
 {
-    // By default, all incoming requests will be authorized according to the default policy
-    options.FallbackPolicy = options.DefaultPolicy;
+    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("api://340cf90c-0ea4-48a6-902c-b1ef13d801a8/API.Access");
 });
 
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor()
-    .AddMicrosoftIdentityConsentHandler();
-
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SELearning")));
-}
-builder.Services.AddScoped<IWeatherContext, WeatherContext>();
-builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
-
-builder.Services.AddScoped<WeatherForecastService>();
-#endregion
-
-var app = builder.Build();
-
-#region Serve
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-    endpoints.MapBlazorHub();
-    endpoints.MapFallbackToPage("/_Host");
-});
-
-app.Run();
-#endregion
+await builder.Build().RunAsync();

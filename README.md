@@ -37,3 +37,9 @@ dotnet ef database update --startup-project ../SELearning
 $Env:ASPNETCORE_ENVIRONMENT = "Development" (Windows powershell)
 export ASPNETCORE_ENVIROMENT="Development"  (Linux)
 ```
+
+## Run the system
+```
+dotnet run --project SELearning.API
+```
+This will build the Blazor project and serve it along with the API
