@@ -351,3 +351,9 @@ MigrationBackup/
 
 # Ignore code-workspace
 **/*.code-workspace
+SELearning/.vscode/tasks.json
+SELearning/.vscode/launch.json
+.gitignore
+.gitignore
+.vscode/launch.json
+.vscode/tasks.json
