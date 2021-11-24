@@ -1,47 +1,55 @@
-using System.Threading.Tasks;
-using SELearning.Core.Permission;
-using static SELearning.Core.Permission.Permission;
-using Xunit;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
+using SELearning.Core.Permission;
+using static SELearning.Core.Permission.Permission;
 
 namespace SELearning.Infrastructure.Tests;
 
 public class PermissionDeciderTests
 {
-    public static TheoryData<IEnumerable<Func<object, Task<bool>>>> PermissionDeciderFalseScenarios => new TheoryData<IEnumerable<Func<object, Task<bool>>>> {
-            { new List<Func<object, Task<bool>>>{ o => Task.Run<bool>(() => false)} },
-            { new List<Func<object, Task<bool>>>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false)} },
-            { new List<Func<object, Task<bool>>>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false), o => Task.Run<bool>(() => true)} }
+    public static TheoryData<IEnumerable<Rule>> PermissionDeciderFalseScenarios => new TheoryData<IEnumerable<Rule>> {
+            { new List<Rule>{ o => Task.Run<bool>(() => false)} },
+            { new List<Rule>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false)} },
+            { new List<Rule>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false), o => Task.Run<bool>(() => true)} }
         };
 
     [Fact]
     public async Task IsAllowed_NoRulesForRequestedPermission_ReturnTrue()
     {
-        IDictionary<Permission, IEnumerable<Func<object, Task<bool>>>> permissions = new Dictionary<Permission, IEnumerable<Func<object, Task<bool>>>>();
+        // Arrange
+        IDictionary<Permission, IEnumerable<Rule>> permissions = new Dictionary<Permission, IEnumerable<Rule>>();
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
+
+        // Act
         bool result = await permissionDecider.IsAllowed(null, CreateComment);
 
+        // Assert
         Assert.True(result);
     }
 
     [Theory]
     [MemberData(nameof(PermissionDeciderFalseScenarios))]
-    public async Task IsAllowed_OneOrMoreRulesEvaluatedToFalse_ReturnFalse(IEnumerable<Func<object, Task<bool>>> rules)
+    public async Task IsAllowed_OneOrMoreRulesEvaluatedToFalse_ReturnFalse(IEnumerable<Rule> rules)
     {
-        IDictionary<Permission, IEnumerable<Func<object, Task<bool>>>> permissions = new Dictionary<Permission, IEnumerable<Func<object, Task<bool>>>>();
+        // Arrange
+        IDictionary<Permission, IEnumerable<Rule>> permissions = new Dictionary<Permission, IEnumerable<Rule>>();
         permissions.Add(CreateComment, rules);
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
+        // Act
         bool result = await permissionDecider.IsAllowed(null, CreateComment);
 
+        // Assert
         Assert.False(result);
     }
 
     [Fact]
     public async Task IsAllowed_AllRulesEvaluatedToTrue_ReturnTrue()
     {
-        IDictionary<Permission, IEnumerable<Func<object, Task<bool>>>> permissions = new Dictionary<Permission, IEnumerable<Func<object, Task<bool>>>>();
+        // Arrange
+        IDictionary<Permission, IEnumerable<Rule>> permissions = new Dictionary<Permission, IEnumerable<Rule>>();
         List<Func<object, Task<bool>>> rules = new List<Func<object, Task<bool>>>();
         rules.Add(o => Task.Run<bool>(() => true));
         rules.Add(o => Task.Run<bool>(() => true));
@@ -49,8 +57,11 @@ public class PermissionDeciderTests
         rules.Add(o => Task.Run<bool>(() => true));
 
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
+
+        // Act
         bool result = await permissionDecider.IsAllowed(null, CreateComment);
 
+        // Assert
         Assert.True(result);
     }
 }
