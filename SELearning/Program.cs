@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
-
+#region configuration
 var initialScopes = builder.Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
@@ -30,9 +30,11 @@ builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
 
 builder.Services.AddScoped<WeatherForecastService>();
+#endregion
 
 var app = builder.Build();
 
+#region Serve
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -59,3 +61,4 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
+#endregion
