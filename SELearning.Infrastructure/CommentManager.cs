@@ -1,13 +1,14 @@
 using SELearning.Core.Services;
 using SELearning.Core;
+using System;
 
 namespace SELearning.Infrastructure
 {
     public class CommentManager : ICommentService
     {
-        public void PostComment(string author, string content)
+        public void PostComment(string author, string content) 
         {
-
+            
         }
         public void UpdateComment(Comment cmt)
         {
@@ -19,11 +20,13 @@ namespace SELearning.Infrastructure
         }
         public void UpvoteComment(Comment cmt)
         {
-
+            cmt.Rating++;
+            UpdateComment(cmt);
         }
         public void DownvoteComment(Comment cmt)
         {
-
+            cmt.Rating--;
+            UpdateComment(cmt);
         }
 
         public List<Comment> GetCommentsFromContentId(int contentId)
