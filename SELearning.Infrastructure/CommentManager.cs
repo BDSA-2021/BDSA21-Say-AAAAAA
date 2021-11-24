@@ -6,9 +6,9 @@ namespace SELearning.Infrastructure
 {
     public class CommentManager : ICommentService
     {
-        public void PostComment(string author, string content) 
+        public void PostComment(string author, string content)
         {
-            
+
         }
         public void UpdateComment(Comment cmt)
         {
