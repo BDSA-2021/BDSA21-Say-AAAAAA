@@ -152,23 +152,23 @@ namespace SELearning.Infrastructure.Tests
             Assert.Equal(3, cmt.Rating);
         }
 
-       /* [Fact]
-        public void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
-        {
-            Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Content = "Really like this",
-                Id = 3,
-                Rating = 7,
-                ContentId = 6
-            };
+        /* [Fact]
+         public void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
+         {
+             Comment cmt = new Comment
+             {
+                 Author = "Ida",
+                 Content = "Really like this",
+                 Id = 3,
+                 Rating = 7,
+                 ContentId = 6
+             };
 
-            List<Comment> comments = _service.GetCommentsFromContentId(6);
+             List<Comment> comments = _service.GetCommentsFromContentId(6);
 
-            Assert.Contains(cmt, comments);
-            Assert.Equal(1, comments.Count);
-        }*/
+             Assert.Contains(cmt, comments);
+             Assert.Equal(1, comments.Count);
+         }*/
 
     }
 }
