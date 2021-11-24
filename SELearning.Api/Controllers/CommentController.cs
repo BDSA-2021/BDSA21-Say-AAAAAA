@@ -19,7 +19,7 @@ public class CommentController : ControllerBase
         _repository = repository;
     }
 
-    [AllowAnonymous]
+    [Authorize]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(CommentDTO), 200)]
     [ProducesResponseType(404)]
@@ -49,7 +49,7 @@ public class CommentController : ControllerBase
 
     [Authorize]
     [HttpDelete("{id}")]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public Task<ActionResult> DeleteComment(int id)
     {

@@ -2,7 +2,8 @@
 
 public interface ICommentRepository
 {
-    Task<WeatherForecastDTO> CreateAsync(WeatherForecastCreateDTO weatherForecast);
-    Task<WeatherForecastDTO> Generate();
-    Task<WeatherForecastDTO[]> ReadAsync(DateTime startDate);
+    Task<CommentDTO> GetAsync(int ID);
+    Task<CommentDTO> CreateAsync(CommentDTO Comment);
+    Task<CommentDTO> UpdateAsync(int ID, CommentDTO Comment);
+    Task<CommentDTO> DeleteAsync(int ID);
 }

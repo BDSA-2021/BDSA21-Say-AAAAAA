@@ -49,7 +49,7 @@ public class ContentController : ControllerBase
 
     [Authorize]
     [HttpDelete("{id}")]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public Task<ActionResult> DeleteContent(int id)
     {
