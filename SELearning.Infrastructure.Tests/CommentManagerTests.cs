@@ -152,7 +152,7 @@ namespace SELearning.Infrastructure.Tests
             Assert.Equal(3, cmt.Rating);
         }
 
-        [Fact]
+       /* [Fact]
         public void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
         {
             Comment cmt = new Comment
@@ -168,7 +168,7 @@ namespace SELearning.Infrastructure.Tests
 
             Assert.Contains(cmt, comments);
             Assert.Equal(1, comments.Count);
-        }
+        }*/
 
     }
 }
