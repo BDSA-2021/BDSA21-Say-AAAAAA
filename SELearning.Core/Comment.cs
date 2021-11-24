@@ -11,5 +11,7 @@ namespace SELearning.Core
         public int Rating {get; set; } = 0;   
 
         public int Id {get; init;}
+
+        public int ContentId {get; init;}
     }
 }
