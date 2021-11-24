@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\SELearning.Core\SELearning.Core.csproj" />
@@ -8,6 +8,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>489fcd83-ad08-44d1-a20a-f41f2ddb1986</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

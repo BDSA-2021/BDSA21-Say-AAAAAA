@@ -1,11 +1,15 @@
 ﻿@page "/fetchdata"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-@using SELearning.Services
-@inject WeatherForecastService ForecastService
+@attribute [Authorize]
+@inject HttpClient Http
 
 <h1>Weather forecast</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<p>This component demonstrates fetching data from the server.</p>
+
+<button @onclick="Generate">Generate</button>
 
 @if (forecasts == null)
 {
@@ -13,9 +17,6 @@
 }
 else
 {
-    <button @onclick="generate">
-        Generate
-    </button>
     <table class="table">
         <thead>
             <tr>
@@ -42,15 +43,32 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await this.fetchData();
+        this.RetrieveForecasts();
     }
 
-    protected async Task generate() {
-        await ForecastService.Generate();
-        await fetchData();
+    protected async Task Generate()
+    {
+        try
+        {
+            await Http.PostAsync("WeatherForecast/generate", null);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+        await RetrieveForecasts();
     }
 
-    protected async Task fetchData() {
-        forecasts = await ForecastService.Get();
+    protected async Task RetrieveForecasts()
+    {
+        try
+        {
+            forecasts = await Http.GetFromJsonAsync<WeatherForecastDTO[]>("WeatherForecast");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
     }
 }
