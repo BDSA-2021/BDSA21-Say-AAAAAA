@@ -9,6 +9,11 @@ namespace SELearning.Infrastructure.Tests;
 
 public class PermissionDeciderTests
 {
+    public static TheoryData<IEnumerable<Func<object, Task<bool>>>> PermissionDeciderFalseScenarios => new TheoryData<IEnumerable<Func<object, Task<bool>>>> {
+            { new List<Func<object, Task<bool>>>{ o => Task.Run<bool>(() => false)} },
+            { new List<Func<object, Task<bool>>>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false)} },
+            { new List<Func<object, Task<bool>>>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false), o => Task.Run<bool>(() => true)} }
+        };
 
     [Fact]
     public async Task IsAllowed_NoRulesForRequestedPermission_ReturnTrue()
@@ -20,13 +25,11 @@ public class PermissionDeciderTests
         Assert.True(result);
     }
 
-    [Fact]
-    public async Task IsAllowed_OneOrMoreRulesEvaluatedToFalse_ReturnFalse()
+    [Theory]
+    [MemberData(nameof(PermissionDeciderFalseScenarios))]
+    public async Task IsAllowed_OneOrMoreRulesEvaluatedToFalse_ReturnFalse(IEnumerable<Func<object, Task<bool>>> rules)
     {
         IDictionary<Permission, IEnumerable<Func<object, Task<bool>>>> permissions = new Dictionary<Permission, IEnumerable<Func<object, Task<bool>>>>();
-        List<Func<object, Task<bool>>> rules = new List<Func<object, Task<bool>>>();
-        rules.Add(o => Task.Run<bool>(() => false));
-
         permissions.Add(CreateComment, rules);
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
