@@ -3,7 +3,7 @@ namespace SELearning.Core
 {   
     public class Comment
     {
-        public string? Author { get; set;}   
+        public string? Author { get; init;}   
 
         public DateTime Timestamp {get; init;}
         public string? Content { get; set;}
