@@ -1,6 +1,5 @@
 namespace SELearning.Core;
 
-
 public record WeatherForecastCreateDTO
 {
     public DateTime Date;
