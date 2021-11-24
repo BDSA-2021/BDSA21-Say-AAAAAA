@@ -1,8 +1,6 @@
 ﻿@page "/fetchdata"
 
-<PageTitle>Weather forecast</PageTitle>
-
-@using SELearning.Data
+@using SELearning.Services
 @inject WeatherForecastService ForecastService
 
 <h1>Weather forecast</h1>
@@ -15,12 +13,14 @@
 }
 else
 {
+    <button @onclick="generate">
+        Generate
+    </button>
     <table class="table">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
                 <th>Summary</th>
             </tr>
         </thead>
@@ -30,7 +30,6 @@ else
                 <tr>
                     <td>@forecast.Date.ToShortDateString()</td>
                     <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
                     <td>@forecast.Summary</td>
                 </tr>
             }
@@ -39,10 +38,19 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private WeatherForecastDTO[] forecasts = {};
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        await this.fetchData();
+    }
+
+    protected async Task generate() {
+        await ForecastService.Generate();
+        await fetchData();
+    }
+
+    protected async Task fetchData() {
+        forecasts = await ForecastService.Get();
     }
 }

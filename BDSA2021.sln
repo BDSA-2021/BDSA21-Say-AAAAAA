@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning", "SELearning\SE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Tests", "SELearning.Tests\SELearning.Tests.csproj", "{21B40677-B0F2-4321-B651-0AF9453266A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Api", "SELearning.Api\SELearning.Api.csproj", "{63F41038-53B6-46BF-A31A-B276F0AE908D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Api.Tests", "SELearning.Api.Tests\SELearning.Api.Tests.csproj", "{45593ABC-CA84-4F72-939D-1E8B34957AF8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Core", "SELearning.Core\SELearning.Core.csproj", "{BABA3890-C896-473F-91B5-B4D17DB1044D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Infrastructure", "SELearning.Infrastructure\SELearning.Infrastructure.csproj", "{F98A132B-C6E0-4772-BE16-C3B50FE03C0C}"
