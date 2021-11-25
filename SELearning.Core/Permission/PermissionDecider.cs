@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace SELearning.Core.Permission;
 
 public class PermissionDecider : IPermissionService
@@ -15,14 +17,8 @@ public class PermissionDecider : IPermissionService
         if (!PermissionHasRules(requestedPermission))
             return true;
 
-        foreach (Rule rule in _permissions[requestedPermission])
-        {
-            bool isAllowed = await rule(user);
-            if (!isAllowed)
-                return false;
-        }
-
-        return true;
+        return (await Task.WhenAll(_permissions[requestedPermission].Select(rule => rule(user))))
+                                                                    .All(isAllowed => isAllowed);
     }
 
     private bool PermissionHasRules(Permission p) => _permissions.ContainsKey(p) && _permissions[p].Count() != 0;
