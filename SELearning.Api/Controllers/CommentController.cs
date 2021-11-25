@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
 
 namespace SELearning.API.Controllers;
-
-// Required scope?
 
 [Authorize]
 [ApiController]
 [Route("[controller]")]
+[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;

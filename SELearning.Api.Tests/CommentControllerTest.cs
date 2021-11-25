@@ -86,7 +86,7 @@ public class CommentControllerTest
     }
 
     [Fact]
-    public async Task UpdateComment_Given_Valid_ID_And_CommentDTO_Returns_NoComment()
+    public async Task UpdateComment_Given_Valid_ID_And_CommentDTO_Returns_NoContent()
     {
         // Arrange
         var logger = new Mock<ILogger<CommentController>>();
@@ -107,17 +107,43 @@ public class CommentControllerTest
     [Fact]
     public async Task UpdateComment_Given_Invalid_ID_Returns_NotFound()
     {
-        Assert.True(false);
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var repository = new Mock<ICommentRepository>();
+
+        var comment = new CommentDTO(1);
+        repository.Setup(m => m.UpdateAsync(42, comment));
+
+        var controller = new CommentController(logger.Object, repository.Object);
+
+        // Act
+        var response = await controller.UpdateComment(42, comment);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(response);
     }
 
     [Fact]
     public async Task UpdateComment_Given_Invalid_CommentDTO_Returns_BadRequest()
     {
-        Assert.True(false);
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var repository = new Mock<ICommentRepository>();
+
+        var comment = new CommentDTO(-1);
+        repository.Setup(m => m.UpdateAsync(1, comment));
+
+        var controller = new CommentController(logger.Object, repository.Object);
+
+        // Act
+        var response = await controller.UpdateComment(1, comment);
+
+        // Assert
+        Assert.IsType<BadRequestResult>(response);
     }
 
     [Fact]
-    public async Task DeleteComment_Given_Valid_ID_Returns_NoComment()
+    public async Task DeleteComment_Given_Valid_ID_Returns_NoContent()
     {
         // Arrange
         var logger = new Mock<ILogger<CommentController>>();
@@ -137,6 +163,18 @@ public class CommentControllerTest
     [Fact]
     public async Task DeleteComment_Given_Invalid_ID_Returns_NotFound()
     {
-        Assert.True(false);
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var repository = new Mock<ICommentRepository>();
+
+        repository.Setup(m => m.DeleteAsync(42));
+
+        var controller = new CommentController(logger.Object, repository.Object);
+
+        // Act
+        var response = await controller.DeleteComment(42);
+
+        // Assert
+        Assert.IsType<NoContentResult>(response);
     }
 }
