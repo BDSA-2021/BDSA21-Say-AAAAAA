@@ -28,7 +28,7 @@ jobs:
         run: dotnet restore
       - name: Build
         working-directory: ./SELearning.API
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
       - name: Publish
         working-directory: ./SELearning.API
         run: dotnet publish -c Release -o ../'${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/selearning'
