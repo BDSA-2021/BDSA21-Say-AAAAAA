@@ -4,6 +4,8 @@ BDSA2021 final project
 ## Local development
 [Shamelessly ripped from ondfisk](https://github.com/ondfisk/BDSA2021/blob/main/Notes.md)
 
+Assume the location these commands are run from is the root of the project, unless specifically stated.
+
 Run sql server in docker (Windows):
 ```
 $password = New-Guid
@@ -20,16 +22,16 @@ export database=SELearning
 export connectionString=$(echo "Server=localhost;Database=${database};User Id=sa;Password=${password}")
 ```
 
-## Enable User Secrets (In the SELearning project)
+## Enable User Secrets
 ```powershell
-dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:SELearning" "$connectionString"
+dotnet user-secrets init --project SELearning.API
+dotnet user-secrets set "ConnectionStrings:SELearning" "$connectionString" --project SELearning.API
 ```
 
-## Migrate database (In the SELearning.Infrastructure project)
+## Migrate database
 ```
 dotnet tool install --global --version 6.0.0 dotnet-ef
-dotnet ef database update --startup-project ../SELearning
+dotnet ef database update --project SELearning.Infrastructure --startup-project SELearning.API
 ```
 
 ## Set enviroment to development
