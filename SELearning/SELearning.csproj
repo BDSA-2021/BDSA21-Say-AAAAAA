@@ -17,4 +17,8 @@
     <ProjectReference Include="..\SELearning.Core\SELearning.Core.csproj" />
     <ProjectReference Include="..\SELearning.Infrastructure\SELearning.Infrastructure.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+  </ItemGroup>
 </Project>
