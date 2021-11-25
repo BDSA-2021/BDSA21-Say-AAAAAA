@@ -10,10 +10,10 @@ namespace SELearning.Infrastructure.Tests;
 public class PermissionDeciderTests
 {
     public static TheoryData<IEnumerable<Rule>> PermissionDeciderFalseScenarios => new TheoryData<IEnumerable<Rule>> {
-            { new List<Rule>{ o => Task.Run<bool>(() => false)} },
-            { new List<Rule>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false)} },
-            { new List<Rule>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false), o => Task.Run<bool>(() => true)} }
-        };
+        { new List<Rule>{ o => Task.Run<bool>(() => false)} },
+        { new List<Rule>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false)} },
+        { new List<Rule>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false), o => Task.Run<bool>(() => true)} }
+    };
 
     [Fact]
     public async Task IsAllowed_NoRulesForRequestedPermission_ReturnTrue()
