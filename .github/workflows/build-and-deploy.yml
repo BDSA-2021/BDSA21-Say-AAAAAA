@@ -9,7 +9,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: SELearning
-  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  AZURE_WEBAPP_PACKAGE_PATH: '/app'
   DOTNET_VERSION: '6.0.x'
 
 jobs:
@@ -29,11 +29,9 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Build
-        working-directory: ./SELearning.API
         run: dotnet build --configuration Release
       - name: Publish
-        working-directory: ./SELearning.API
-        run: dotnet publish -c Release -o ../'${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/selearning'
+        run: dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/selearning'
       - name: Deploy to azure
         uses: azure/webapps-deploy@v2
         with: 
