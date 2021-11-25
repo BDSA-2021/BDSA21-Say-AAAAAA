@@ -26,6 +26,8 @@ jobs:
           include-prerelease: true
       - name: Install dependencies
         run: dotnet restore
+      - name: Install wasm tools
+        run: dotnet workload install wasm-tools
       - name: Build
         working-directory: ./SELearning.API
         run: dotnet build --configuration Release
