@@ -20,7 +20,9 @@ if (builder.Environment.IsDevelopment())
     });
 
     connectionString = builder.Configuration.GetConnectionString("SELearning");
-} else {
+}
+else
+{
     connectionString = builder.Configuration.GetConnectionString("ProductionConnectionString");
 }
 
