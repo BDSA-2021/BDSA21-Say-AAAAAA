@@ -24,10 +24,10 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           include-prerelease: true
-      - name: Install dependencies
-        run: dotnet restore
       - name: Install wasm tools
         run: dotnet workload install wasm-tools
+      - name: Install dependencies
+        run: dotnet restore
       - name: Build
         working-directory: ./SELearning.API
         run: dotnet build --configuration Release
