@@ -23,7 +23,7 @@ public class PermissionDeciderTests
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
         // Act
-        bool result = await permissionDecider.IsAllowed(null, CreateComment);
+        bool result = await permissionDecider.IsAllowed(new Object(), CreateComment);
 
         // Assert
         Assert.True(result);
@@ -39,7 +39,7 @@ public class PermissionDeciderTests
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
         // Act
-        bool result = await permissionDecider.IsAllowed(null, CreateComment);
+        bool result = await permissionDecider.IsAllowed(new Object(), CreateComment);
 
         // Assert
         Assert.False(result);
@@ -59,7 +59,7 @@ public class PermissionDeciderTests
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
         // Act
-        bool result = await permissionDecider.IsAllowed(null, CreateComment);
+        bool result = await permissionDecider.IsAllowed(new Object(), CreateComment);
 
         // Assert
         Assert.True(result);
