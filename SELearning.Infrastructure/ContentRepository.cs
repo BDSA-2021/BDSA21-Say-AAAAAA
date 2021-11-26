@@ -7,9 +7,22 @@ public class ContentRepository : IContentRepository
     {
         _context = context;
     }
-    public void AddContent(Content content)
+    public async Task<ContentDto> CreateAsync(ContentCreateDto content)
     {
-        throw new NotImplementedException();
+        var entity = new Content {
+           Section = content.Section,
+           Author = content.Author,
+           Title = content.Title,
+           Description = content.Description,
+           VideoLink = content.VideoLink,
+           Rating = content.Rating
+        };
+
+        _context.Content.Add(entity);
+
+        await _context.SaveChangesAsync();
+
+        return (new ContentDto(entity.Id, entity.Section, entity.Author, entity.Title, entity.Description, entity.VideoLink, entity.Rating));
     }
 
     public void AddSection(Section section)

@@ -2,9 +2,12 @@ namespace SELearning.Infrastructure;
 
 public class ContentContext : DbContext, IContentContext
 {
-    public ContentContext(DbContextOptions options) : base(options)
-    {
-    }
+    public DbSet<Content> Content => Set<Content>();
 
-    public DbSet<Content> Content => throw new NotImplementedException();
+    public ContentContext(DbContextOptions<ContentContext> options) : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        
+    }
 }
