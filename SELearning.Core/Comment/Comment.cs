@@ -1,5 +1,4 @@
-
-namespace SELearning.Core
+namespace SELearning.Core.Comment
 {
     public class Comment
     {

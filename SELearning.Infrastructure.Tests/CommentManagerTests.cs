@@ -1,4 +1,4 @@
-using SELearning.Core.Services;
+using SELearning.Core.Comment;
 using SELearning.Core;
 using Xunit;
 using System;

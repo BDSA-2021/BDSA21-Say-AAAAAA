@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
-using SELearning.Core;
+using SELearning.Core.Comment;
 
 namespace SELearning.Infrastructure.Tests
 {

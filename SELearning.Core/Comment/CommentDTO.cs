@@ -1,4 +1,4 @@
-namespace SELearning.Core
+namespace SELearning.Core.Comment
 {
-    public record CommentCreateDTO(string author, string content);
+    public record CommentCreateDTO(string ?author, string ?content);
 }

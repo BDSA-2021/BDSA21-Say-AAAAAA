@@ -1,3 +1,4 @@
+using SELearning.Core.Comment;
 namespace SELearning.Infrastructure
 {
     public class CommentRepository: ICommentRepository

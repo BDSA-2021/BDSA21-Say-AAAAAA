@@ -1,4 +1,4 @@
-namespace SELearning.Core.Services
+namespace SELearning.Core.Comment
 {
     public interface ICommentService
     {
