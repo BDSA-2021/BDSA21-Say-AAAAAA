@@ -3,12 +3,14 @@ using Microsoft.Data.Sqlite;
 using Xunit;
 using SELearning.Core.Content;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SELearning.Infrastructure.Tests;
 
 public class ContentRepositoryTests : IDisposable
 {
-
+    private readonly ICollection<Guid> _idList;
     private readonly ContentContext _context;
     private readonly ContentRepository _repository;
     private bool disposedValue;
@@ -21,8 +23,19 @@ public class ContentRepositoryTests : IDisposable
         builder.UseSqlite(connection);
         var context = new ContentContext(builder.Options);
         context.Database.EnsureCreated();
+        
+        _idList = new List<Guid>();
+        _idList.Add(new Guid());
+        _idList.Add(new Guid());
+        _idList.Add(new Guid());
+        _idList.Add(new Guid());
 
-        var content = new Content();
+        context.Content.AddRange(
+            new Content { Id = 1, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 },
+            new Content { Id = 2, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 },
+            new Content { Id = 3, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 },
+            new Content { Id = 4, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 }
+        );
 
         var section = new Section();
 
@@ -30,6 +43,8 @@ public class ContentRepositoryTests : IDisposable
 
         _context = context;
         _repository = new ContentRepository(_context);
+
+
     }
 
     [Fact]
@@ -56,6 +71,48 @@ public class ContentRepositoryTests : IDisposable
         Assert.Equal(3, created.Rating);
     }
 
+    [Fact]
+    public async Task UpdateAsync_given_non_existing_id_returns_NotFound()
+    {
+        var content = new ContentUpdateDto
+        {
+            Section = "section",
+            Author = "author",
+            Title = "title",
+            Description = "description",
+            VideoLink = "video link",
+            Rating = 3,
+        };
+
+        var reponse = await _repository.UpdateAsync(42, content);
+
+        Assert.Equal(OperationResult.NotFound, reponse);
+    }
+
+
+    [Fact]
+    public async Task UpdateAsync_updates_existing_content()
+    {
+        var content = new ContentUpdateDto
+        {
+            Id = 1,
+            Section = "section",
+            Author = "author",
+            Title = "title",
+            Description = "description",
+            VideoLink = "video link",
+            Rating = 3,
+        };
+
+        var updated = await _repository.UpdateAsync(1, content);
+
+        Assert.Equal(OperationResult.Updated, updated);
+
+        // var option = await _repository.ReadAsync(1);
+        // var superman = option.Value;
+
+        // Assert.Empty(superman.Powers);
+    }
 
 
     protected virtual void Dispose(bool disposing)

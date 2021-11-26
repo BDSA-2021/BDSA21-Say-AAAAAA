@@ -1,6 +1,6 @@
 namespace SELearning.Core.Content;
 public record ContentDto(
-    Guid? Id,
+    int? Id,
     string? Section,
     string? Author,
     string? Title,
@@ -32,5 +32,5 @@ public record ContentCreateDto
 
 public record ContentUpdateDto : ContentCreateDto
 {
-    public Guid? Id { get; init; }
+    public int Id { get; init; }
 }

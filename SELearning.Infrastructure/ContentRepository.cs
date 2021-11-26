@@ -50,7 +50,7 @@ public class ContentRepository : IContentRepository
         throw new NotImplementedException();
     }
 
-    public Content GetContent(string id)
+    public Content ReadAsync(string id)
     {
         throw new NotImplementedException();
     }
@@ -60,8 +60,25 @@ public class ContentRepository : IContentRepository
         throw new NotImplementedException();
     }
 
-    public void UpdateContent(string id, Content content)
+    public async Task<OperationResult> UpdateAsync(int id, ContentUpdateDto content)
     {
-        throw new NotImplementedException();
+        // var entity = await _context.Content.Include(c => c.Powers).FirstOrDefaultAsync(c => c.Id == character.Id);
+        var entity = await _context.Content.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (entity == null)
+        {
+            return OperationResult.NotFound;
+        }
+
+        entity.Id = content.Id;
+        entity.Author = content.Author;
+        entity.Title = content.Title;
+        entity.Description = content.Description;
+        entity.Section = content.Section;
+        entity.Rating = content.Rating;
+
+        await _context.SaveChangesAsync();
+
+        return OperationResult.Updated;
     }
 }
