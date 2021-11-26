@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Claims;
 
 namespace SELearning.Core.Permission;
 
@@ -12,7 +13,7 @@ public class PermissionDecider : IPermissionService
         _permissions = permissionRules;
     }
 
-    public async Task<bool> IsAllowed(object user, Permission requestedPermission)
+    public async Task<bool> IsAllowed(ClaimsPrincipal user, Permission requestedPermission)
     {
         if (!PermissionHasRules(requestedPermission))
             return true;

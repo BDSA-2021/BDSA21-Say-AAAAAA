@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using SELearning.Core.Permission;
 using static SELearning.Core.Permission.Permission;
+using System.Security.Claims;
 
 namespace SELearning.Infrastructure.Tests;
 
@@ -14,6 +15,8 @@ public class PermissionDeciderTests
         { new List<Rule>{ o => Task.Run<bool>(() => true), o => Task.Run<bool>(() => false), o => Task.Run<bool>(() => true)} }
     };
 
+    static ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "brunkage.pebernød") }));
+
     [Fact]
     public async Task IsAllowed_NoRulesForRequestedPermission_ReturnTrue()
     {
@@ -22,7 +25,7 @@ public class PermissionDeciderTests
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
         // Act
-        bool result = await permissionDecider.IsAllowed(new Object(), CreateComment);
+        bool result = await permissionDecider.IsAllowed(user, CreateComment);
 
         // Assert
         Assert.True(result);
@@ -38,7 +41,7 @@ public class PermissionDeciderTests
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
         // Act
-        bool result = await permissionDecider.IsAllowed(new Object(), CreateComment);
+        bool result = await permissionDecider.IsAllowed(user, CreateComment);
 
         // Assert
         Assert.False(result);
@@ -58,7 +61,7 @@ public class PermissionDeciderTests
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
         // Act
-        bool result = await permissionDecider.IsAllowed(new Object(), CreateComment);
+        bool result = await permissionDecider.IsAllowed(user, CreateComment);
 
         // Assert
         Assert.True(result);

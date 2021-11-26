@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 namespace SELearning.Core.Permission;
 
 /// <summary>
@@ -11,5 +13,5 @@ public interface IPermissionService
     /// <param name="user">Instance of the user</param>
     /// <param name="requestedPermission">The requested permission</param>
     /// <returns>Returns true if the user is allowed and false if not</returns>
-    Task<bool> IsAllowed(object user, Permission requestedPermission); // TODO: Change object to an instance of user
+    Task<bool> IsAllowed(ClaimsPrincipal user, Permission requestedPermission);
 }

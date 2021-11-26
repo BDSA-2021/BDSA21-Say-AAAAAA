@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.Infrastructure.Tests;
@@ -8,16 +7,36 @@ namespace SELearning.Infrastructure.Tests;
 public class PermissionAuthorizationHandlerTests
 {
     [Fact]
-    async public void yadda()
+    async public void HandleAsync_GivenPermittedUser_YieldsHasSucceeded()
     {
         var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson") }));
-        var requirement = new OperationAuthorizationRequirement { Name = "Read" };
+        var requirement = new PermissionRequirement(Permission.CreateContent);
 
-        var authzContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, resource);
+        var authContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, null);
 
-        var authzHandler = new PermissionAuthorizationHandler();
-        await authzHandler.HandleAsync(authzContext);
+        var permissionService = new Mock<IPermissionService>();
+        permissionService.Setup(m => m.IsAllowed(user, Permission.CreateContent)).ReturnsAsync(true);
 
-        Assert.True(authzContext.HasSucceeded);
+        var authHandler = new PermissionAuthorizationHandler(permissionService.Object);
+        await authHandler.HandleAsync(authContext);
+
+        Assert.True(authContext.HasSucceeded);
+    }
+
+    [Fact]
+    async public void HandleAsync_GivenUnpermittedUser_YieldsHasFailed()
+    {
+        var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson") }));
+        var requirement = new PermissionRequirement(Permission.CreateContent);
+
+        var authContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, null);
+
+        var permissionService = new Mock<IPermissionService>();
+        permissionService.Setup(m => m.IsAllowed(user, Permission.CreateContent)).ReturnsAsync(false);
+
+        var authHandler = new PermissionAuthorizationHandler(permissionService.Object);
+        await authHandler.HandleAsync(authContext);
+
+        Assert.True(authContext.HasFailed);
     }
 }
