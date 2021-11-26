@@ -24,6 +24,7 @@ namespace SELearning.Infrastructure.Tests
 
             _repository = new CommentRepository(_context);
 
+            //TODO: create some content here and reference it in the coments below
             _context.Comments.AddRange(
                 new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = 4 },
                 new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = 4 },
@@ -37,7 +38,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment_creates_new_comment_with_generated_id()
         {
-            CommentDTO comment = new CommentDTO("Harleen", "Nice content");
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content",1);
 
             var created = await _repository.AddComment(comment);
 
@@ -47,13 +48,33 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
+        public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
+        {
+            
+        }
+
+        [Fact]
         public async Task UpdateComment_given_non_existing_id_returns_NotFound()
         {
-            CommentDTO dto = new CommentDTO("Amalie","Really like this content");
+            CommentUpdateDTO dto = new CommentUpdateDTO("Really like this content");
 
             var updated = await _repository.UpdateComment(42, dto);
 
             Assert.Equal(OperationResult.NotFound, updated.Item1);
+        }
+
+        [Fact]
+        public async Task UpdateComment_updates_existing_comment()
+        {
+            CommentUpdateDTO dto = new CommentUpdateDTO("Nice but also confusing");
+
+            var updated = await _repository.UpdateComment(1, dto);
+
+            Assert.Equal(1, updated.Item2.Id);
+            Assert.Equal("Amalie", updated.Item2.Author);
+            Assert.Equal("Nice but also confusing", updated.Item2.Text);
+            
+            Assert.Equal(OperationResult.Updated, updated.Item1);
         }
     }
 }
