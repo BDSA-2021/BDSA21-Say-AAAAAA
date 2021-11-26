@@ -22,7 +22,7 @@ public class ContentRepositoryTests : IDisposable
         context.Database.EnsureCreated();
 
         var content = new Content();
-        
+
         var section = new Section();
 
         context.SaveChanges();

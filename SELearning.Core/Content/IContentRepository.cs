@@ -10,5 +10,5 @@ public interface IContentRepository
     public List<Content> GetContent();
     public Content GetContent(string id);
     public List<Content> GetContentInSection(string id);
-    
+
 }
