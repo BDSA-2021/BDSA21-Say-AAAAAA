@@ -3,7 +3,7 @@ using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
 
-public class PermissionRequirement : IAuthorizationRequirement
+public record PermissionRequirement : IAuthorizationRequirement
 {
     public PermissionRequirement(Permission p) => this.Permission = p;
 

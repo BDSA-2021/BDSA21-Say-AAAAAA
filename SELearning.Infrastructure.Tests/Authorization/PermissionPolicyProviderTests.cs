@@ -25,7 +25,7 @@ public class PermissionPolicyProviderTests
     [Fact]
     public async Task GetPolicyAsync_ProvideKnownPolicy_ReturnPolicyWithPermissionRequirement()
     {
-        var result = await _policyProvider.GetPolicyAsync("PermissionCreateDocument");
+        var result = await _policyProvider.GetPolicyAsync("PermissionCreateComment");
 
         Assert.Equal(new PermissionRequirement(Permission.CreateComment), result?.Requirements[0]);
     }
