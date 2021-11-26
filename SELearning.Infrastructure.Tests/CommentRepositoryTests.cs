@@ -24,10 +24,10 @@ namespace SELearning.Infrastructure.Tests
             _repository = new CommentRepository(_context);
 
             _context.Comments.AddRange(
-                new Comment {Author = "Amalie",Id = 1, Text = "Nice", Content = 4},
-                new Comment {Author = "Albert",Id = 2, Text = "Cool but boring", Content = 4},
-                new Comment {Author = "Paolo",Id = 3, Text = "This is a great video", Content = 3},
-                new Comment {Author = "Rasmus",Id = 4, Text = "Very inappropriate", Content = 5}
+                new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = 4 },
+                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = 4 },
+                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = 3 },
+                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = 5 }
             );
 
             _context.SaveChanges();
@@ -36,13 +36,13 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment_creates_new_comment_with_generated_id()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen","Nice content");
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content");
 
             var created = await _repository.AddComment(comment);
 
             Assert.Equal(5, created.Item2.Id);
-            Assert.Equal("Harleen",created.Item2.Author);
-            Assert.Equal("Nice content",created.Item2.Text);
+            Assert.Equal("Harleen", created.Item2.Author);
+            Assert.Equal("Nice content", created.Item2.Text);
         }
     }
 }

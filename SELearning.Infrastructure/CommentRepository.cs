@@ -1,7 +1,7 @@
 using SELearning.Core.Comment;
 namespace SELearning.Infrastructure
 {
-    public class CommentRepository: ICommentRepository
+    public class CommentRepository : ICommentRepository
     {
         private readonly CommentContext _context;
 
@@ -9,9 +9,9 @@ namespace SELearning.Infrastructure
         {
             _context = context;
         }
-        
-        public async Task<(OperationResult,CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
-        {   
+
+        public Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
+        {
             Comment c = new Comment
             {
                 Author = cmt.Author,
@@ -22,27 +22,27 @@ namespace SELearning.Infrastructure
 
             _context.SaveChanges();
 
-            CommentDetailsDTO dto = new CommentDetailsDTO(c.Author,c.Text,c.Id,c.Timestamp,c.Rating,c.Content);
+            CommentDetailsDTO dto = new CommentDetailsDTO(c.Author, c.Text, c.Id, c.Timestamp, c.Rating, c.Content);
 
-            return (OperationResult.Created,dto);
+            return Task.FromResult((OperationResult.Created, dto));
         }
         //hvis id ikke findes returner notfound, ellers updated
-        public async Task<OperationResult> UpdateComment(int Id, Comment cmt)
+        public Task<OperationResult> UpdateComment(int Id, Comment cmt)
         {
-            return OperationResult.BadRequest;
+            return Task.FromResult(OperationResult.BadRequest);
         }
 
         //hvis id ikke findes returner notfound, ellers deleted
 
-        public async Task<OperationResult> RemoveComment(int Id)
+        public Task<OperationResult> RemoveComment(int Id)
         {
-            return OperationResult.BadRequest;
+            return Task.FromResult(OperationResult.BadRequest);
         }
 
-        public async Task<List<Comment>> GetCommentsByContentId(int contentId)
+        public Task<List<Comment>> GetCommentsByContentId(int contentId)
         {
             //_context.Comments.Where(x => x.Content.Id == contentId);
-            return new List<Comment>();
+            return Task.FromResult(new List<Comment>());
         }
     }
 }

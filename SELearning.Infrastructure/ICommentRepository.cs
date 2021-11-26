@@ -3,7 +3,7 @@ namespace SELearning.Infrastructure
 {
     public interface ICommentRepository
     {
-        Task<(OperationResult,CommentDetailsDTO)> AddComment(CommentCreateDTO cmt);
+        Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt);
         Task<OperationResult> UpdateComment(int Id, Comment cmt);
         Task<OperationResult> RemoveComment(int Id);
 

@@ -1,9 +1,10 @@
 using SELearning.Core.Comment;
-namespace SELearning.Infrastructure{
+namespace SELearning.Infrastructure
+{
 
-    public class CommentContext: DbContext
+    public class CommentContext : DbContext
     {
-        public DbSet<Comment> ?Comments { get; set; }
+        public DbSet<Comment>? Comments { get; set; }
 
         public CommentContext(DbContextOptions<CommentContext> options) : base(options) { }
 
