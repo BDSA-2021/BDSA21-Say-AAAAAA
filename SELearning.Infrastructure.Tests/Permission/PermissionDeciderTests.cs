@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Xunit;
+using System.Collections.Generic;
 using SELearning.Core.Permission;
 using static SELearning.Core.Permission.Permission;
 
