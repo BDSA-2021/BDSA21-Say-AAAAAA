@@ -2,7 +2,7 @@ namespace SELearning.Core.Comment
 {
     public class Comment
     {
-        public string? Author { get; init; }
+        public string? Author { get; set; }
 
         public DateTime Timestamp { get; init; } = DateTime.Now;
         public string? Text { get; set; }

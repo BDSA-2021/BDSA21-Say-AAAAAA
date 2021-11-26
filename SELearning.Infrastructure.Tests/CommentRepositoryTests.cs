@@ -3,6 +3,7 @@ using Xunit;
 using Microsoft.EntityFrameworkCore;
 using SELearning.Core.Comment;
 using System.Threading.Tasks;
+using SELearning.Core;
 
 namespace SELearning.Infrastructure.Tests
 {
@@ -36,13 +37,23 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment_creates_new_comment_with_generated_id()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content");
+            CommentDTO comment = new CommentDTO("Harleen", "Nice content");
 
             var created = await _repository.AddComment(comment);
 
             Assert.Equal(5, created.Item2.Id);
             Assert.Equal("Harleen", created.Item2.Author);
             Assert.Equal("Nice content", created.Item2.Text);
+        }
+
+        [Fact]
+        public async Task UpdateComment_given_non_existing_id_returns_NotFound()
+        {
+            CommentDTO dto = new CommentDTO("Amalie","Really like this content");
+
+            var updated = await _repository.UpdateComment(42, dto);
+
+            Assert.Equal(OperationResult.NotFound, updated.Item1);
         }
     }
 }

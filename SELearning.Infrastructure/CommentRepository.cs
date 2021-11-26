@@ -10,7 +10,7 @@ namespace SELearning.Infrastructure
             _context = context;
         }
 
-        public Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
+        public async Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentDTO cmt)
         {
             Comment c = new Comment
             {
@@ -24,12 +24,24 @@ namespace SELearning.Infrastructure
 
             CommentDetailsDTO dto = new CommentDetailsDTO(c.Author, c.Text, c.Id, c.Timestamp, c.Rating, c.Content);
 
-            return Task.FromResult((OperationResult.Created, dto));
+            return (OperationResult.Created, dto);
         }
         //hvis id ikke findes returner notfound, ellers updated
-        public Task<OperationResult> UpdateComment(int Id, Comment cmt)
+        public async Task<(OperationResult,CommentDetailsDTO?)> UpdateComment(int Id, CommentDTO cmt)
         {
-            return Task.FromResult(OperationResult.BadRequest);
+            Comment? c = await _context.Comments.FirstOrDefaultAsync(c => c.Id == Id);
+
+            if(c == null)
+            {
+                return (OperationResult.NotFound, null);
+            }
+
+            c.Author = cmt.Author;
+            c.Text = cmt.Text;
+
+            CommentDetailsDTO dto = new CommentDetailsDTO(c.Author, c.Text, c.Id, c.Timestamp, c.Rating, c.Content);
+
+            return (OperationResult.Updated, dto);
         }
 
         //hvis id ikke findes returner notfound, ellers deleted
