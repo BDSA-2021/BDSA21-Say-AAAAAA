@@ -7,7 +7,7 @@ public class ContentRepository : IContentRepository
     {
         _context = context;
     }
-    public async Task<ContentDto> CreateAsync(ContentCreateDto content)
+    public async Task<(OperationResult, ContentDto)> CreateAsync(ContentCreateDto content)
     {
         var entity = new Content {
            Section = content.Section,
@@ -22,7 +22,7 @@ public class ContentRepository : IContentRepository
 
         await _context.SaveChangesAsync();
 
-        return (new ContentDto(entity.Id, entity.Section, entity.Author, entity.Title, entity.Description, entity.VideoLink, entity.Rating));
+        return (OperationResult.Created, new ContentDto(entity.Id, entity.Section, entity.Author, entity.Title, entity.Description, entity.VideoLink, entity.Rating));
     }
 
     public void AddSection(Section section)

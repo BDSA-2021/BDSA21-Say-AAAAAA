@@ -1,7 +1,7 @@
 namespace SELearning.Core.Content;
 public interface IContentRepository
 {
-    public Task<ContentDto> CreateAsync(ContentCreateDto content);
+    public Task<(OperationResult, ContentDto)> CreateAsync(ContentCreateDto content);
     
     //TODO: Hvis du prøver at update et stykke content der ikke findes via ID så retuer NotFound. Ellers returner updated.
     public void UpdateContent(string id, Content content);

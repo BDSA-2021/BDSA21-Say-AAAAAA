@@ -45,7 +45,7 @@ public class ContentRepositoryTests : IDisposable
             Rating = 3,
         };
 
-        var created = await _repository.CreateAsync(content);
+        var (status, created) = await _repository.CreateAsync(content);
 
         Assert.NotNull(created.Id);
         Assert.Equal("section", created.Section);
