@@ -20,39 +20,32 @@ public class ContentController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ContentDTO), 200)]
-    [ProducesResponseType(404)]
-    public Task<ActionResult<ContentDTO>> GetContent(int id)
-    {
-        throw new NotImplementedException();
-    }
+    [HttpGet("{ID}")]
+    [ProducesResponseType(typeof(ContentDTO), 200)] // OK
+    [ProducesResponseType(404)] // Not Found
+    public async Task<ActionResult<ContentDTO>> GetContent(int ID)
+        => (await _repository.GetAsync(ID)).ToActionResult();
 
     [Authorize]
     [HttpPost]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(400)]
-    public Task<ActionResult> CreateContent(ContentDTO content)
+    [ProducesResponseType(201)] // Created
+    public async Task<IActionResult> CreateContent(ContentDTO content)
     {
-        throw new NotImplementedException();
+        var created = (await _repository.CreateAsync(content));
+        return CreatedAtRoute(nameof(GetContent), new { created.ID }, created);
     }
 
     [Authorize]
-    [HttpPut("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
-    public Task<ActionResult> UpdateContent(int id, ContentDTO content)
-    {
-        throw new NotImplementedException();
-    }
+    [HttpPut("{ID}")]
+    [ProducesResponseType(204)] // No Content
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> UpdateContent(int ID, ContentDTO content)
+        => (await _repository.UpdateAsync(ID, content)).ToActionResult();
 
     [Authorize]
-    [HttpDelete("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    public Task<ActionResult> DeleteContent(int id)
-    {
-        throw new NotImplementedException();
-    }
+    [HttpDelete("{ID}")]
+    [ProducesResponseType(204)] // No Content
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> DeleteContent(int ID)
+        => (await _repository.DeleteAsync(ID)).ToActionResult();
 }

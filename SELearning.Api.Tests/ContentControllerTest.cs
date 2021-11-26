@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
 using SELearning.Core;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,7 +25,7 @@ public class ContentControllerTest
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var actual = await controller.GetContent(1);
+        var actual = (await controller.GetContent(1)).Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -46,54 +48,37 @@ public class ContentControllerTest
         // Assert
         Assert.IsType<NotFoundResult>(response.Result);
     }
-    
+
     [Fact]
-    public async Task CreateContent_Given_Valid_ContentDTO_Returns_Created()
+    public async Task CreateContent_Returns_Created()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
         var content = new ContentDTO(1);
-        repository.Setup(m => m.CreateAsync(content));
+        repository.Setup(m => m.CreateAsync(content)).ReturnsAsync(content);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.CreateContent(content);
+        var result = await controller.CreateContent(content) as CreatedAtRouteResult;
 
         // Assert
-        Assert.IsType<CreatedResult>(response);
+        Assert.Equal(content, result?.Value);
+        Assert.Equal("GetContent", result?.RouteName);
+        Assert.Equal(KeyValuePair.Create("ID", (object?)1), result?.RouteValues?.Single());
     }
-    
+
     [Fact]
-    public async Task CreateContent_Given_Invalid_ContentDTO_Returns_BadRequest()
-    {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var repository = new Mock<IContentRepository>();
-
-        var content = new ContentDTO(-1);
-        repository.Setup(m => m.CreateAsync(content));
-
-        var controller = new ContentController(logger.Object, repository.Object);
-
-        // Act
-        var response = await controller.CreateContent(content);
-
-        // Assert
-        Assert.IsType<BadRequestResult>(response);
-    }
-    
-    [Fact]
-    public async Task UpdateContent_Given_Valid_ID_And_ContentDTO_Returns_NoContent()
+    public async Task UpdateContent_Given_Valid_ID_Returns_NoContent()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
         var content = new ContentDTO(1);
-        repository.Setup(m => m.UpdateAsync(1, content));
+        repository.Setup(m => m.UpdateAsync(1, content)).ReturnsAsync(OperationResult.Updated);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -103,7 +88,7 @@ public class ContentControllerTest
         // Assert
         Assert.IsType<NoContentResult>(response);
     }
-    
+
     [Fact]
     public async Task UpdateContent_Given_Invalid_ID_Returns_NotFound()
     {
@@ -112,7 +97,7 @@ public class ContentControllerTest
         var repository = new Mock<IContentRepository>();
 
         var content = new ContentDTO(1);
-        repository.Setup(m => m.UpdateAsync(42, content));
+        repository.Setup(m => m.UpdateAsync(42, content)).ReturnsAsync(OperationResult.NotFound);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -122,26 +107,7 @@ public class ContentControllerTest
         // Assert
         Assert.IsType<NotFoundResult>(response);
     }
-    
-    [Fact]
-    public async Task UpdateContent_Given_Invalid_ContentDTO_Returns_BadRequest()
-    {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var repository = new Mock<IContentRepository>();
 
-        var content = new ContentDTO(-1);
-        repository.Setup(m => m.UpdateAsync(1, content));
-
-        var controller = new ContentController(logger.Object, repository.Object);
-
-        // Act
-        var response = await controller.UpdateContent(1, content);
-
-        // Assert
-        Assert.IsType<BadRequestResult>(response);
-    }
-    
     [Fact]
     public async Task DeleteContent_Given_Valid_ID_Returns_NoContent()
     {
@@ -149,7 +115,7 @@ public class ContentControllerTest
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
-        repository.Setup(m => m.DeleteAsync(1));
+        repository.Setup(m => m.DeleteAsync(1)).ReturnsAsync(OperationResult.Deleted);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -159,7 +125,7 @@ public class ContentControllerTest
         // Assert
         Assert.IsType<NoContentResult>(response);
     }
-    
+
     [Fact]
     public async Task DeleteContent_Given_Invalid_ID_Returns_NotFound()
     {
@@ -167,7 +133,7 @@ public class ContentControllerTest
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
-        repository.Setup(m => m.DeleteAsync(42));
+        repository.Setup(m => m.DeleteAsync(42)).ReturnsAsync(OperationResult.NotFound);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -175,6 +141,6 @@ public class ContentControllerTest
         var response = await controller.DeleteContent(42);
 
         // Assert
-        Assert.IsType<NoContentResult>(response);
+        Assert.IsType<NotFoundResult>(response);
     }
 }

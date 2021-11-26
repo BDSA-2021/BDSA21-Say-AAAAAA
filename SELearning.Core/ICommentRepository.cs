@@ -2,8 +2,8 @@
 
 public interface ICommentRepository
 {
-    Task<CommentDTO> GetAsync(int ID);
-    Task<CommentDTO> CreateAsync(CommentDTO Comment);
-    Task<CommentDTO> UpdateAsync(int ID, CommentDTO Comment);
-    Task<CommentDTO> DeleteAsync(int ID);
+    Task<Option<CommentDTO>> GetAsync(int ID);
+    Task<CommentDTO> CreateAsync(int contentID, CommentDTO comment);
+    Task<OperationResult> UpdateAsync(int ID, CommentDTO comment);
+    Task<OperationResult> DeleteAsync(int ID);
 }

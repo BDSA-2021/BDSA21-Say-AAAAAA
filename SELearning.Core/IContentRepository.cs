@@ -2,8 +2,8 @@
 
 public interface IContentRepository
 {
-    Task<ContentDTO> GetAsync(int ID);
+    Task<Option<ContentDTO>> GetAsync(int ID);
     Task<ContentDTO> CreateAsync(ContentDTO content);
-    Task<ContentDTO> UpdateAsync(int ID, ContentDTO content);
-    Task<ContentDTO> DeleteAsync(int ID);
+    Task<OperationResult> UpdateAsync(int ID, ContentDTO content);
+    Task<OperationResult> DeleteAsync(int ID);
 }

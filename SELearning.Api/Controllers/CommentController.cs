@@ -20,39 +20,42 @@ public class CommentController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(CommentDTO), 200)]
-    [ProducesResponseType(404)]
-    public Task<ActionResult<CommentDTO>> GetComment(int id)
+    [HttpGet("{ID}")]
+    [ProducesResponseType(typeof(CommentDTO), 200)] // OK
+    [ProducesResponseType(404)] // Not Found
+    public async Task<ActionResult<CommentDTO>> GetComment(int id)
+        => (await _repository.GetAsync(id)).ToActionResult();
+
+    [Authorize]
+    [HttpGet("{contentID}")]
+    [ProducesResponseType(typeof(CommentDTO), 200)] // OK
+    [ProducesResponseType(404)] // Not Found
+    public Task<ActionResult<IReadOnlyCollection<CommentDTO>>> GetCommentsFromContent(int contentID)
     {
         throw new NotImplementedException();
     }
 
     [Authorize]
     [HttpPost]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(400)]
-    public Task<ActionResult> CreateComment(CommentDTO comment)
+    [ProducesResponseType(201)] // Created
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> CreateComment(int contentID, CommentDTO comment)
     {
-        throw new NotImplementedException();
+        var created = (await _repository.CreateAsync(contentID, comment));
+        return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);
     }
 
     [Authorize]
-    [HttpPut("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
-    public Task<ActionResult> UpdateComment(int id, CommentDTO comment)
-    {
-        throw new NotImplementedException();
-    }
+    [HttpPut("{ID}")]
+    [ProducesResponseType(204)] // No Content
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> UpdateComment(int ID, CommentDTO comment)
+        => (await _repository.UpdateAsync(ID, comment)).ToActionResult();
 
     [Authorize]
-    [HttpDelete("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    public Task<ActionResult> DeleteComment(int id)
-    {
-        throw new NotImplementedException();
-    }
+    [HttpDelete("{ID}")]
+    [ProducesResponseType(204)] // No Content
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> DeleteComment(int ID)
+        => (await _repository.DeleteAsync(ID)).ToActionResult();
 }
