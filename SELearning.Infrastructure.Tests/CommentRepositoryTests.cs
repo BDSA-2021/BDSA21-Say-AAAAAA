@@ -25,11 +25,26 @@ namespace SELearning.Infrastructure.Tests
             _repository = new CommentRepository(_context);
 
             //TODO: create some content here and reference it in the coments below
+            Section section = new Section{
+                Id = "1",
+                Title = "C#",
+                Description = "C# tools", 
+            };
+            Content content = new Content{
+                Author = "Sarah",
+                Section = section,
+                Id = "5",
+                Title = "Video on Entity Core",
+                Description = "Nice",
+                VideoLink = "www.hej.dk"
+            };
+            section.Content.Add(content);
+
             _context.Comments.AddRange(
-                new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = 4 },
-                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = 4 },
-                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = 3 },
-                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = 5 }
+                new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content },
+                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
+                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
+                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
             );
 
             _context.SaveChanges();
@@ -38,19 +53,24 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment_creates_new_comment_with_generated_id()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content",1);
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content","1");
 
             var created = await _repository.AddComment(comment);
 
             Assert.Equal(5, created.Item2.Id);
             Assert.Equal("Harleen", created.Item2.Author);
             Assert.Equal("Nice content", created.Item2.Text);
+            Assert.Equal(OperationResult.Created,created.Item1);
         }
 
         [Fact]
         public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
         {
-            
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content","2");
+
+            var created = await _repository.AddComment(comment); 
+
+            Assert.Equal(OperationResult.NotFound,created.Item1);   
         }
 
         [Fact]

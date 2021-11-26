@@ -4,6 +4,7 @@ namespace SELearning.Infrastructure
     public class CommentRepository : ICommentRepository
     {
         private readonly CommentContext _context;
+        private readonly ContentContext _contentContext;
 
         public CommentRepository(CommentContext context)
         {
@@ -13,10 +14,17 @@ namespace SELearning.Infrastructure
         //TODO: nedenstående skal tjekke dens contentId og returnere notfound hvis det ikke findes
         public async Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
         {
+            Content content = await _contentContext.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);
+            if(content == null)
+            {
+                return (OperationResult.NotFound, null);
+            }
+
             Comment c = new Comment
             {
                 Author = cmt.Author,
-                Text = cmt.Text
+                Text = cmt.Text,
+                Content = content
             };
 
             _context.Comments.Add(c);
@@ -27,7 +35,7 @@ namespace SELearning.Infrastructure
 
             return (OperationResult.Created, dto);
         }
-        //hvis id ikke findes returner notfound, ellers updated
+        
         public async Task<(OperationResult,CommentDetailsDTO?)> UpdateComment(int Id, CommentUpdateDTO cmt)
         {
             Comment? c = await _context.Comments.FirstOrDefaultAsync(c => c.Id == Id);

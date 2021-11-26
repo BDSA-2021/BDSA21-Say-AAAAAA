@@ -1,3 +1,4 @@
+
 namespace SELearning.Core.Comment
 {
     public class Comment
@@ -11,6 +12,6 @@ namespace SELearning.Core.Comment
 
         public int Id { get; init; }
 
-        public int Content { get; init; }//TODO: skal ændres til at page på selve content
+        public Content.Content? Content { get; init; }
     }
 }
