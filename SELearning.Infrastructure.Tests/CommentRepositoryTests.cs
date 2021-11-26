@@ -24,10 +24,10 @@ namespace SELearning.Infrastructure.Tests
             _repository = new CommentRepository(_context);
 
             _context.Comments.AddRange(
-                new Comment {Author = "Amalie",Id = 1, Content = "Nice", ContentId = 4},
-                new Comment {Author = "Albert",Id = 2, Content = "Cool but boring", ContentId = 4},
-                new Comment {Author = "Paolo",Id = 3, Content = "This is a great video", ContentId = 3},
-                new Comment {Author = "Rasmus",Id = 4, Content = "Very inappropriate", ContentId = 5}
+                new Comment {Author = "Amalie",Id = 1, Text = "Nice", Content = 4},
+                new Comment {Author = "Albert",Id = 2, Text = "Cool but boring", Content = 4},
+                new Comment {Author = "Paolo",Id = 3, Text = "This is a great video", Content = 3},
+                new Comment {Author = "Rasmus",Id = 4, Text = "Very inappropriate", Content = 5}
             );
 
             _context.SaveChanges();
@@ -42,7 +42,7 @@ namespace SELearning.Infrastructure.Tests
 
             Assert.Equal(5, created.Item2.Id);
             Assert.Equal("Harleen",created.Item2.Author);
-            Assert.Equal("Nice content",created.Item2.Content);
+            Assert.Equal("Nice content",created.Item2.Text);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace SELearning.Infrastructure.Tests
             Comment cmt = new Comment
             {
                 Author = "Ida",
-                Content = "Really like this",
+                Text = "Really like this",
                 Id = 3
             };
             _service.UpvoteComment(cmt);
@@ -64,7 +64,7 @@ namespace SELearning.Infrastructure.Tests
             Comment cmt = new Comment
             {
                 Author = "Ida",
-                Content = "Really like this",
+                Text = "Really like this",
                 Id = 3,
                 Rating = -10
             };
@@ -84,7 +84,7 @@ namespace SELearning.Infrastructure.Tests
             Comment cmt = new Comment
             {
                 Author = "Ida",
-                Content = "Really like this",
+                Text = "Really like this",
                 Id = 3,
                 Rating = 7
             };
@@ -104,7 +104,7 @@ namespace SELearning.Infrastructure.Tests
             Comment cmt = new Comment
             {
                 Author = "Ida",
-                Content = "Really like this",
+                Text = "Really like this",
                 Id = 3
             };
             _service.DownvoteComment(cmt);
@@ -118,7 +118,7 @@ namespace SELearning.Infrastructure.Tests
             Comment cmt = new Comment
             {
                 Author = "Ida",
-                Content = "Really like this",
+                Text = "Really like this",
                 Id = 3,
                 Rating = -10
             };
@@ -138,7 +138,7 @@ namespace SELearning.Infrastructure.Tests
             Comment cmt = new Comment
             {
                 Author = "Ida",
-                Content = "Really like this",
+                Text = "Really like this",
                 Id = 3,
                 Rating = 7
             };
