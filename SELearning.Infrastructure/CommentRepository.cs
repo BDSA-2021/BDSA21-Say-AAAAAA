@@ -2,6 +2,12 @@ namespace SELearning.Infrastructure
 {
     public class CommentRepository: ICommentRepository
     {
+        private readonly CommentContext dbContext;
+
+        public CommentRepository(CommentContext context)
+        {
+            dbContext = context;
+        }
         public void AddComment(string author, string content)
         {
 
