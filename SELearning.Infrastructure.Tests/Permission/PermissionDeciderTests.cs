@@ -18,7 +18,7 @@ public class PermissionDeciderTests
     public async Task IsAllowed_NoRulesForRequestedPermission_ReturnTrue()
     {
         // Arrange
-        IDictionary<Permission, IEnumerable<Rule>> permissions = new Dictionary<Permission, IEnumerable<Rule>>();
+        Dictionary<Permission, IEnumerable<Rule>> permissions = new();
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
         // Act
@@ -33,7 +33,7 @@ public class PermissionDeciderTests
     public async Task IsAllowed_OneOrMoreRulesEvaluatedToFalse_ReturnFalse(IEnumerable<Rule> rules)
     {
         // Arrange
-        IDictionary<Permission, IEnumerable<Rule>> permissions = new Dictionary<Permission, IEnumerable<Rule>>();
+        Dictionary<Permission, IEnumerable<Rule>> permissions = new();
         permissions.Add(CreateComment, rules);
         PermissionDecider permissionDecider = new PermissionDecider(permissions);
 
@@ -48,7 +48,7 @@ public class PermissionDeciderTests
     public async Task IsAllowed_AllRulesEvaluatedToTrue_ReturnTrue()
     {
         // Arrange
-        IDictionary<Permission, IEnumerable<Rule>> permissions = new Dictionary<Permission, IEnumerable<Rule>>();
+        Dictionary<Permission, IEnumerable<Rule>> permissions = new();
         List<Func<object, Task<bool>>> rules = new List<Func<object, Task<bool>>>();
         rules.Add(o => Task.Run<bool>(() => true));
         rules.Add(o => Task.Run<bool>(() => true));
