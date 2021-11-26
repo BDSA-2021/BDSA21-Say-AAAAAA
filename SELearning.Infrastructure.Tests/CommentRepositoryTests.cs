@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SELearning.Core.Comment;
 using System.Threading.Tasks;
 using SELearning.Core;
+using System.Collections.Generic;
 
 namespace SELearning.Infrastructure.Tests
 {
@@ -28,7 +29,8 @@ namespace SELearning.Infrastructure.Tests
             Section section = new Section{
                 Id = "1",
                 Title = "C#",
-                Description = "C# tools", 
+                Description = "C# tools",
+                Content = new List<Content>()
             };
             Content content = new Content{
                 Author = "Sarah",
