@@ -11,9 +11,10 @@ public class CredibilityCalculator : ICredibilityService
 
     async public Task<int> GetCredibilityScore(User user)
     {
-        var commentCredibilityScore = await _credibilityRepository.GetCommentCredibilityScore(user);
-        var contentCredibilityScore = await _credibilityRepository.GetContentCredibilityScore(user);
+        var commentCredibilityScore = _credibilityRepository.GetCommentCredibilityScore(user);
+        var contentCredibilityScore = _credibilityRepository.GetContentCredibilityScore(user);
+        var scores = new[] { commentCredibilityScore, contentCredibilityScore };
 
-        return commentCredibilityScore + contentCredibilityScore;
+        return (await Task.WhenAll(scores)).Sum();
     }
 }
