@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.Infrastructure.Tests.Authorization;
@@ -10,7 +11,7 @@ public class PermissionPolicyProviderTests
 
     public PermissionPolicyProviderTests()
     {
-        _policyProvider = new PermissionPolicyProvider();
+        _policyProvider = new PermissionPolicyProvider(Options.Create<AuthorizationOptions>(new AuthorizationOptions()));
     }
 
     [Fact]
