@@ -6,8 +6,6 @@ namespace SELearning.Infrastructure.Authorization;
 
 public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {
-    private const string POLICY_PREFIX = "Permission";
-
     private DefaultAuthorizationPolicyProvider DefaultProvider { get; }
     private AuthorizationOptions Options { get; }
 
@@ -35,13 +33,13 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     private bool TryParsePolicyPermission(string policyName, out Permission parsedPermission)
     {
         // Permission name
-        if (!policyName.StartsWith(POLICY_PREFIX))
+        if (!policyName.StartsWith(AuthorizationConstants.POLICY_PREFIX))
         {
             parsedPermission = default(Permission);
             return false;
         }
 
-        string permissionName = policyName.Substring(POLICY_PREFIX.Length);
+        string permissionName = policyName.Substring(AuthorizationConstants.POLICY_PREFIX.Length);
         return Enum.TryParse<Permission>(permissionName, false, out parsedPermission);
     }
 }
