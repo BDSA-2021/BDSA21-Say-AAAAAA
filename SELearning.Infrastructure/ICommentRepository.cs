@@ -2,9 +2,9 @@ namespace SELearning.Infrastructure
 {
     public interface ICommentRepository
     {
-        void AddComment(string author, string content);
-        void UpdateComment(Comment cmt);
-        void RemoveComment(Comment cmt);
+        Task<OperationResult> AddComment(Comment cmt);
+        Task<OperationResult> UpdateComment(int Id, Comment cmt);
+        Task<OperationResult> RemoveComment(int Id);
 
         List<Comment> GetCommentsByContentId(int contentId);
     }

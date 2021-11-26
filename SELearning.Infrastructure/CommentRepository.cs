@@ -8,17 +8,17 @@ namespace SELearning.Infrastructure
         {
             dbContext = context;
         }
-        public void AddComment(string author, string content)
+        public async Task<OperationResult> AddComment(Comment cmt)
         {
-
+            return OperationResult.BadRequest;
         }
-        public void UpdateComment(Comment cmt)
+        public async Task<OperationResult> UpdateComment(int Id, Comment cmt)
         {
-
+            return OperationResult.BadRequest;
         }
-        public void RemoveComment(Comment cmt)
+        public async Task<OperationResult> RemoveComment(int Id)
         {
-
+            return OperationResult.BadRequest;
         }
 
         public List<Comment> GetCommentsByContentId(int contentId)
