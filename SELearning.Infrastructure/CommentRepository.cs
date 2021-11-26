@@ -9,18 +9,22 @@ namespace SELearning.Infrastructure
         {
             _context = context;
         }
-        //returner created
+        
         public async Task<(OperationResult,CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
-        {
-            // omdan DTO til comment
+        {   
+            Comment c = new Comment
+            {
+                Author = cmt.Author,
+                Text = cmt.Text
+            };
 
-            // Tilføj Comment instans yil context.dbset
+            _context.Comments.Add(c);
 
-            // kald savechanges
+            _context.SaveChanges();
 
-            //comment har fået et id
+            CommentDetailsDTO dto = new CommentDetailsDTO(c.Author,c.Text,c.Id,c.Timestamp,c.Rating,c.Content);
 
-            return (OperationResult.BadRequest,new CommentDetailsDTO("","",1,DateTime.Now,1,1));
+            return (OperationResult.Created,dto);
         }
         //hvis id ikke findes returner notfound, ellers updated
         public async Task<OperationResult> UpdateComment(int Id, Comment cmt)
