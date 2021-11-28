@@ -15,11 +15,11 @@ public class PermissionPolicyProviderTests
     }
 
     [Fact]
-    public async Task GetPolicyAsync_ProvideEmptyString_ReturnDefaultPolicy()
+    public async Task GetPolicyAsync_ProvideEmptyString_ReturnNull()
     {
         var result = await _policyProvider.GetPolicyAsync("");
 
-        Assert.Equal(new PermissionRequirement(Permission.CreateComment), result?.Requirements[0]);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -28,5 +28,13 @@ public class PermissionPolicyProviderTests
         var result = await _policyProvider.GetPolicyAsync("PermissionCreateComment");
 
         Assert.Equal(new PermissionRequirement(Permission.CreateComment), result?.Requirements[0]);
+    }
+
+    [Fact]
+    public async Task GetPolicyAsync_ProvideUnknownPolicy_ReturnNull()
+    {
+        var result = await _policyProvider.GetPolicyAsync("PermissionUnknownPolicy");
+
+        Assert.Null(result);
     }
 }
