@@ -23,9 +23,10 @@ namespace SELearning.Infrastructure.Tests
             _context = new CommentContext(builder.Options);
             _context.Database.EnsureCreated();
 
+
+
             _repository = new CommentRepository(_context);
 
-            //TODO: create some content here and reference it in the coments below
             Section section = new Section{
                 Id = "1",
                 Title = "C#",
