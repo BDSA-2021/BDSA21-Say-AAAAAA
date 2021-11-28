@@ -10,7 +10,6 @@ namespace SELearning.Infrastructure.Authorization;
 public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {
     private DefaultAuthorizationPolicyProvider DefaultProvider { get; }
-    private AuthorizationOptions Options { get; }
 
     public PermissionPolicyProvider(IOptions<AuthorizationOptions> options) => DefaultProvider = new DefaultAuthorizationPolicyProvider(options);
 
@@ -26,9 +25,9 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     /// Returns a policy based on the policy name. 
     /// If the policy name is not recognized, then it will default to Microsoft's DefaultAuthorizationPolicyProvider.GetPolicyAsync()
     /// </returns>
-    public async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName) 
+    public async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        if(!TryParsePolicyPermission(policyName, out Permission parsedPermission))
+        if (!TryParsePolicyPermission(policyName, out Permission parsedPermission))
             return await DefaultProvider.GetPolicyAsync(policyName); // Could not parse permission... fallback to default implementation
 
         var policy = new AuthorizationPolicyBuilder();
