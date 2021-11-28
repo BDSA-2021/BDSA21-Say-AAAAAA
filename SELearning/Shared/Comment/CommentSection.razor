@@ -1,6 +1,55 @@
+@inject HttpClient Http
 
+<section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
+    <div class="row">
+        <!-- Comment section header-->
+        <h3>Comments</h3>
+    </div>
+    <div class="row">
+        <!-- List of comments -->
+        @foreach(var comment in _comments)
+        {
+            
+        }
+    </div>
+    <div class="row">
+        <!-- Comment section -->
+    </div>
+</section>
 
 @code{
     [Parameter]
     public int ContentId { get; set; }
+
+    private IList<CommentPlaceholder> _comments;
+    
+    protected override void OnInitialized()
+    {
+        _comments = new List<CommentPlaceholder>()
+        {
+            new CommentPlaceholder{Text = "", Author = "Adrian", Rating = 0},
+            new CommentPlaceholder{Text = "", Author = "Tietgen", Rating = 5155},
+            new CommentPlaceholder{Text = "", Author = "Albert", Rating = 2},
+            new CommentPlaceholder{Text = "", Author = "Asger", Rating = 5241},
+            new CommentPlaceholder{Text = "", Author = "Joachim", Rating = 32},
+            new CommentPlaceholder{Text = "", Author = "Amalie", Rating = 41},
+            new CommentPlaceholder{Text = "", Author = "Tietgen", Rating = 421},
+            new CommentPlaceholder{Text = "", Author = "Arne4545", Rating = 412},
+            new CommentPlaceholder{Text = "", Author = "KongBorup", Rating = 333},
+            new CommentPlaceholder{Text = "", Author = "Amalie", Rating = 233213},
+            new CommentPlaceholder{Text = "", Author = "Albert", Rating = -1241}
+        }
+    }
+
+    /// <summary>
+    /// A placeholder for the CommentDetails. TODO: This should be deleted!
+    /// </summary>
+    public class CommmentPlaceholder
+    {
+        public string Text { get; init; }
+
+        public string Author { get; init; }
+
+        public int Rating { get; init; }
+    }
 }
