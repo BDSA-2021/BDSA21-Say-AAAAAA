@@ -50,7 +50,7 @@ public class CommentControllerTest
     }
 
     [Fact]
-    public async Task CreateComment_Given_Valid_ContentID_Returns_Created()
+    public async Task CreateComment_Given_Valid_ContentID_Returns_CommentDTO()
     {
         // Arrange
         var logger = new Mock<ILogger<CommentController>>();

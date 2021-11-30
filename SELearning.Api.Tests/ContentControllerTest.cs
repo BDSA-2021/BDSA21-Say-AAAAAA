@@ -50,7 +50,7 @@ public class ContentControllerTest
     }
 
     [Fact]
-    public async Task CreateContent_Returns_Created()
+    public async Task CreateContent_Returns_ContentDTO()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
