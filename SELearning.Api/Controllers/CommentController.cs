@@ -38,10 +38,9 @@ public class CommentController : ControllerBase
     [Authorize]
     [HttpPost]
     [ProducesResponseType(201)] // Created
-    [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> CreateComment(int contentID, CommentDTO comment)
     {
-        var created = (await _repository.CreateAsync(contentID, comment));
+        var created = (await _repository.CreateAsync(contentID, comment)).Item2;
         return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);
     }
 
@@ -50,7 +49,7 @@ public class CommentController : ControllerBase
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> UpdateComment(int ID, CommentDTO comment)
-        => (await _repository.UpdateAsync(ID, comment)).ToActionResult();
+        => (await _repository.UpdateAsync(ID, comment)).Item1.ToActionResult();
 
     [Authorize]
     [HttpDelete("{ID}")]

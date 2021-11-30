@@ -2,6 +2,7 @@
 {
     public enum OperationResult
     {
+        Created,
         Updated,
         Deleted,
         NotFound

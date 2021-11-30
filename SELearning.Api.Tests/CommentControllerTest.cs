@@ -57,7 +57,7 @@ public class CommentControllerTest
         var repository = new Mock<ICommentRepository>();
 
         var comment = new CommentDTO(1);
-        repository.Setup(m => m.CreateAsync(1, comment)).ReturnsAsync(comment);
+        repository.Setup(m => m.CreateAsync(1, comment)).ReturnsAsync((OperationResult.Created, comment));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
@@ -84,7 +84,7 @@ public class CommentControllerTest
         var repository = new Mock<ICommentRepository>();
 
         var comment = new CommentDTO(1);
-        repository.Setup(m => m.UpdateAsync(1, comment)).ReturnsAsync(OperationResult.Updated);
+        repository.Setup(m => m.UpdateAsync(1, comment)).ReturnsAsync((OperationResult.Updated, comment));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
@@ -103,7 +103,7 @@ public class CommentControllerTest
         var repository = new Mock<ICommentRepository>();
 
         var comment = new CommentDTO(1);
-        repository.Setup(m => m.UpdateAsync(42, comment)).ReturnsAsync(OperationResult.NotFound);
+        repository.Setup(m => m.UpdateAsync(42, comment)).ReturnsAsync((OperationResult.NotFound, default(CommentDTO)));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
