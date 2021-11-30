@@ -19,7 +19,7 @@ Run sql server in docker (Linux):
 export password=$(uuidgen)
 sudo docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=$password" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
 export database=SELearning
-export connectionString=$(echo "Server=localhost;Database=${database};User Id=sa;Password=${password}")
+export connectionstring=$(echo "server=localhost;database=${database};user id=sa;password=${password}")
 ```
 
 ## Enable User Secrets
