@@ -1,0 +1,77 @@
+@page "/content/{contentId}"
+
+@*
+TODO: Implement according to design. Need to fix dotnet watch or something. The
+slow build-to-see-changes cycle is killing me. Page 23 of RAD.
+*@
+<section class="about-section">
+    <div class="rating-container">
+        <div role="button" class="arrow-up"></div>
+        <span class="rating">@_Content.Rating</span>
+        <div role="button" class="arrow-down"></div>
+    </div>
+    <div class="header-section">
+        <h1>@_Content.Title</h1>
+        <p>@_Content.Author | @_Content.CreatedAt.ToString("dddd, dd MMMM yyyy")</p>
+    </div>
+</section>
+
+<iframe width="560" height="315" src="@_Content.Link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+@code {
+    [Parameter]
+    public string ContentId { get; set; }
+
+    ContentPlaceholder _Content = new ContentPlaceholder {
+        Title = "A short introduction to internet practice",
+        Link = "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        Author = "Mickey Mouse",
+        Rating = 1234,
+        CreatedAt = DateTime.Now
+    };
+
+    record ContentPlaceholder
+    {
+        public string Title { get; init; }
+        public string Link { get; init; } // TODO: custom storage?
+        public string Author { get; init; } // TODO: custom user object from backend?
+        public DateTime CreatedAt { get; init; } // TODO: custom user object from backend?
+        public int Rating { get; init; }
+    }
+}
+
+<style>
+@* TODO: Fix that the Content.razor.css file does not work *@
+
+.arrow-up, .arrow-down {
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    margin: 0.5rem;
+}
+
+.arrow-up {
+    border-bottom: 12px solid grey;
+}
+
+.arrow-down {
+    border-top: 12px solid grey;
+}
+
+.about-section {
+    display: flex;
+}
+
+.header-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 2rem;
+}
+</style>
