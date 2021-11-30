@@ -1,22 +1,37 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 as build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 as base
+# Multi-stage enviroment variables
+ENV ASPNETCORE_ENVIROMENT="Production"
+ENV ConnectionStrings:SELearning=""
+ENV ConnectionStrings:ProductionConnectionString=""
+ENV PATH="/root/.dotnet/tools:${PATH}"
+ENV ASPNETCORE_URLS=http://localhost:80
 
-ENV ASPNETCORE_URLS=http://+:80/
+# Multi-stage dependencies
+RUN apt-get update && apt-get install -y python3
+RUN dotnet workload install wasm-tools
 
+# Restore
+FROM base as restore
 WORKDIR /source
 
 COPY . .
 
-RUN apt-get update && apt-get install -y python3
-RUN dotnet workload install wasm-tools
 RUN dotnet restore
+
+# Build, based on restored
+FROM restore as build
 RUN dotnet build -c Release
-RUN dotnet publish -c Release -o /app
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+# Publish, based on build
+FROM build as publish 
+RUN dotnet publish -v d -c Release -o /app
 
+# Serve built files
+FROM base as serve
 WORKDIR /app
-COPY --from=build /app .
+COPY --from=publish /app .
+COPY ./scripts/entrypoint.sh .
 
 EXPOSE 80
 
-ENTRYPOINT ["dotnet", "SELearning.API.dll"]
+CMD /bin/bash ./entrypoint.sh
