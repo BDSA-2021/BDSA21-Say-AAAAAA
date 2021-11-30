@@ -30,10 +30,8 @@ public class CommentController : ControllerBase
     [HttpGet("{contentID}")]
     [ProducesResponseType(typeof(CommentDTO), 200)] // OK
     [ProducesResponseType(404)] // Not Found
-    public Task<ActionResult<IReadOnlyCollection<CommentDTO>>> GetCommentsFromContent(int contentID)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<IReadOnlyCollection<CommentDTO>> GetCommentsByContentID(int contentID)
+        => await _repository.GetAsyncByContentID(contentID);
 
     [Authorize]
     [HttpPost]

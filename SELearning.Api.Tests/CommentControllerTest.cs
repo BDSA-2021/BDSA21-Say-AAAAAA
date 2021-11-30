@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
 using SELearning.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,6 +51,25 @@ public class CommentControllerTest
     }
 
     [Fact]
+    public async Task GetCommentsByContentID_Given_Valid_ID_Returns_CommentDTOs()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var repository = new Mock<ICommentRepository>();
+
+        var expected = Array.Empty<CommentDTO>();
+        repository.Setup(m => m.GetAsyncByContentID(1)).ReturnsAsync(expected);
+
+        var controller = new CommentController(logger.Object, repository.Object);
+
+        // Act
+        var actual = await controller.GetCommentsByContentID(1);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public async Task CreateComment_Given_Valid_ContentID_Returns_CommentDTO()
     {
         // Arrange
@@ -69,12 +89,6 @@ public class CommentControllerTest
         Assert.Equal("GetComment", result?.RouteName);
         Assert.Equal(KeyValuePair.Create("ID", (object?)1), result?.RouteValues?.Single());
     }
-
-    // [Fact]
-    // public async Task CreateComment_Given_Invalid_ContentID_Returns_NotFound()
-    // {
-    //     Assert.True(false);
-    // }
 
     [Fact]
     public async Task UpdateComment_Given_Valid_ID_Returns_NoContent()
