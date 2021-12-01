@@ -15,20 +15,22 @@ namespace SELearning.Infrastructure.Tests
 
         private readonly ContentContext _contentContext;
 
-        private static readonly Section section = new Section{
-                Id = "1",
-                Title = "C#",
-                Description = "C# tools",
-                Content = new List<Content>()
-            };
-        private static readonly Content content = new Content{
-                Author = "Sarah",
-                Section = section,
-                Id = 1,
-                Title = "Video on Entity Core",
-                Description = "Nice",
-                VideoLink = "www.hej.dk"
-            };
+        private static readonly Section section = new Section
+        {
+            Id = "1",
+            Title = "C#",
+            Description = "C# tools",
+            Content = new List<Content>()
+        };
+        private static readonly Content content = new Content
+        {
+            Author = "Sarah",
+            Section = section,
+            Id = 1,
+            Title = "Video on Entity Core",
+            Description = "Nice",
+            VideoLink = "www.hej.dk"
+        };
         private IEnumerable<Comment> _comments = new List<Comment>()
         {
             new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content },
@@ -53,12 +55,12 @@ namespace SELearning.Infrastructure.Tests
             _contentContext = new ContentContext(contentBuilder.Options);
             _contentContext.Database.EnsureCreated();
 
-            _repository = new CommentRepository(_context,_contentContext);
+            _repository = new CommentRepository(_context, _contentContext);
 
             section.Content.Add(content);
 
             _context.Comments.AddRange(
-                _comments    
+                _comments
             );
 
             _context.SaveChanges();
@@ -67,24 +69,24 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment_creates_new_comment_with_generated_id()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content",1);
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content", 1);
 
             var created = await _repository.AddComment(comment);
 
             Assert.Equal(5, created.Item2.Id);
             Assert.Equal("Harleen", created.Item2.Author);
             Assert.Equal("Nice content", created.Item2.Text);
-            Assert.Equal(OperationResult.Created,created.Item1);
+            Assert.Equal(OperationResult.Created, created.Item1);
         }
 
         [Fact]
         public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content",2);
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content", 2);
 
-            var created = await _repository.AddComment(comment); 
+            var created = await _repository.AddComment(comment);
 
-            Assert.Equal(OperationResult.NotFound,created.Item1);   
+            Assert.Equal(OperationResult.NotFound, created.Item1);
         }
 
         [Fact]
@@ -107,7 +109,7 @@ namespace SELearning.Infrastructure.Tests
             Assert.Equal(1, updated.Item2.Id);
             Assert.Equal("Amalie", updated.Item2.Author);
             Assert.Equal("Nice but also confusing", updated.Item2.Text);
-            
+
             Assert.Equal(OperationResult.Updated, updated.Item1);
         }
 
@@ -116,54 +118,54 @@ namespace SELearning.Infrastructure.Tests
         {
             var removed = await _repository.RemoveComment(68);
 
-            Assert.Equal(OperationResult.NotFound, removed);   
+            Assert.Equal(OperationResult.NotFound, removed);
         }
 
         [Fact]
         public async Task RemoveComment_given_existing_id_removes_comment()
         {
-            var removed = await _repository.RemoveComment(2); 
+            var removed = await _repository.RemoveComment(2);
 
-            Assert.Equal(OperationResult.Deleted, removed); 
+            Assert.Equal(OperationResult.Deleted, removed);
 
             var tryRead = await _repository.GetCommentByCommentId(2);
-            Assert.Equal(OperationResult.NotFound,tryRead.Item2);
-            Assert.Null(tryRead.Item1);      
+            Assert.Equal(OperationResult.NotFound, tryRead.Item2);
+            Assert.Null(tryRead.Item1);
         }
 
         [Fact]
         public async Task GetCommentByCommentId_given_existing_id_returns_comment()
         {
-            var read = await _repository.GetCommentByCommentId(3); 
-            
-            Assert.Equal(OperationResult.Succes, read.Item2);   
-            Assert.Equal("Paolo",read.Item1.Author);  
-            Assert.Equal("This is a great video",read.Item1.Text);       
+            var read = await _repository.GetCommentByCommentId(3);
+
+            Assert.Equal(OperationResult.Succes, read.Item2);
+            Assert.Equal("Paolo", read.Item1.Author);
+            Assert.Equal("This is a great video", read.Item1.Text);
         }
 
         [Fact]
         public async Task GetCommentByCommentId_given_not_existing_id_returns_NotFound()
         {
-            var read = await _repository.GetCommentByCommentId(90); 
-            
-            Assert.Equal(OperationResult.NotFound, read.Item2);         
+            var read = await _repository.GetCommentByCommentId(90);
+
+            Assert.Equal(OperationResult.NotFound, read.Item2);
         }
 
         [Fact]
         public async Task GetCommentsByContentId_given_existing_id_returns_comments()
         {
-            var read = await _repository.GetCommentsByContentId(1);    
+            var read = await _repository.GetCommentsByContentId(1);
 
-            Assert.Equal(OperationResult.Succes, read.Item2); 
-            Assert.Equal(_comments,read.Item1);        
+            Assert.Equal(OperationResult.Succes, read.Item2);
+            Assert.Equal(_comments, read.Item1);
         }
 
         [Fact]
         public async Task GetCommentsByContentId_given_not_existing_id_returns_NotFound()
         {
-            var read = await _repository.GetCommentsByContentId(90); 
-            
-            Assert.Equal(OperationResult.NotFound, read.Item2); 
+            var read = await _repository.GetCommentsByContentId(90);
+
+            Assert.Equal(OperationResult.NotFound, read.Item2);
         }
     }
 }

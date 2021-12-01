@@ -16,7 +16,7 @@ namespace SELearning.Infrastructure
         public async Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
         {
             Content content = await _contentContext.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);
-            if(content == null)
+            if (content == null)
             {
                 return (OperationResult.NotFound, null!);
             }
@@ -36,12 +36,12 @@ namespace SELearning.Infrastructure
 
             return (OperationResult.Created, dto);
         }
-        
-        public async Task<(OperationResult,CommentDetailsDTO?)> UpdateComment(int Id, CommentUpdateDTO cmt)
+
+        public async Task<(OperationResult, CommentDetailsDTO?)> UpdateComment(int Id, CommentUpdateDTO cmt)
         {
             Comment? c = await _context.Comments.FirstOrDefaultAsync(c => c.Id == Id);
 
-            if(c == null)
+            if (c == null)
             {
                 return (OperationResult.NotFound, null);
             }
@@ -59,7 +59,7 @@ namespace SELearning.Infrastructure
         {
             Comment? comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == Id);
 
-            if(comment == null)
+            if (comment == null)
             {
                 return (OperationResult.NotFound);
             }
@@ -67,32 +67,32 @@ namespace SELearning.Infrastructure
             _context.Remove(comment);
 
             await _context.SaveChangesAsync();
-            
+
             return (OperationResult.Deleted);
         }
 
-        public async Task<(Comment?,OperationResult)> GetCommentByCommentId(int commentId)
+        public async Task<(Comment?, OperationResult)> GetCommentByCommentId(int commentId)
         {
             Comment comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
-            
-            if(comment == null)
+
+            if (comment == null)
             {
-                return (null,OperationResult.NotFound);
+                return (null, OperationResult.NotFound);
             }
 
-            return (comment,OperationResult.Succes);
+            return (comment, OperationResult.Succes);
         }
-        
-        public async Task<(List<Comment>?,OperationResult)> GetCommentsByContentId(int contentId)
+
+        public async Task<(List<Comment>?, OperationResult)> GetCommentsByContentId(int contentId)
         {
             List<Comment> comments = await _context.Comments.Where(x => x.Content.Id == contentId).ToListAsync();
-            
-            if(comments == null)
+
+            if (comments == null)
             {
-                return (null,OperationResult.NotFound);
+                return (null, OperationResult.NotFound);
             }
 
-            return (comments,OperationResult.Succes);        
+            return (comments, OperationResult.Succes);
         }
     }
 }
