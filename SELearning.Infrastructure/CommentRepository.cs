@@ -85,12 +85,13 @@ namespace SELearning.Infrastructure
 
         public async Task<(List<Comment>?, OperationResult)> GetCommentsByContentId(int contentId)
         {
-            List<Comment> comments = await _context.Comments.Where(x => x.Content.Id == contentId).ToListAsync();
-
-            if (comments == null)
+            Content content = await _contentContext.Content.FirstOrDefaultAsync(c => c.Id == contentId);
+            if (content == null)
             {
-                return (null, OperationResult.NotFound);
-            }
+                return (null,OperationResult.NotFound);
+            }   
+            
+            List<Comment> comments = await _context.Comments.Where(x => x.Content.Id == contentId).ToListAsync();
 
             return (comments, OperationResult.Succes);
         }
