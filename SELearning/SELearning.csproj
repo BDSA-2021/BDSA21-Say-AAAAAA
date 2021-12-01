@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <RunAOTCompilation>true</RunAOTCompilation>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,5 +16,9 @@
   <ItemGroup>
     <ProjectReference Include="..\SELearning.Core\SELearning.Core.csproj" />
     <ProjectReference Include="..\SELearning.Infrastructure\SELearning.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
   </ItemGroup>
 </Project>

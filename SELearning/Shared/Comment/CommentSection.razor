@@ -1,0 +1,71 @@
+@using SELearning.Core
+
+@inject HttpClient Http
+
+<section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
+    <div class="row">
+        <!-- Comment section header-->
+        <h3>Comments</h3>
+    </div>
+    <div class="row">
+        <!-- List of comments -->
+        @foreach(Comment comment in _comments)
+        {
+            <CommentTile Comment="@comment" OnCommentDeleted="@OnCommentDeleted"/>
+        }
+    </div>
+    <div class="row">
+        <!-- Comment section -->
+        <EditForm class="col-lg-12" Model="@_comment" OnValidSubmit="@PostComment">
+            <div class="form-group">
+                <InputTextArea @bind-Value="_comment.Content" class="form-control" rows="3"/>
+            </div>
+            <div class="form-group col-lg-3 col-lg-offset-9">
+                <button class="btn btn-primary" type="submit">Post comment</button>
+            </div>
+        </EditForm>
+    </div>
+</section>
+
+@code{
+    [Parameter]
+    public int ContentId { get; set; }
+
+    private Comment _comment = new();
+
+    private IList<Comment> _comments;
+    
+    protected override void OnInitialized()
+    {
+        _comments = new List<Comment>()
+        {
+            new Comment{Content = "Hej Tietgen", Author = "Adrian", Rating = 0},
+            new Comment{Content = "Hey Buddy!", Author = "Tietgen", Rating = 5155},
+            new Comment{Content = "Skal vi lave noget arbejde. Kh. Headboi", Author = "Albert", Rating = 2},
+            new Comment{Content = "Jeg er chefen!", Author = "Asger", Rating = 5241},
+            new Comment{Content = "Nej nej! hallo jeg er chefen!", Author = "Joachim", Rating = 32},
+            new Comment{Content = "Who run the world girls! Jeg er chefen.", Author = "Amalie", Rating = 41},
+            new Comment{Content = "Bla bla... lav nu bare nogle use cases!", Author = "Tietgen", Rating = 421},
+            new Comment{Content = "Bla bla bla blab lbalblfbasfbslbfablbksf", Author = "Arne4545", Rating = 412},
+            new Comment{Content = "Hasklfjhdklgklashgklshwhegionkaio  dsklg sdk lfdkflj skf klsfiweone klsfwe fiwen ifi jweiewi i iw fimf ieiofwifji if wei ew i", Author = "KongBorup", Rating = 333},
+            new Comment{Content = "Haingdi diknh eiw nf d nioe ew ke wefio dn ei wniek sdn kldfl ew we ew wedfe fwfefw", Author = "Amalie", Rating = 233213},
+            new Comment{Content = "jhdksfhwei edi wefiioweiwei   ifwe ifwe iwe iweiow iow ioifmewf iwif mwm fiwmfi meiiwoeo ifofmwe ief iwi f i ii  imifiweif wefjewifhw iohgsdghaæsghwieghksahfiohægenvf", Author = "Albert", Rating = -1241}
+        };
+    }
+
+    private void PostComment()
+    {
+        System.Console.WriteLine("Posting comment...");
+        System.Console.WriteLine($"{_comment.Content}, {_comment.Author}");
+
+        _comments.Add(_comment); // only add if the 
+        _comment = new();
+    }
+
+    private void OnCommentDeleted(Comment comment)
+    {
+        System.Console.WriteLine($"Comment from {comment.Author} is deleted!");
+        _comments.Remove(comment);
+    }
+
+}
