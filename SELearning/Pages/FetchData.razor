@@ -43,7 +43,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        this.RetrieveForecasts();
+        await this.RetrieveForecasts();
     }
 
     protected async Task Generate()

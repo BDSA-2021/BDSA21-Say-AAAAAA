@@ -27,7 +27,7 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<WeatherForecastDTO[]> Get()
+    public async Task<IReadOnlyCollection<WeatherForecastDTO>> Get()
     {
         return await _repository.ReadAsync(DateTime.Now);
     }

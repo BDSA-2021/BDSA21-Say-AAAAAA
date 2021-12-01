@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using SELearning.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration
@@ -9,6 +10,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+string connectionString;
+
 if (builder.Environment.IsDevelopment())
 {
 
@@ -17,8 +20,14 @@ if (builder.Environment.IsDevelopment())
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "SELearning.API", Version = "v1" });
     });
 
-    builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SELearning")));
+    connectionString = builder.Configuration.GetConnectionString("SELearning");
 }
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("ProductionConnectionString");
+}
+
+builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
 #endregion
@@ -59,5 +68,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapFallbackToFile("index.html");
 });
 
+app.Migrate();
 app.Run();
 #endregion
