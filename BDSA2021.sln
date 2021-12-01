@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning", "SELearning\SE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.API", "SELearning.API\SELearning.API.csproj", "{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.API.Tests", "SELearning.API.Tests\SELearning.API.Tests.csproj", "{96E6DFCC-FF55-443A-8425-D549A8FD5E31}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Tests", "SELearning.Tests\SELearning.Tests.csproj", "{21B40677-B0F2-4321-B651-0AF9453266A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Core", "SELearning.Core\SELearning.Core.csproj", "{BABA3890-C896-473F-91B5-B4D17DB1044D}"
@@ -14,8 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Infrastructure", "SELearning.Infrastructure\SELearning.Infrastructure.csproj", "{F98A132B-C6E0-4772-BE16-C3B50FE03C0C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Infrastructure.Tests", "SELearning.Infrastructure.Tests\SELearning.Infrastructure.Tests.csproj", "{E76DC1CC-B726-4CFF-AC58-65DBC90E1235}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.API.Tests", "SELearning.Api.Tests\SELearning.API.Tests.csproj", "{96E6DFCC-FF55-443A-8425-D549A8FD5E31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
