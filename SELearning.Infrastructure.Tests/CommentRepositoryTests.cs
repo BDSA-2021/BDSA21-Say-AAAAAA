@@ -15,6 +15,28 @@ namespace SELearning.Infrastructure.Tests
 
         private readonly ContentContext _contentContext;
 
+        private static readonly Section section = new Section{
+                Id = "1",
+                Title = "C#",
+                Description = "C# tools",
+                Content = new List<Content>()
+            };
+        private static readonly Content content = new Content{
+                Author = "Sarah",
+                Section = section,
+                Id = 1,
+                Title = "Video on Entity Core",
+                Description = "Nice",
+                VideoLink = "www.hej.dk"
+            };
+        private IEnumerable<Comment> _comments = new List<Comment>()
+        {
+            new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content },
+                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
+                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
+                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
+        };
+
         public CommentRepositoryTests()
         {
             //setting up the comment connection
@@ -26,8 +48,6 @@ namespace SELearning.Infrastructure.Tests
             _context.Database.EnsureCreated();
 
             //setting up the content connection
-            //var connection = new SqliteConnection("Filename=:memory:");
-            //connection.Open();
             var contentBuilder = new DbContextOptionsBuilder<ContentContext>();
             contentBuilder.UseSqlite(connection);
             _contentContext = new ContentContext(contentBuilder.Options);
@@ -35,27 +55,10 @@ namespace SELearning.Infrastructure.Tests
 
             _repository = new CommentRepository(_context,_contentContext);
 
-            Section section = new Section{
-                Id = "1",
-                Title = "C#",
-                Description = "C# tools",
-                Content = new List<Content>()
-            };
-            Content content = new Content{
-                Author = "Sarah",
-                Section = section,
-                Id = "1",
-                Title = "Video on Entity Core",
-                Description = "Nice",
-                VideoLink = "www.hej.dk"
-            };
             section.Content.Add(content);
 
             _context.Comments.AddRange(
-                new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content },
-                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
-                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
-                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
+                _comments    
             );
 
             _context.SaveChanges();
@@ -64,7 +67,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment_creates_new_comment_with_generated_id()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content","1");
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content",1);
 
             var created = await _repository.AddComment(comment);
 
@@ -77,7 +80,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content","2");
+            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content",2);
 
             var created = await _repository.AddComment(comment); 
 
@@ -144,6 +147,23 @@ namespace SELearning.Infrastructure.Tests
             var read = await _repository.GetCommentByCommentId(90); 
             
             Assert.Equal(OperationResult.NotFound, read.Item2);         
+        }
+
+        [Fact]
+        public async Task GetCommentsByContentId_given_existing_id_returns_comments()
+        {
+            var read = await _repository.GetCommentsByContentId(1);    
+
+            Assert.Equal(OperationResult.Succes, read.Item2); 
+            Assert.Equal(_comments,read.Item1);        
+        }
+
+        [Fact]
+        public async Task GetCommentsByContentId_given_not_existing_id_returns_NotFound()
+        {
+            var read = await _repository.GetCommentsByContentId(90); 
+            
+            Assert.Equal(OperationResult.NotFound, read.Item2); 
         }
     }
 }

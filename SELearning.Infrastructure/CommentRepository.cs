@@ -83,10 +83,16 @@ namespace SELearning.Infrastructure
             return (comment,OperationResult.Succes);
         }
         
-        public Task<List<Comment>> GetCommentsByContentId(int contentId)
+        public async Task<(List<Comment>?,OperationResult)> GetCommentsByContentId(int contentId)
         {
-            //_context.Comments.Where(x => x.Content.Id == contentId);
-            return Task.FromResult(new List<Comment>());
+            List<Comment> comments = await _context.Comments.Where(x => x.Content.Id == contentId).ToListAsync();
+            
+            if(comments == null)
+            {
+                return (null,OperationResult.NotFound);
+            }
+
+            return (comments,OperationResult.Succes);        
         }
     }
 }
