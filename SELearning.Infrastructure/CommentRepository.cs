@@ -67,6 +67,12 @@ namespace SELearning.Infrastructure
             return (OperationResult.Deleted);
         }
 
+        public async Task<(Comment,OperationResult)> GetCommentByCommentId(int CommentId)
+        {
+            
+            return (new Comment(),OperationResult.BadRequest);
+        }
+        
         public Task<List<Comment>> GetCommentsByContentId(int contentId)
         {
             //_context.Comments.Where(x => x.Content.Id == contentId);
