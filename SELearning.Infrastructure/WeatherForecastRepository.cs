@@ -14,16 +14,17 @@ public class WeatherForecastRepository : IWeatherForecastRepository
         _context = context;
     }
 
-    public async Task<WeatherForecastDTO[]> ReadAsync(DateTime startDate)
+    public async Task<IReadOnlyCollection<WeatherForecastDTO>> ReadAsync(DateTime startDate)
     {
-        return await _context.WeatherForecasts
-            .Select(w => new WeatherForecastDTO
-            {
-                Id = w.Id,
-                Date = w.Date,
-                TemperatureC = w.TemperatureC,
-                Summary = w.Summary,
-            }).ToArrayAsync();
+        return (await _context.WeatherForecasts
+            .Select(w => new WeatherForecastDTO(
+                w.Id,
+                w.Date,
+                w.TemperatureC,
+                w.Summary
+            ))
+            .ToListAsync())
+            .AsReadOnly();
     }
 
     public async Task<WeatherForecastDTO> CreateAsync(WeatherForecastCreateDTO weatherForecast)
@@ -39,13 +40,12 @@ public class WeatherForecastRepository : IWeatherForecastRepository
 
         await _context.SaveChangesAsync();
 
-        return new WeatherForecastDTO
-        {
-            Id = entity.Id,
-            Date = entity.Date,
-            TemperatureC = entity.TemperatureC,
-            Summary = entity.Summary,
-        };
+        return new WeatherForecastDTO(
+            entity.Id,
+            entity.Date,
+            entity.TemperatureC,
+            entity.Summary
+        );
     }
 
     public async Task<WeatherForecastDTO> Generate()
