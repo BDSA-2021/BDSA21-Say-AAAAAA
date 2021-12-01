@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
 using SELearning.Core;
+using SELearning.Core.Content;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ public class ContentControllerTest
         var repository = new Mock<IContentRepository>();
 
         var expected = new ContentDTO(1);
-        repository.Setup(m => m.ReadAsync("1")).ReturnsAsync(expected);
+        repository.Setup(m => m.GetContent("1")).ReturnsAsync(expected);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -38,7 +39,7 @@ public class ContentControllerTest
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
-        repository.Setup(m => m.ReadAsync("42")).ReturnsAsync(default(ContentDTO));
+        repository.Setup(m => m.GetContent("42")).ReturnsAsync(default(ContentDTO));
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -57,7 +58,7 @@ public class ContentControllerTest
         var repository = new Mock<IContentRepository>();
 
         var content = new ContentDTO(1);
-        repository.Setup(m => m.CreateAsync(content)).ReturnsAsync((OperationResult.Created, content));
+        repository.Setup(m => m.AddContent(content)).ReturnsAsync((OperationResult.Created, content));
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -78,12 +79,12 @@ public class ContentControllerTest
         var repository = new Mock<IContentRepository>();
 
         var content = new ContentDTO(1);
-        repository.Setup(m => m.UpdateAsync(1, content)).ReturnsAsync(OperationResult.Updated);
+        repository.Setup(m => m.UpdateContent("1", content)).ReturnsAsync(OperationResult.Updated);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.UpdateContent(1, content);
+        var response = await controller.UpdateContent("1", content);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -97,12 +98,12 @@ public class ContentControllerTest
         var repository = new Mock<IContentRepository>();
 
         var content = new ContentDTO(1);
-        repository.Setup(m => m.UpdateAsync(42, content)).ReturnsAsync(OperationResult.NotFound);
+        repository.Setup(m => m.UpdateContent("42", content)).ReturnsAsync(OperationResult.NotFound);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.UpdateContent(42, content);
+        var response = await controller.UpdateContent("42", content);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
