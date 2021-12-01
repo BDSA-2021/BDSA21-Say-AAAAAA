@@ -6,6 +6,8 @@ namespace SELearning.Infrastructure
     {
         public DbSet<Comment> Comments { get; set; }
 
+        public DbSet<Content> Content { get; set; }
+
         public CommentContext(DbContextOptions<CommentContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)

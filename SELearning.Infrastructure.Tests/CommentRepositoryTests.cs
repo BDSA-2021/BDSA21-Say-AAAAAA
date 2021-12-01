@@ -49,13 +49,7 @@ namespace SELearning.Infrastructure.Tests
             _context = new CommentContext(builder.Options);
             _context.Database.EnsureCreated();
 
-            //setting up the content connection
-            var contentBuilder = new DbContextOptionsBuilder<ContentContext>();
-            contentBuilder.UseSqlite(connection);
-            _contentContext = new ContentContext(contentBuilder.Options);
-            _contentContext.Database.EnsureCreated();
-
-            _repository = new CommentRepository(_context, _contentContext);
+            _repository = new CommentRepository(_context);
 
             section.Content.Add(content);
 
