@@ -27,8 +27,8 @@ az sql server firewall-rule create --resource-group SELearning \
 az sql server firewall-rule create --name AllowLocalClient \
   --server selearning \
   --resource-group SELearning \
-  --start-ip-address=80.71.143.84 \
-  --end-ip-address=80.71.143.84
+  --start-ip-address=<your ip address> \
+  --end-ip-address=<your ip address>
 ```
 
 ## Create database
