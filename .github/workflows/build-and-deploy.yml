@@ -8,8 +8,7 @@ on:
     types: [published]
 
 env:
-  CONTAINER_REGISTRY: selearningregistry.azurecr.io
-  IMAGE_TAG: ${{ env.CONTAINER_REGISTRY }}/selearning-image:${{ github.sha }}
+  IMAGE_TAG: ${{ secrets.REGISTRY_SERVER }}/selearning-image:${{ github.sha }}
 
 jobs:
   build-and-deploy:
@@ -27,7 +26,7 @@ jobs:
       - name: Login to ACR
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ env.CONTAINER_REGISTRY }}
+          login-server: ${{ secrets.REGISTRY_SERVER }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
