@@ -13,19 +13,27 @@ namespace SELearning.Infrastructure.Tests
         private readonly CommentRepository _repository;
         private readonly CommentContext _context;
 
+        private readonly ContentContext _contentContext;
+
         public CommentRepositoryTests()
         {
+            //setting up the comment connection
             var connection = new SqliteConnection("Filename=:memory:");
             connection.Open();
             var builder = new DbContextOptionsBuilder<CommentContext>();
             builder.UseSqlite(connection);
-
             _context = new CommentContext(builder.Options);
             _context.Database.EnsureCreated();
 
+            //setting up the content connection
+            //var connection = new SqliteConnection("Filename=:memory:");
+            //connection.Open();
+            var contentBuilder = new DbContextOptionsBuilder<ContentContext>();
+            contentBuilder.UseSqlite(connection);
+            _contentContext = new ContentContext(contentBuilder.Options);
+            _contentContext.Database.EnsureCreated();
 
-
-            _repository = new CommentRepository(_context);
+            _repository = new CommentRepository(_context,_contentContext);
 
             Section section = new Section{
                 Id = "1",

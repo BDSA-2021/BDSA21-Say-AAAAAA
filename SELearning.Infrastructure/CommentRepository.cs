@@ -6,9 +6,10 @@ namespace SELearning.Infrastructure
         private readonly CommentContext _context;
         private readonly ContentContext _contentContext;
 
-        public CommentRepository(CommentContext context)
+        public CommentRepository(CommentContext context, ContentContext contentContext)
         {
             _context = context;
+            _contentContext = contentContext;
         }
 
         //TODO: nedenstående skal tjekke dens contentId og returnere notfound hvis det ikke findes
@@ -17,7 +18,7 @@ namespace SELearning.Infrastructure
             Content content = await _contentContext.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);
             if(content == null)
             {
-                return (OperationResult.NotFound, null);
+                return (OperationResult.NotFound, null!);
             }
 
             Comment c = new Comment
