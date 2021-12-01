@@ -1,0 +1,43 @@
+@using SELearning.Core
+
+<div class="row col-lg-12">
+    <div class="col-lg-3">
+        <!--Rating section-->
+        <p>@Comment.Rating</p>
+        <p>Rating</p>
+
+        <!-- TODO: Create column for up and down vote-->
+    </div>
+    <div class="col-lg-9">
+        <!-- Content section -->
+        <div class="row">
+            <!-- Content header section -->
+            <p class="col-lg-9">
+                <b>@Comment.Author</b>
+            </p>
+            <a class="col-lg-3" @onclick="Delete">Delete</a>
+        </div>
+        <div class="row">
+            <p>@Comment.Content</p>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Comment Comment { get; set; }
+
+    [Parameter]
+    public EventCallback<Comment> OnCommentDeleted { get; set; }
+
+    private async Task Delete()
+    {
+        // TODO: Delete comment with api
+
+        // TODO: Check if return code is not an error
+
+        if(OnCommentDeleted.HasDelegate)
+            await OnCommentDeleted.InvokeAsync(Comment);
+    }
+}

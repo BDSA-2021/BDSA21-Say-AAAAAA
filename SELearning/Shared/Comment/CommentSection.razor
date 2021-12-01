@@ -11,7 +11,7 @@
         <!-- List of comments -->
         @foreach(Comment comment in _comments)
         {
-            <h1 class="col-lg-12">@comment.Content</h1>
+            <CommentTile Comment="@comment" OnCommentDeleted="@OnCommentDeleted"/>
         }
     </div>
     <div class="row">
@@ -60,6 +60,11 @@
 
         _comments.Add(_comment); // only add if the 
         _comment = new();
+    }
+
+    private void OnCommentDeleted(Comment comment)
+    {
+        System.Console.WriteLine($"Comment from {comment.Author} is deleted!");
     }
 
 }
