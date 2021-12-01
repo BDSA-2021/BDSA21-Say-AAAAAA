@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning", "SELearning\SELearning.csproj", "{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.API", "SELearning.API\SELearning.API.csproj", "{9FC85DBF-9A3B-49BD-AA90-D37470320799}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.API", "SELearning.API\SELearning.API.csproj", "{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning", "SELearning\SELearning.csproj", "{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Tests", "SELearning.Tests\SELearning.Tests.csproj", "{21B40677-B0F2-4321-B651-0AF9453266A6}"
 EndProject
@@ -24,6 +24,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9FC85DBF-9A3B-49BD-AA90-D37470320799}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC85DBF-9A3B-49BD-AA90-D37470320799}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC85DBF-9A3B-49BD-AA90-D37470320799}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC85DBF-9A3B-49BD-AA90-D37470320799}.Release|Any CPU.Build.0 = Release|Any CPU
 		{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -58,5 +62,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E12DAD81-3343-4BE2-AAFF-37BB47D2DC4F}
-	EndGlobalSection	
+	EndGlobalSection
 EndGlobal
