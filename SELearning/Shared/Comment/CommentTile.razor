@@ -1,21 +1,36 @@
 @using SELearning.Core
 
 <div class="row col-lg-12">
-    <div class="col-lg-3">
+    <div class="col-lg-2 row">
         <!--Rating section-->
-        <p>@Comment.Rating</p>
-        <p>Rating</p>
+        <div class="col-lg-4">
+            <p class="row col-lg-12">@Comment.Rating</p>
+            <p class="row col-lg-12">Rating</p>
+        </div>
+        <div class="col-lg-8">
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-default btn-lg" aria-label="Left Align" @onclick="UpVote">
+                    <span class="oi oi-thumb-up"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-lg" @onclick="DownVote">
+                    <span class="oi oi-thumb-down"></span>
+                </button>
+            </div>
+        </div>
 
-        <!-- TODO: Create column for up and down vote-->
     </div>
     <div class="col-lg-9">
         <!-- Content section -->
         <div class="row">
             <!-- Content header section -->
-            <p class="col-lg-9">
+            <p class="col-lg-11">
                 <b>@Comment.Author</b>
             </p>
-            <a class="col-lg-3" @onclick="Delete">Delete</a>
+            <div class="col-lg-1">
+                <button type="button" class="btn btn-default btn-lg text-danger" aria-label="Left Align" @onclick="Delete">
+                        <span class="oi oi-trash"></span>
+                </button>
+            </div>
         </div>
         <div class="row">
             <p>@Comment.Content</p>
@@ -39,5 +54,23 @@
 
         if(OnCommentDeleted.HasDelegate)
             await OnCommentDeleted.InvokeAsync(Comment);
+    }
+
+    private Task UpVote()
+    {
+        // Call up vote api
+
+        Comment.Rating++;
+
+        return Task.CompletedTask;
+    }
+
+    private Task DownVote() 
+    {
+        // Call down vote api
+
+        Comment.Rating--;
+
+        return Task.CompletedTask;
     }
 }
