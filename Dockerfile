@@ -24,7 +24,7 @@ RUN dotnet build -c Release
 
 # Publish, based on build
 FROM build as publish 
-RUN dotnet publish -v d -c Release -o /app
+RUN dotnet publish -c Release -o /app
 
 # Serve built files
 FROM base as serve
