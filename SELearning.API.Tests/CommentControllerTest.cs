@@ -117,7 +117,7 @@ public class CommentControllerTest
         var repository = new Mock<ICommentRepository>();
 
         var comment = new CommentDTO(1);
-        repository.Setup(m => m.UpdateAsync(42, comment)).ReturnsAsync((OperationResult.NotFound, default(CommentDTO)));
+        repository.Setup(m => m.UpdateAsync(42, comment)).ReturnsAsync((OperationResult.NotFound, new CommentDTO(-1)));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
