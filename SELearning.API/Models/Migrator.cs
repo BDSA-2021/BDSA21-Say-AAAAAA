@@ -7,7 +7,7 @@ public static class Migrator
         using (var scope = host.Services.CreateScope())
         {
             using var ctx = scope.ServiceProvider.GetRequiredService<WeatherContext>();
-            
+
             ctx.Database.Migrate();
         }
 
