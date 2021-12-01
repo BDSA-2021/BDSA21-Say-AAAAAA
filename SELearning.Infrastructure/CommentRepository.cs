@@ -21,18 +21,18 @@ namespace SELearning.Infrastructure
                 return (OperationResult.NotFound, null!);
             }
 
-            Comment c = new Comment
+            Comment comment = new Comment
             {
                 Author = cmt.Author,
                 Text = cmt.Text,
                 Content = content
             };
 
-            _context.Comments.Add(c);
+            _context.Comments.Add(comment);
 
             _context.SaveChanges();
 
-            CommentDetailsDTO dto = new CommentDetailsDTO(c.Author, c.Text, c.Id, c.Timestamp, c.Rating, c.Content);
+            CommentDetailsDTO dto = new CommentDetailsDTO(comment.Author, comment.Text, comment.Id, comment.Timestamp, comment.Rating, comment.Content);
 
             return (OperationResult.Created, dto);
         }
@@ -53,11 +53,18 @@ namespace SELearning.Infrastructure
             return (OperationResult.Updated, dto);
         }
 
-        //hvis id ikke findes returner notfound, ellers deleted
-
-        public Task<OperationResult> RemoveComment(int Id)
+        public async Task<OperationResult> RemoveComment(int Id)
         {
-            return Task.FromResult(OperationResult.BadRequest);
+            Comment? comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == Id);
+
+            if(comment == null)
+            {
+                return (OperationResult.NotFound);
+            }
+
+            _context.Remove(comment);
+            
+            return (OperationResult.Deleted);
         }
 
         public Task<List<Comment>> GetCommentsByContentId(int contentId)

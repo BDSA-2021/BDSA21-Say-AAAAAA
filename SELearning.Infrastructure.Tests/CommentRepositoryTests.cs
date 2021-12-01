@@ -44,7 +44,7 @@ namespace SELearning.Infrastructure.Tests
             Content content = new Content{
                 Author = "Sarah",
                 Section = section,
-                Id = "5",
+                Id = "1",
                 Title = "Video on Entity Core",
                 Description = "Nice",
                 VideoLink = "www.hej.dk"
@@ -106,6 +106,22 @@ namespace SELearning.Infrastructure.Tests
             Assert.Equal("Nice but also confusing", updated.Item2.Text);
             
             Assert.Equal(OperationResult.Updated, updated.Item1);
+        }
+
+        [Fact]
+        public async Task RemoveComment_given_not_existing_id_returns_NotFound()
+        {
+            var removed = await _repository.RemoveComment(68);
+
+            Assert.Equal(OperationResult.NotFound, removed);   
+        }
+
+        [Fact]
+        public async Task RemoveComment_given_existing_id_removes_comment()
+        {
+            var removed = await _repository.RemoveComment(2); 
+
+            Assert.Equal(OperationResult.Deleted, removed);       
         }
     }
 }
