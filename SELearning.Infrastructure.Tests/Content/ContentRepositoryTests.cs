@@ -60,7 +60,7 @@ public class ContentRepositoryTests : IDisposable
             Rating = 3,
         };
 
-        var (status, created) = await _repository.CreateAsync(content);
+        var (status, created) = await _repository.CreateContentAsync(content);
 
         Assert.NotNull(created.Id);
         Assert.Equal("section", created.Section);
@@ -69,6 +69,73 @@ public class ContentRepositoryTests : IDisposable
         Assert.Equal("description", created.Description);
         Assert.Equal("video link", created.VideoLink);
         Assert.Equal(3, created.Rating);
+    }
+
+    // [Fact]
+    // public async Task CreateAsync_given_existing_Content_returns_Conflict_with_existing_Content()
+    // {
+    //     var content = new ContentCreateDto {
+    //         Section = "section",
+    //         Author = "author",
+    //         Title = "title",
+    //         Description = "description",
+    //         VideoLink = "video link",
+    //         Rating = 3,
+    //     };
+
+    //     // TODO: Hvorfor kan jeg ikke lave en DTO?
+    //     var contentDto = new ContentDto {
+    //         Id = 5,
+    //         Section = "section",
+    //         Author = "author",
+    //         Title = "title",
+    //         Description = "description",
+    //         VideoLink = "video link",
+    //         Rating = 3,
+    //     };
+
+    //     var (status, created) = await _repository.CreateAsync(content);
+
+    //     Assert.Equal(contentDto, created);
+    //     Assert.Equal(OperationResult.Conflict, status);
+    // }
+
+    [Fact]
+    public async Task CreateAsync_given_Content_returns_Created_with_Content()
+    {
+        var content = new ContentCreateDto
+        {
+            Section = "section",
+            Author = "author",
+            Title = "title",
+            Description = "description",
+            VideoLink = "video link",
+            Rating = 3,
+        };
+
+        var (status, created) = await _repository.CreateContentAsync(content);
+
+        // TODO: Hvorfor kan jeg ikke lave en DTO?
+        var contentDto = new ContentDto {
+            Id = 5,
+            Section = "section",
+            Author = "author",
+            Title = "title",
+            Description = "description",
+            VideoLink = "video link",
+            Rating = 3,
+        };
+
+        Assert.Equal(contentDto, created);
+        Assert.Equal(OperationResult.Created, status);
+    }
+
+    [Fact]
+    public async Task ReadAsync_given_non_existing_id_returns_None()
+    {
+        var option = await _repository.ReadContentAsync(42);
+
+        Assert.True(option.IsNone);
     }
 
     [Fact]
@@ -84,34 +151,91 @@ public class ContentRepositoryTests : IDisposable
             Rating = 3,
         };
 
-        var reponse = await _repository.UpdateAsync(42, content);
+        var reponse = await _repository.UpdateContentAsync(42, content);
 
         Assert.Equal(OperationResult.NotFound, reponse);
+    }
+
+    [Fact]
+    public async Task ReadAsync_given_existing_id_returns_city()
+    {
+        var option = await _repository.ReadContentAsync(1);
+
+        var content = new ContentDto { Id = 1, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+
+        Assert.Equal(content, option.Value);
+    }
+
+
+    [Fact]
+    public async Task ReadAsync_returns_all_content()
+    {
+    var allContent = await _repository.ReadContentAsync();
+
+        var contentDto1 = new ContentDto {Id = 1, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var contentDto2 = new ContentDto {Id = 2, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var contentDto3 = new ContentDto {Id = 3, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var contentDto4 = new ContentDto {Id = 4, Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+
+        Assert.Collection(allContent,
+            content => Assert.Equal(contentDto1, content),
+            content => Assert.Equal(contentDto2, content),
+            content => Assert.Equal(contentDto3, content),
+            content => Assert.Equal(contentDto4, content)
+        );
     }
 
 
     [Fact]
     public async Task UpdateAsync_updates_existing_content()
     {
-        var content = new ContentUpdateDto
-        {
-            Id = 1,
-            Section = "section",
-            Author = "author",
-            Title = "title",
-            Description = "description",
-            VideoLink = "video link",
-            Rating = 3,
-        };
+        var content = new ContentUpdateDto { Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
-        var updated = await _repository.UpdateAsync(1, content);
+        var updated = await _repository.UpdateContentAsync(1, content);
 
         Assert.Equal(OperationResult.Updated, updated);
+    }
 
-        // var option = await _repository.ReadAsync(1);
-        // var superman = option.Value;
+    [Fact]
+    public async Task UpdateAsync_given_non_existing_Content_returns_NotFound()
+    {
+        var content = new ContentUpdateDto { Section = "section", Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
-        // Assert.Empty(superman.Powers);
+        var response = await _repository.UpdateContentAsync(42, content);
+
+        Assert.Equal(OperationResult.NotFound, response);
+    }
+
+
+    [Fact]
+    public async Task UpdateAsync_updates_and_returns_Updated()
+    {
+        var contentDto = new ContentUpdateDto {Section = "section", Author = "author", Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+
+        var response = await _repository.UpdateContentAsync(1, contentDto);
+
+        var entity = await _context.Content.FirstAsync(c => c.Title == "new title");
+
+        Assert.Equal(OperationResult.Updated, response);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_given_non_existing_Id_returns_NotFound()
+    {
+        var response = await _repository.DeleteContentAsync(42);
+
+        Assert.Equal(OperationResult.NotFound, response);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_deletes_and_returns_Deleted()
+    {
+        var response = await _repository.DeleteContentAsync(2);
+
+        var entity = await _context.Content.FindAsync(2);
+
+        Assert.Equal(OperationResult.Deleted, response);
+        Assert.Null(entity);
     }
 
 

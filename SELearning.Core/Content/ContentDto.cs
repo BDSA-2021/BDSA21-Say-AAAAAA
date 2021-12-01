@@ -1,13 +1,14 @@
 namespace SELearning.Core.Content;
-public record ContentDto(
-    int? Id,
-    string? Section,
-    string? Author,
-    string? Title,
-    string? Description,
-    string? VideoLink,
-    int Rating
-    );
+public record ContentDto {
+
+    public int? Id { get; set; }
+    public string? Section { get; set; }
+    public string? Author { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public string? VideoLink { get; set; }
+    public int Rating { get; set; }
+    }
 
 public record ContentCreateDto
 {
