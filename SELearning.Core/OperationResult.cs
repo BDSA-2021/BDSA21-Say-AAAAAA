@@ -7,6 +7,7 @@ namespace SELearning.Core
         Deleted,
         NotFound,
         BadRequest,
-        Conflict
+        Conflict,
+        Succes
     }
 }
