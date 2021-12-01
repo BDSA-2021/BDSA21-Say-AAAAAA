@@ -1,7 +1,10 @@
 # BDSA21-Say-AAAAAA
 BDSA2021 final project
 
-## Local development
+This app has been deployed to an Azure app service [here.](https://selearningapp.azurewebsites.net)
+
+## Build and run
+### Local development
 [Shamelessly ripped from ondfisk](https://github.com/ondfisk/BDSA2021/blob/main/Notes.md)
 
 Assume the location these commands are run from is the root of the project, unless specifically stated.
@@ -22,26 +25,33 @@ export database=SELearning
 export connectionstring=$(echo "server=localhost;database=${database};user id=sa;password=${password}")
 ```
 
-## Enable User Secrets
+#### Enable User Secrets
 ```powershell
 dotnet user-secrets init --project SELearning.API
 dotnet user-secrets set "ConnectionStrings:SELearning" "$connectionString" --project SELearning.API
 ```
 
-## Migrate database
+#### Migrate database
+Note: The migrations are done automatically after the first one. The first migration also creates the database which is necessary for the system to run.
 ```
 dotnet tool install --global --version 6.0.0 dotnet-ef
 dotnet ef database update --project SELearning.Infrastructure --startup-project SELearning.API
 ```
 
-## Set enviroment to development
+#### Set enviroment to development
 ```
 $Env:ASPNETCORE_ENVIRONMENT = "Development" (Windows powershell)
 export ASPNETCORE_ENVIROMENT="Development"  (Linux)
 ```
 
-## Run the system
+#### Run the system
 ```
 dotnet run --project SELearning.API
 ```
 This will build the Blazor project and serve it along with the API
+
+### Production build and run
+```
+docker-compose up
+```
+The command above will create a database server, a database and build the app for production as well as serving it on port 7207
