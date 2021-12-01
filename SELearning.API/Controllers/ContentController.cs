@@ -23,15 +23,15 @@ public class ContentController : ControllerBase
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(ContentDTO), 200)] // OK
     [ProducesResponseType(404)] // Not Found
-    public async Task<ActionResult<ContentDTO>> GetContent(int ID)
-        => (await _repository.GetAsync(ID)).ToActionResult();
+    public async Task<ActionResult<ContentDTO>> GetContent(string ID)
+        => (await _repository.ReadAsync(ID)).ToActionResult();
 
     [Authorize]
     [HttpPost]
     [ProducesResponseType(201)] // Created
     public async Task<IActionResult> CreateContent(ContentDTO content)
     {
-        var created = (await _repository.CreateAsync(content));
+        var created = (await _repository.CreateAsync(content)).Item2;
         return CreatedAtRoute(nameof(GetContent), new { created.ID }, created);
     }
 
@@ -46,6 +46,6 @@ public class ContentController : ControllerBase
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
-    public async Task<IActionResult> DeleteContent(int ID)
-        => (await _repository.DeleteAsync(ID)).ToActionResult();
+    public async Task<IActionResult> DeleteContent(string ID)
+        => (await _repository.DeleteContent(ID)).ToActionResult();
 }

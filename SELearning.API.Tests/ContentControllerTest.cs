@@ -20,12 +20,12 @@ public class ContentControllerTest
         var repository = new Mock<IContentRepository>();
 
         var expected = new ContentDTO(1);
-        repository.Setup(m => m.GetAsync(1)).ReturnsAsync(expected);
+        repository.Setup(m => m.ReadAsync("1")).ReturnsAsync(expected);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var actual = (await controller.GetContent(1)).Value;
+        var actual = (await controller.GetContent("1")).Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -38,12 +38,12 @@ public class ContentControllerTest
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
-        repository.Setup(m => m.GetAsync(42)).ReturnsAsync(default(ContentDTO));
+        repository.Setup(m => m.ReadAsync("42")).ReturnsAsync(default(ContentDTO));
 
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.GetContent(42);
+        var response = await controller.GetContent("42");
 
         // Assert
         Assert.IsType<NotFoundResult>(response.Result);
@@ -57,7 +57,7 @@ public class ContentControllerTest
         var repository = new Mock<IContentRepository>();
 
         var content = new ContentDTO(1);
-        repository.Setup(m => m.CreateAsync(content)).ReturnsAsync(content);
+        repository.Setup(m => m.CreateAsync(content)).ReturnsAsync((OperationResult.Created, content));
 
         var controller = new ContentController(logger.Object, repository.Object);
 
@@ -115,12 +115,12 @@ public class ContentControllerTest
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
-        repository.Setup(m => m.DeleteAsync(1)).ReturnsAsync(OperationResult.Deleted);
+        repository.Setup(m => m.DeleteContent("1")).ReturnsAsync(OperationResult.Deleted);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.DeleteContent(1);
+        var response = await controller.DeleteContent("1");
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -133,12 +133,12 @@ public class ContentControllerTest
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
 
-        repository.Setup(m => m.DeleteAsync(42)).ReturnsAsync(OperationResult.NotFound);
+        repository.Setup(m => m.DeleteContent("42")).ReturnsAsync(OperationResult.NotFound);
 
         var controller = new ContentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.DeleteContent(42);
+        var response = await controller.DeleteContent("42");
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
