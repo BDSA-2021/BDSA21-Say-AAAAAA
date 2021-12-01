@@ -30,7 +30,7 @@ namespace SELearning.Infrastructure
 
             _context.Comments.Add(comment);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             CommentDetailsDTO dto = new CommentDetailsDTO(comment.Author, comment.Text, comment.Id, comment.Timestamp, comment.Rating, comment.Content);
 
@@ -50,6 +50,8 @@ namespace SELearning.Infrastructure
 
             CommentDetailsDTO dto = new CommentDetailsDTO(c.Author, c.Text, c.Id, c.Timestamp, c.Rating, c.Content);
 
+            await _context.SaveChangesAsync();
+
             return (OperationResult.Updated, dto);
         }
 
@@ -63,14 +65,22 @@ namespace SELearning.Infrastructure
             }
 
             _context.Remove(comment);
+
+            await _context.SaveChangesAsync();
             
             return (OperationResult.Deleted);
         }
 
-        public async Task<(Comment,OperationResult)> GetCommentByCommentId(int CommentId)
+        public async Task<(Comment?,OperationResult)> GetCommentByCommentId(int commentId)
         {
+            Comment comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
             
-            return (new Comment(),OperationResult.BadRequest);
+            if(comment == null)
+            {
+                return (null,OperationResult.NotFound);
+            }
+
+            return (comment,OperationResult.Succes);
         }
         
         public Task<List<Comment>> GetCommentsByContentId(int contentId)

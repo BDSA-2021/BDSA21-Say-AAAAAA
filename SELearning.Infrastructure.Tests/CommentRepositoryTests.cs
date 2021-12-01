@@ -121,7 +121,29 @@ namespace SELearning.Infrastructure.Tests
         {
             var removed = await _repository.RemoveComment(2); 
 
-            Assert.Equal(OperationResult.Deleted, removed);       
+            Assert.Equal(OperationResult.Deleted, removed); 
+
+            var tryRead = await _repository.GetCommentByCommentId(2);
+            Assert.Equal(OperationResult.NotFound,tryRead.Item2);
+            Assert.Null(tryRead.Item1);      
+        }
+
+        [Fact]
+        public async Task GetCommentByCommentId_given_existing_id_returns_comment()
+        {
+            var read = await _repository.GetCommentByCommentId(3); 
+            
+            Assert.Equal(OperationResult.Succes, read.Item2);   
+            Assert.Equal("Paolo",read.Item1.Author);  
+            Assert.Equal("This is a great video",read.Item1.Text);       
+        }
+
+        [Fact]
+        public async Task GetCommentByCommentId_given_not_existing_id_returns_NotFound()
+        {
+            var read = await _repository.GetCommentByCommentId(90); 
+            
+            Assert.Equal(OperationResult.NotFound, read.Item2);         
         }
     }
 }
