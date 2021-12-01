@@ -31,7 +31,8 @@ jobs:
       - name: Push docker image
         run: docker push ${{ env.IMAGE_TAG }}
 
-      - uses: azure/webapps-deploy@v2
+      - name: Deploy image to App Service
+        uses: azure/webapps-deploy@v2
         with:
           app-name: 'SELearningApp'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
