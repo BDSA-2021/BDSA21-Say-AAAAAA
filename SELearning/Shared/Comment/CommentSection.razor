@@ -42,9 +42,9 @@
             new Comment{Content = "Hej Tietgen", Author = "Adrian", Rating = 0},
             new Comment{Content = "Hey Buddy!", Author = "Tietgen", Rating = 5155},
             new Comment{Content = "Skal vi lave noget arbejde. Kh. Headboi", Author = "Albert", Rating = 2},
-            new Comment{Content = "Jeg er cheffen!", Author = "Asger", Rating = 5241},
-            new Comment{Content = "Nej nej! hallo jeg er cheffen!", Author = "Joachim", Rating = 32},
-            new Comment{Content = "Who run the world girls! Jeg er cheffen,,.", Author = "Amalie", Rating = 41},
+            new Comment{Content = "Jeg er chefen!", Author = "Asger", Rating = 5241},
+            new Comment{Content = "Nej nej! hallo jeg er chefen!", Author = "Joachim", Rating = 32},
+            new Comment{Content = "Who run the world girls! Jeg er chefen.", Author = "Amalie", Rating = 41},
             new Comment{Content = "Bla bla... lav nu bare nogle use cases!", Author = "Tietgen", Rating = 421},
             new Comment{Content = "Bla bla bla blab lbalblfbasfbslbfablbksf", Author = "Arne4545", Rating = 412},
             new Comment{Content = "Hasklfjhdklgklashgklshwhegionkaio  dsklg sdk lfdkflj skf klsfiweone klsfwe fiwen ifi jweiewi i iw fimf ieiofwifji if wei ew i", Author = "KongBorup", Rating = 333},
@@ -65,6 +65,7 @@
     private void OnCommentDeleted(Comment comment)
     {
         System.Console.WriteLine($"Comment from {comment.Author} is deleted!");
+        _comments.Remove(comment);
     }
 
 }
