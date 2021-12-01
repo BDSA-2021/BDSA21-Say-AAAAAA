@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using SELearning.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration
@@ -67,5 +68,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapFallbackToFile("index.html");
 });
 
+app.Migrate();
 app.Run();
 #endregion
