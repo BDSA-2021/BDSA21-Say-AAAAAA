@@ -38,7 +38,7 @@ public class CommentController : ControllerBase
     [ProducesResponseType(201)] // Created
     public async Task<IActionResult> CreateComment(int contentID, CommentDTO comment)
     {
-        var created = (await _repository.CreateAsync(contentID, comment)).Item2;
+        var (result, created) = await _repository.CreateAsync(contentID, comment);
         return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);
     }
 

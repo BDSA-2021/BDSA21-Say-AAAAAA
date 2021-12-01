@@ -32,7 +32,7 @@ public class ContentController : ControllerBase
     [ProducesResponseType(201)] // Created
     public async Task<IActionResult> CreateContent(ContentDTO content)
     {
-        var created = (await _repository.AddContent(content)).Item2;
+        var (result, created) = await _repository.AddContent(content);
         return CreatedAtRoute(nameof(GetContent), new { created.ID }, created);
     }
 
