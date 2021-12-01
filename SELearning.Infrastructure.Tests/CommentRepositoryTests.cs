@@ -13,8 +13,6 @@ namespace SELearning.Infrastructure.Tests
         private readonly CommentRepository _repository;
         private readonly CommentContext _context;
 
-        private readonly ContentContext _contentContext;
-
         private static readonly Section section = new Section
         {
             Id = "1",

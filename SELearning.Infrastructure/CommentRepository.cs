@@ -10,7 +10,6 @@ namespace SELearning.Infrastructure
             _context = context;
         }
 
-        //TODO: nedenstående skal tjekke dens contentId og returnere notfound hvis det ikke findes
         public async Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
         {
             Content content = await _context.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);

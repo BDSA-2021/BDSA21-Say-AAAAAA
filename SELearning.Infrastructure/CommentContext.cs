@@ -16,6 +16,10 @@ namespace SELearning.Infrastructure
             builder.Entity<Comment>()
                 .HasIndex(t => t.Id)
                 .IsUnique();
+
+            builder.Entity<Content>()
+                .HasIndex(t => t.Id)
+                .IsUnique();
         }
     }
 }
