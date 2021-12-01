@@ -86,7 +86,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task UpdateComment_given_non_existing_id_returns_NotFound()
         {
-            CommentUpdateDTO dto = new CommentUpdateDTO("Really like this content");
+            CommentUpdateDTO dto = new CommentUpdateDTO("Really like this content",0);
 
             var updated = await _repository.UpdateComment(42, dto);
 
@@ -96,13 +96,14 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task UpdateComment_updates_existing_comment()
         {
-            CommentUpdateDTO dto = new CommentUpdateDTO("Nice but also confusing");
+            CommentUpdateDTO dto = new CommentUpdateDTO("Nice but also confusing",1);
 
             var updated = await _repository.UpdateComment(1, dto);
 
             Assert.Equal(1, updated.Item2.Id);
             Assert.Equal("Amalie", updated.Item2.Author);
             Assert.Equal("Nice but also confusing", updated.Item2.Text);
+            Assert.Equal(1,updated.Item2.Rating);
 
             Assert.Equal(OperationResult.Updated, updated.Item1);
         }

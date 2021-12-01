@@ -45,6 +45,7 @@ namespace SELearning.Infrastructure
             }
 
             c.Text = cmt.Text;
+            c.Rating = cmt.Rating;
 
             CommentDetailsDTO dto = new CommentDetailsDTO(c.Author, c.Text, c.Id, c.Timestamp, c.Rating, c.Content);
 
