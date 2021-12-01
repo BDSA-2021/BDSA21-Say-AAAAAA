@@ -7,7 +7,8 @@ public class ContentRepository : IContentRepository
     {
         _context = context;
     }
-    public void AddContent(Content content)
+
+    public Task<(OperationResult, ContentDTO)> AddContent(ContentDTO content)
     {
         throw new NotImplementedException();
     }
@@ -17,7 +18,7 @@ public class ContentRepository : IContentRepository
         throw new NotImplementedException();
     }
 
-    public void DeleteContent(string id)
+    Task<OperationResult> IContentRepository.DeleteContent(string id)
     {
         throw new NotImplementedException();
     }
@@ -37,7 +38,7 @@ public class ContentRepository : IContentRepository
         throw new NotImplementedException();
     }
 
-    public Content GetContent(string id)
+    Task<Option<ContentDTO>> IContentRepository.GetContent(string id)
     {
         throw new NotImplementedException();
     }
@@ -47,7 +48,7 @@ public class ContentRepository : IContentRepository
         throw new NotImplementedException();
     }
 
-    public void UpdateContent(string id, Content content)
+    public Task<OperationResult> UpdateContent(string id, ContentDTO content)
     {
         throw new NotImplementedException();
     }
