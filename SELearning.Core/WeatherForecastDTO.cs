@@ -9,7 +9,4 @@ public record WeatherForecastCreateDTO
     public string? Summary;
 }
 
-public record WeatherForecastDTO : WeatherForecastCreateDTO
-{
-    public int Id;
-}
+public record WeatherForecastDTO(int Id, DateTime Date, int TemperatureC, string? Summary);
