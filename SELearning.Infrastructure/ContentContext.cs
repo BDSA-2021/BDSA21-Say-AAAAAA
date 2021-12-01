@@ -6,5 +6,13 @@ public class ContentContext : DbContext, IContentContext
     {
     }
 
-    public DbSet<Content> Content => throw new NotImplementedException();
+    public DbSet<Content> Content {get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+        {
+            // Rules for entity creation for DB
+            builder.Entity<Content>()
+                .HasIndex(t => t.Id)
+                .IsUnique();
+        }
 }
