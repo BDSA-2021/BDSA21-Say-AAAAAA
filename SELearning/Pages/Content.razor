@@ -1,22 +1,21 @@
 @page "/content/{contentId}"
 
-@*
-TODO: Implement according to design. Need to fix dotnet watch or something. The
-slow build-to-see-changes cycle is killing me. Page 23 of RAD.
-*@
+<section class="video-wrapper">
+    <iframe width="560" height="315" src="@_Content.Link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</section>
+
 <section class="about-section">
+    <div class="header-section">
+        <h1>@_Content.Title</h1>
+        <p>@_Content.Author | @_Content.CreatedAt.ToString("dddd, dd MMMM yyyy")</p>
+    </div>
     <div class="rating-container">
         <div role="button" class="arrow-up"></div>
         <span class="rating">@_Content.Rating</span>
         <div role="button" class="arrow-down"></div>
     </div>
-    <div class="header-section">
-        <h1>@_Content.Title</h1>
-        <p>@_Content.Author | @_Content.CreatedAt.ToString("dddd, dd MMMM yyyy")</p>
-    </div>
 </section>
-
-<iframe width="560" height="315" src="@_Content.Link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p class="description">@_Content.Description</p>
 
 @code {
     [Parameter]
@@ -27,12 +26,14 @@ slow build-to-see-changes cycle is killing me. Page 23 of RAD.
         Link = "https://www.youtube.com/embed/dQw4w9WgXcQ",
         Author = "Mickey Mouse",
         Rating = 1234,
-        CreatedAt = DateTime.Now
+        CreatedAt = DateTime.Now,
+        Description = "ZywOO skilled player but that is not normally, This very very insane....They need to check him pc and game.....Maybe he not cheating but maybe he using the game deficit ...and this cant seem on game screen..He needs to check-up....Day0s FPL Cheater with Streaming.....I think day0s still cheating...Zyw00 using game deficit on PRO scene ,ON BIG Events.Maybe everyone dont knows him trick.He incredible....I want to ask his where is the comming of your skill's ?"
     };
 
     record ContentPlaceholder
     {
         public string Title { get; init; }
+        public string Description { get; init; }
         public string Link { get; init; } // TODO: custom storage?
         public string Author { get; init; } // TODO: custom user object from backend?
         public DateTime CreatedAt { get; init; } // TODO: custom user object from backend?
