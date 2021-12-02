@@ -1,3 +1,5 @@
-﻿namespace SELearning.Core.Permission;
+﻿using System.Security.Claims;
 
-public delegate Task<bool> Rule(object user); // TODO: Change object to an instance of user
+namespace SELearning.Core.Permission;
+
+public delegate Task<bool> Rule(ClaimsPrincipal user);
