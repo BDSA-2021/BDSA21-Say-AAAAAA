@@ -21,6 +21,8 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
     /// <returns></returns>
     async protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
+        // TODO: Add default check if the user is a moderator... it should be a claims thing... i think
+
         var user = context.User;
         var isPermitted = await _permissionService.IsAllowed(user, requirement.Permission);
 
