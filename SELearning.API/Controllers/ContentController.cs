@@ -27,8 +27,8 @@ public class ContentController : ControllerBase
     /// <returns>A content with the given ID if it exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
     [HttpGet("{ID}")]
-    [ProducesResponseType(typeof(ContentDTO), 200)] // OK
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(typeof(ContentDTO), 200)]
+    [ProducesResponseType(404)]
     public async Task<ActionResult<ContentDTO>> GetContent(string ID)
         => (await _repository.GetContent(ID)).ToActionResult();
 
@@ -39,7 +39,7 @@ public class ContentController : ControllerBase
     /// <returns>A response type 201: Created.</returns>
     [Authorize]
     [HttpPost]
-    [ProducesResponseType(201)] // Created
+    [ProducesResponseType(201)]
     public async Task<IActionResult> CreateContent(ContentDTO content)
     {
         var (result, created) = await _repository.AddContent(content);
@@ -54,8 +54,8 @@ public class ContentController : ControllerBase
     /// <returns></returns>
     [Authorize]
     [HttpPut("{ID}")]
-    [ProducesResponseType(204)] // No Content
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> UpdateContent(string ID, ContentDTO content)
         => (await _repository.UpdateContent(ID, content)).ToActionResult();
 
@@ -66,8 +66,8 @@ public class ContentController : ControllerBase
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
     [HttpDelete("{ID}")]
-    [ProducesResponseType(204)] // No Content
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteContent(string ID)
         => (await _repository.DeleteContent(ID)).ToActionResult();
 }
