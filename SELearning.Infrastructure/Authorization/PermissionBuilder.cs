@@ -4,7 +4,8 @@ using SELearning.Core.Permission;
 namespace SELearning.Infrastructure.Authorization;
 
 /// <summary>
-/// Builds the Permissions and adds them into the dependency injection system
+/// Builds the Permissions and adds them into the dependency injection system.
+/// This is inspired by the AuthenticationBuilder: https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication/AuthenticationBuilder.cs
 /// </summary>
 public class PermissionBuilder
 {

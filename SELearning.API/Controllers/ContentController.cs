@@ -27,7 +27,7 @@ public class ContentController : ControllerBase
     public async Task<ActionResult<ContentDTO>> GetContent(string ID)
         => (await _repository.GetContent(ID)).ToActionResult();
 
-    [AuthorizePermission(Permission.CreateContent)]
+    [AuthorizePermission(Permission.CreateContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPost]
     [ProducesResponseType(201)] // Created
     public async Task<IActionResult> CreateContent(ContentDTO content)
@@ -36,7 +36,7 @@ public class ContentController : ControllerBase
         return CreatedAtRoute(nameof(GetContent), new { created.ID }, created);
     }
 
-    [AuthorizePermission(Permission.EditAnyContent)]
+    [AuthorizePermission(Permission.EditAnyContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPut("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
