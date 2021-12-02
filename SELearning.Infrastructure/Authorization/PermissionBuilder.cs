@@ -46,7 +46,7 @@ public class PermissionBuilder
         *  and then later use them as the way to create instances in dependency injection?
         *
         *  Or else i have another solution, where we get rid of the PermissionDecider and instead lets the AuthorizationHandler handle it
-        *  by providing a Requirement with the cred score to be above...
+        *  by providing a Requirement with the cred score that the user has to be above...
         */ 
 
         ICredibilityRepository credibilityRepository = null; // TODO: Add Cred repo here
