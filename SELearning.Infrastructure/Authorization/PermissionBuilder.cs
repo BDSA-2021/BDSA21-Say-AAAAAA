@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
@@ -56,11 +57,11 @@ public class PermissionBuilder
     }
 
     /// <summary>
-    /// Injects the add permissions to the dependency injection system
+    /// Injects the added permissions to the dependency injection system
     /// </summary>
     public void Build()
     {
-        Services.AddSingleton<IDictionary<Permission, IEnumerable<Rule>>>(
+        Services.TryAddSingleton<IDictionary<Permission, IEnumerable<Rule>>>(
             x => (IDictionary<Permission, IEnumerable<Rule>>)_permissions);
     }
 }
