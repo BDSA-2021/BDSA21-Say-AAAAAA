@@ -13,7 +13,7 @@ public class CredibilityCalculator : ICredibilityService
 
     async public Task<int> GetCredibilityScore(ClaimsPrincipal user)
     {
-        string userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
 
         var commentCredibilityScore = _credibilityRepository.GetCommentCredibilityScore(userId);
         var contentCredibilityScore = _credibilityRepository.GetContentCredibilityScore(userId);
