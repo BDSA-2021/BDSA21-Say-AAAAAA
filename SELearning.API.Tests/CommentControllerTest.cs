@@ -91,6 +91,25 @@ public class CommentControllerTest
     }
 
     [Fact]
+    public async Task CreateComment_Given_Invalid_ContentID_Returns_NotFound()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var repository = new Mock<ICommentRepository>();
+
+        var comment = new CommentDTO(1);
+        repository.Setup(m => m.CreateAsync(1, comment)).ReturnsAsync((OperationResult.NotFound, new CommentDTO(-1)));
+
+        var controller = new CommentController(logger.Object, repository.Object);
+
+        // Act
+        var response = await controller.CreateComment(1, comment);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(response);
+    }
+
+    [Fact]
     public async Task UpdateComment_Given_Valid_ID_Returns_NoContent()
     {
         // Arrange

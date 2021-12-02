@@ -35,10 +35,12 @@ public class CommentController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [ProducesResponseType(201)] // Created
+    [ProducesResponseType(201)] // No Content
+    [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> CreateComment(int contentID, CommentDTO comment)
     {
         var (result, created) = await _repository.CreateAsync(contentID, comment);
+        if (result == OperationResult.NotFound) return result.ToActionResult();
         return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);
     }
 
