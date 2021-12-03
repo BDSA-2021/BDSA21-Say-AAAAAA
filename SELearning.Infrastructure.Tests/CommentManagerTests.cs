@@ -62,19 +62,19 @@ namespace SELearning.Infrastructure.Tests
 
         public void Post_given_empty_content_throws_exception()
         {
-        
+
         }
 
         [Fact]
         public void Update_given_new_content_succeeds()
         {
-           
+
         }
 
         [Fact]
         public void Remove_given_comment_succeeds()
         {
-             
+
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace SELearning.Infrastructure.Tests
         {
             await _service.UpvoteComment(1);
             Assert.Equal(-9, (await _service.GetCommentFromCommentId(1)).Rating);
-            
+
             await _service.UpvoteComment(1);
             await _service.UpvoteComment(1);
             await _service.UpvoteComment(1);
@@ -118,7 +118,7 @@ namespace SELearning.Infrastructure.Tests
         {
             await _service.DownvoteComment(1);
             Assert.Equal(-11, (await _service.GetCommentFromCommentId(1)).Rating);
-            
+
             await _service.DownvoteComment(1);
             await _service.DownvoteComment(1);
             await _service.DownvoteComment(1);
@@ -130,7 +130,7 @@ namespace SELearning.Infrastructure.Tests
         public async void Downvote_subtracts_1_given_positive_rating()
         {
             await _service.DownvoteComment(4);
-            Assert.Equal(27, (await _service.GetCommentFromCommentId(4)).Rating);    
+            Assert.Equal(27, (await _service.GetCommentFromCommentId(4)).Rating);
         }
 
         /* [Fact]
