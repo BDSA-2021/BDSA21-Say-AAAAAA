@@ -17,7 +17,7 @@ namespace SELearning.API.Tests;
 public class CommentControllerTest
 {
     [Fact]
-    public async Task GetComment_Given_Valid_ID_Returns_CommentDTO()
+    public async Task GetComment_Given_Valid_ID_Returns_Comment()
     {
         // Arrange
         var logger = new Mock<ILogger<CommentController>>();
@@ -54,7 +54,7 @@ public class CommentControllerTest
     }
 
     [Fact]
-    public async Task GetCommentsByContentID_Given_Valid_ID_Returns_CommentDTOs()
+    public async Task GetCommentsByContentID_Given_Valid_ID_Returns_Comments()
     {
         // Arrange
         var logger = new Mock<ILogger<CommentController>>();
@@ -66,7 +66,7 @@ public class CommentControllerTest
         var controller = new CommentController(logger.Object, repository.Object);
 
         // Act
-        var actual = await controller.GetCommentsByContentID(1);
+        var actual = ((await controller.GetCommentsByContentID(1)).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -91,13 +91,26 @@ public class CommentControllerTest
         // Assert
         Assert.Equal(expected, result?.Value);
         Assert.Equal("GetComment", result?.RouteName);
-        Assert.Equal(KeyValuePair.Create("ID", (object?)1), result?.RouteValues?.Single());
+        Assert.Equal(KeyValuePair.Create("Id", (object?)1), result?.RouteValues?.Single());
     }
 
     [Fact]
-    public void CreateComment_Given_CommentCreateDTO_With_Invalid_ContentID_ContentID_Returns_NotFound()
+    public async Task CreateComment_Given_CommentCreateDTO_With_Invalid_ContentID_ContentID_Returns_NotFound()
     {
-        Assert.True(false);
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var repository = new Mock<ICommentRepository>();
+
+        var comment = new CommentCreateDTO("Author", "Text", 42);
+        repository.Setup(m => m.AddComment(comment)).ReturnsAsync((OperationResult.NotFound, default(CommentDetailsDTO)!));
+
+        var controller = new CommentController(logger.Object, repository.Object);
+
+        // Act
+        var response = await controller.CreateComment(1, comment);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(response);
     }
 
     [Fact]
@@ -107,14 +120,13 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        var update = new CommentUpdateDTO("Text", 42);
-        var details = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 42, new Content());
-        repository.Setup(m => m.UpdateComment(1, update)).ReturnsAsync((OperationResult.Updated, details));
+        var comment = new CommentUpdateDTO("Text", 42);
+        repository.Setup(m => m.UpdateComment(1, comment)).ReturnsAsync((OperationResult.Updated, default(CommentDetailsDTO)!));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.UpdateComment(1, update);
+        var response = await controller.UpdateComment(1, comment);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -127,14 +139,13 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        var update = new CommentUpdateDTO("Text", 42);
-        var details = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 42, new Content());
-        repository.Setup(m => m.UpdateComment(42, update)).ReturnsAsync((OperationResult.NotFound, details));
+        var comment = new CommentUpdateDTO("Text", 42);
+        repository.Setup(m => m.UpdateComment(42, comment)).ReturnsAsync((OperationResult.NotFound, default(CommentDetailsDTO)!));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.UpdateComment(42, update);
+        var response = await controller.UpdateComment(42, comment);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
