@@ -9,7 +9,7 @@ public static class AuthorizationConfiguration
     public static PermissionBuilder AddPermissionAuthorization(this IServiceCollection services) 
     {
         // Inject asp net Authorization handler and policy implementations
-        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationHandler, CredibilityAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
         // Add permission service

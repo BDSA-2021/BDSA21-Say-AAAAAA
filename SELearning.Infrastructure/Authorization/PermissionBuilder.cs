@@ -34,29 +34,6 @@ public class PermissionBuilder
     }
 
     /// <summary>
-    /// Adds a credibility rule to the permission
-    /// </summary>
-    /// <param name="permissionKey">Permission to add a credibility rule to</param>
-    /// <param name="requiredCredibilityScore">The required credibility score that the user needs to have</param>
-    /// <returns>Returns the current builder</returns>
-    public PermissionBuilder AddCredibilityRule(Permission permissionKey, int requiredCredibilityScore)
-    {
-        /* NOTE: I am still not sure if this is a good solution. 
-        *  We loose dependency injection here by creating concrete instances of the credibility calculator.
-        *  What could make this better is by having a factory class for ICredibilityService and ICredibilityRepository, 
-        *  and then later use them as the way to create instances in dependency injection?
-        *
-        *  Or else i have another solution, where we get rid of the PermissionDecider and instead lets the AuthorizationHandler handle it
-        *  by providing a Requirement with the cred score that the user has to be above...
-        */ 
-
-        ICredibilityRepository credibilityRepository = null; // TODO: Add Cred repo here
-        ICredibilityService credibilityService = new CredibilityCalculator(credibilityRepository!);
-
-        return AddRule(permissionKey, async x => await credibilityService.GetCredibilityScore(x) >= requiredCredibilityScore);
-    }
-
-    /// <summary>
     /// Injects the added permissions to the dependency injection system
     /// </summary>
     public void Build()

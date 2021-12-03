@@ -30,8 +30,10 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         if (!TryParsePolicyPermission(policyName, out Permission parsedPermission))
             return await DefaultProvider.GetPolicyAsync(policyName); // Could not parse permission... fallback to default implementation
 
+        // TODO: Get Credibility score for specific permission
+
         var policy = new AuthorizationPolicyBuilder();
-        policy.AddRequirements(new PermissionRequirement(parsedPermission));
+        policy.AddRequirements(new PermissionRequirement(parsedPermission), new CredibilityPermissionRequirement(0));
 
         return policy.Build();
     }

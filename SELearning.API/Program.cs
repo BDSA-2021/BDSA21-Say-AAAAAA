@@ -34,14 +34,6 @@ builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
 
 builder.Services.AddPermissionAuthorization()
-                    .AddCredibilityRule(Permission.CreateComment, -10)
-                    .AddCredibilityRule(Permission.CreateContent, 200)
-                    .AddCredibilityRule(Permission.DeleteAnyComment, 200)
-                    .AddCredibilityRule(Permission.EditOwnComment, -20)
-                    .AddCredibilityRule(Permission.EditAnyComment, 200)
-                    .AddCredibilityRule(Permission.EditAnyContent, 300)
-                    .AddCredibilityRule(Permission.Rate, -20)
-                    .AddCredibilityRule(Permission.DeleteAnyContent, 400)
                     .Build();
 #endregion
 
