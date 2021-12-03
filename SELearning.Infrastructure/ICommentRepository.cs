@@ -8,6 +8,6 @@ namespace SELearning.Infrastructure
         Task<OperationResult> RemoveComment(int Id);
 
         Task<Option<Comment>> GetCommentByCommentId(int commentId);
-        Task<List<(Comment,OperationResult)>> GetCommentsByContentId(int contentId);
+        Task<(List<Comment>, OperationResult)> GetCommentsByContentId(int contentId);
     }
 }

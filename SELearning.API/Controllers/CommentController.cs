@@ -31,29 +31,35 @@ public class CommentController : ControllerBase
     [HttpGet("{contentID}")]
     [ProducesResponseType(typeof(List<Comment>), 200)] // OK
     [ProducesResponseType(404)] // Not Found
-    public async Task<List<Comment>> GetCommentsByContentID(int contentID)
-        => (await _repository.GetCommentsByContentId(contentID));
+    public async Task<ActionResult<List<Comment>>> GetCommentsByContentID(int contentID)
+    {
+        var (created, result) = await _repository.GetCommentsByContentId(contentID);
+        if(result == OperationResult.NotFound){
+            return new NotFoundResult();
+        }
+        else return Ok(created);
+    }
 
     [Authorize]
     [HttpPost]
     [ProducesResponseType(201)] // Created
     public async Task<IActionResult> CreateComment(int contentID, CommentCreateDTO comment)
     {
-        var (result, created) = await _repository.CreateAsync(contentID, comment);
-        return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);
+        var (result, created) = await _repository.AddComment(comment);
+        return CreatedAtRoute(nameof(GetComment), new { created.Id }, created);
     }
 
     [Authorize]
     [HttpPut("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
-    public async Task<IActionResult> UpdateComment(int ID, CommentDTO comment)
-        => (await _repository.UpdateAsync(ID, comment)).Item1.ToActionResult();
+    public async Task<IActionResult> UpdateComment(int ID, CommentUpdateDTO comment)
+        => (await _repository.UpdateComment(ID, comment)).Item1.ToActionResult();
 
     [Authorize]
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> DeleteComment(int ID)
-        => (await _repository.DeleteAsync(ID)).ToActionResult();
+        => (await _repository.RemoveComment(ID)).ToActionResult();
 }
