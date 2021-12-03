@@ -8,7 +8,20 @@ namespace SELearning.Infrastructure.Tests
 {
     public class CommentManagerTests
     {
-        ICommentService _service = new CommentManager();
+        ICommentService _service;
+        public CommentManagerTests()
+        {
+            //setting up the comment connection
+            var connection = new SqliteConnection("Filename=:memory:");
+            connection.Open();
+            var builder = new DbContextOptionsBuilder<CommentContext>();
+            builder.UseSqlite(connection);
+            CommentContext _context = new CommentContext(builder.Options);
+            _context.Database.EnsureCreated();
+
+            ICommentRepository _repo = new CommentRepository(_context);
+            _service = new CommentManager(_repo);
+        }
 
         [Theory]
         [InlineData("Amalie", "A really nice and professional video!")]
@@ -17,7 +30,6 @@ namespace SELearning.Infrastructure.Tests
         public void Post_given_acceptable_input_does_post(string author, string content)
         {
 
-            _service.PostComment(author, content);
             //TODO: how do i check that this has actually been done?
         }
 
@@ -27,7 +39,7 @@ namespace SELearning.Infrastructure.Tests
         [InlineData("", "")]
         public void Post_given_empty_content_throws_exception(string author, string content)
         {
-            _service.PostComment(author, content);
+        
 
             //TODO: how do i assert that it throws something and what do we want it to throw?
         }
