@@ -12,36 +12,54 @@ namespace SELearning.Infrastructure
         public CommentManager(ICommentRepository repo){
             _repo = repo;
         }
-        public void PostComment(string author, string content)
+        public void PostComment(CommentCreateDTO dto)
         {
-
+            if(_repo.AddComment(dto).Result.Item1 == OperationResult.NotFound)
+            {
+                throw new Exception("The content that the comment belongs to could not be found");    
+            }
         }
-        public void UpdateComment(Comment cmt)
+        public void UpdateComment(int id, CommentUpdateDTO dto)
         {
-            
+            if(_repo.UpdateComment(id, dto).Result.Item1 == OperationResult.NotFound)
+            {
+                throw new Exception("The comment could not be found");
+            }   
         }
-        public void RemoveComment(Comment cmt)
+        public void RemoveComment(int id)
         {
-
+            if(_repo.RemoveComment(id).Result == OperationResult.NotFound)
+            {
+                throw new Exception("The comment could not be found");
+            }     
         }
-        public void UpvoteComment(Comment cmt)
+        public void UpvoteComment(int id)
         {
-            cmt.Rating++;
-            UpdateComment(cmt);
+            Comment comment = _repo.GetCommentByCommentId(id).Result;
+            comment.Rating++;
+            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Text,comment.Rating);
+            UpdateComment(id,dto);
         }
-        public void DownvoteComment(Comment cmt)
+        public void DownvoteComment(int id)
         {
-            cmt.Rating--;
-            UpdateComment(cmt);
+            Comment comment = _repo.GetCommentByCommentId(id).Result;
+            comment.Rating--;
+            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Text,comment.Rating);
+            UpdateComment(id,dto);
         }
 
         public List<Comment> GetCommentsFromContentId(int contentId)
         {
-            return new List<Comment>();
+            var comments = _repo.GetCommentsByContentId(contentId).Result;
+            if(comments.Item2 == OperationResult.NotFound)
+            {
+                throw new Exception("The content that the comments belongs to could not be found");    
+            }
+            return comments.Item1;
         }
 
         public Comment GetCommentFromCommentId(int commentId){
-            return new Comment();
+            return _repo.GetCommentByCommentId(commentId).Result;
         }
 
     }

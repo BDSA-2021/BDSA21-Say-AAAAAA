@@ -2,11 +2,11 @@ namespace SELearning.Core.Comment
 {
     public interface ICommentService
     {
-        void PostComment(string author, string content);
-        void UpdateComment(Comment cmt);
-        void RemoveComment(Comment cmt);
-        void UpvoteComment(Comment cmt);
-        void DownvoteComment(Comment cmt);
+        void PostComment(CommentCreateDTO dto);
+        void UpdateComment(int id, CommentUpdateDTO dto);
+        void RemoveComment(int id);
+        void UpvoteComment(int id);
+        void DownvoteComment(int id);
 
         List<Comment> GetCommentsFromContentId(int contentId);
 
