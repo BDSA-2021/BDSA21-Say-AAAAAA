@@ -13,10 +13,13 @@ public class CredibilityCalculator : ICredibilityService
 
     async public Task<int> GetCredibilityScore(ClaimsPrincipal user)
     {
-        var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
 
-        var commentCredibilityScore = _credibilityRepository.GetCommentCredibilityScore(userId);
-        var contentCredibilityScore = _credibilityRepository.GetContentCredibilityScore(userId);
+        if(userIdClaim == null)
+            throw new NullReferenceException("User id claim not found!");
+
+        var commentCredibilityScore = _credibilityRepository.GetCommentCredibilityScore(userIdClaim.Value);
+        var contentCredibilityScore = _credibilityRepository.GetContentCredibilityScore(userIdClaim.Value);
         var scores = new[] { commentCredibilityScore, contentCredibilityScore };
 
         return (await Task.WhenAll(scores)).Sum();

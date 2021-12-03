@@ -11,7 +11,7 @@ public class PermissionPolicyProviderTests
 
     public PermissionPolicyProviderTests()
     {
-        _policyProvider = new PermissionPolicyProvider(Options.Create<AuthorizationOptions>(new AuthorizationOptions()), null);
+        _policyProvider = new PermissionPolicyProvider(Options.Create<AuthorizationOptions>(new AuthorizationOptions()), new PermissionCredibilityService());
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class PermissionPolicyProviderTests
     {
         var result = await _policyProvider.GetPolicyAsync("PermissionCreateComment");
 
-        Assert.Equal(new PermissionRequirement(Permission.CreateComment), result?.Requirements[0]);
+        Assert.Equal(new CredibilityPermissionRequirement(-10), result?.Requirements[0]);
     }
 
     [Fact]
