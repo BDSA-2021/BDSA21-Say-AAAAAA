@@ -12,12 +12,12 @@ namespace SELearning.API.Controllers;
 public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;
-    private readonly ICommentRepository _repository;
+    private readonly ICommentService _service;
 
-    public CommentController(ILogger<CommentController> logger, ICommentRepository repository)
+    public CommentController(ILogger<CommentController> logger, ICommentService service)
     {
         _logger = logger;
-        _repository = repository;
+        _service = service;
     }
 
     [Authorize]
@@ -25,7 +25,16 @@ public class CommentController : ControllerBase
     [ProducesResponseType(typeof(Comment), 200)] // OK
     [ProducesResponseType(404)] // Not Found
     public async Task<ActionResult<Comment>> GetComment(int id)
-        => (await _repository.GetCommentByCommentId(id)).ToActionResult();
+    {
+        try
+        {
+            return Ok(await _service.GetCommentFromCommentId(id));
+        }
+        catch (Exception)
+        {
+            return new NotFoundResult();
+        }
+    }
 
     [Authorize]
     [HttpGet("{contentID}")]
@@ -33,19 +42,31 @@ public class CommentController : ControllerBase
     [ProducesResponseType(404)] // Not Found
     public async Task<ActionResult<List<Comment>>> GetCommentsByContentID(int contentID)
     {
-        var (created, result) = await _repository.GetCommentsByContentId(contentID);
-        if (result == OperationResult.NotFound) return new NotFoundResult();
-        return Ok(created);
+        try
+        {
+            return Ok(await _service.GetCommentsFromContentId(contentID));
+        }
+        catch (Exception)
+        {
+            return new NotFoundResult();
+        }
     }
 
     [Authorize]
     [HttpPost]
     [ProducesResponseType(201)] // Created
-    public async Task<IActionResult> CreateComment(int contentID, CommentCreateDTO comment)
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> CreateComment(CommentCreateDTO comment)
     {
-        var (result, created) = await _repository.AddComment(comment);
-        if (result == OperationResult.NotFound) { return new NotFoundResult(); }
-        return CreatedAtRoute(nameof(GetComment), new { created.Id }, created);
+        try
+        {
+            await _service.PostComment(comment);
+            return Created(nameof(GetComment), new { comment.ContentId });
+        }
+        catch (Exception)
+        {
+            return new NotFoundResult();
+        }
     }
 
     [Authorize]
@@ -53,12 +74,66 @@ public class CommentController : ControllerBase
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> UpdateComment(int ID, CommentUpdateDTO comment)
-        => (await _repository.UpdateComment(ID, comment)).Item1.ToActionResult();
+    {
+        try
+        {
+            await _service.UpdateComment(ID, comment);
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return new NotFoundResult();
+        }
+    }
 
     [Authorize]
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> DeleteComment(int ID)
-        => (await _repository.RemoveComment(ID)).ToActionResult();
+    {
+        try
+        {
+            await _service.RemoveComment(ID);
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return new NotFoundResult();
+        }
+    }
+
+    [Authorize]
+    [HttpDelete("{ID}")]
+    [ProducesResponseType(204)] // No Content
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> UpvoteComment(int ID)
+    {
+        try
+        {
+            await _service.UpvoteComment(ID);
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return new NotFoundResult();
+        }
+    }
+
+    [Authorize]
+    [HttpDelete("{ID}")]
+    [ProducesResponseType(204)] // No Content
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> DownvoteComment(int ID)
+    {
+        try
+        {
+            await _service.DownvoteComment(ID);
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return new NotFoundResult();
+        }
+    }
 }
