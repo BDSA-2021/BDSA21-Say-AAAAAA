@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
 using SELearning.Core;
+using SELearning.Core.Comment;
+using SELearning.Core.Content;
+using SELearning.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +23,8 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        var expected = new CommentDTO(1);
-        repository.Setup(m => m.GetAsync(1)).ReturnsAsync(expected);
+        var expected = new Comment { Id = 1 };
+        repository.Setup(m => m.GetCommentByCommentId(1)).ReturnsAsync(expected);
 
         var controller = new CommentController(logger.Object, repository.Object);
 
@@ -39,7 +42,7 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        repository.Setup(m => m.GetAsync(42)).ReturnsAsync(default(CommentDTO));
+        repository.Setup(m => m.GetCommentByCommentId(42)).ReturnsAsync(default(Comment));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
@@ -57,8 +60,8 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        var expected = Array.Empty<CommentDTO>();
-        repository.Setup(m => m.GetAsyncByContentID(1)).ReturnsAsync(expected);
+        var expected = new List<Comment>();
+        repository.Setup(m => m.GetCommentsByContentId(1)).ReturnsAsync((expected, OperationResult.Succes));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
@@ -70,14 +73,15 @@ public class CommentControllerTest
     }
 
     [Fact]
-    public async Task CreateComment_Given_Valid_ContentID_Returns_CommentDTO()
+    public async Task CreateComment_Given_CommentCreateDTO_With_Valid_ContentID_Returns_CommentDetailsDTO()
     {
         // Arrange
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        var comment = new CommentDTO(1);
-        repository.Setup(m => m.CreateAsync(1, comment)).ReturnsAsync((OperationResult.Created, comment));
+        var comment = new CommentCreateDTO("Author", "Text", 1);
+        var expected = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 42, new Content());
+        repository.Setup(m => m.AddComment(comment)).ReturnsAsync((OperationResult.Created, expected));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
@@ -85,9 +89,15 @@ public class CommentControllerTest
         var result = await controller.CreateComment(1, comment) as CreatedAtRouteResult;
 
         // Assert
-        Assert.Equal(comment, result?.Value);
+        Assert.Equal(expected, result?.Value);
         Assert.Equal("GetComment", result?.RouteName);
         Assert.Equal(KeyValuePair.Create("ID", (object?)1), result?.RouteValues?.Single());
+    }
+
+    [Fact]
+    public void CreateComment_Given_CommentCreateDTO_With_Invalid_ContentID_ContentID_Returns_NotFound()
+    {
+        Assert.True(false);
     }
 
     [Fact]
@@ -97,13 +107,14 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        var comment = new CommentDTO(1);
-        repository.Setup(m => m.UpdateAsync(1, comment)).ReturnsAsync((OperationResult.Updated, comment));
+        var update = new CommentUpdateDTO("Text", 42);
+        var details = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 42, new Content());
+        repository.Setup(m => m.UpdateComment(1, update)).ReturnsAsync((OperationResult.Updated, details));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.UpdateComment(1, comment);
+        var response = await controller.UpdateComment(1, update);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -116,13 +127,14 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        var comment = new CommentDTO(1);
-        repository.Setup(m => m.UpdateAsync(42, comment)).ReturnsAsync((OperationResult.NotFound, new CommentDTO(-1)));
+        var update = new CommentUpdateDTO("Text", 42);
+        var details = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 42, new Content());
+        repository.Setup(m => m.UpdateComment(42, update)).ReturnsAsync((OperationResult.NotFound, details));
 
         var controller = new CommentController(logger.Object, repository.Object);
 
         // Act
-        var response = await controller.UpdateComment(42, comment);
+        var response = await controller.UpdateComment(42, update);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -135,7 +147,7 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        repository.Setup(m => m.DeleteAsync(1)).ReturnsAsync(OperationResult.Deleted);
+        repository.Setup(m => m.RemoveComment(1)).ReturnsAsync(OperationResult.Deleted);
 
         var controller = new CommentController(logger.Object, repository.Object);
 
@@ -153,7 +165,7 @@ public class CommentControllerTest
         var logger = new Mock<ILogger<CommentController>>();
         var repository = new Mock<ICommentRepository>();
 
-        repository.Setup(m => m.DeleteAsync(42)).ReturnsAsync(OperationResult.NotFound);
+        repository.Setup(m => m.RemoveComment(42)).ReturnsAsync(OperationResult.NotFound);
 
         var controller = new CommentController(logger.Object, repository.Object);
 
