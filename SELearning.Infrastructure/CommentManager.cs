@@ -62,14 +62,14 @@ namespace SELearning.Infrastructure
 
         public async Task<List<Comment>> GetCommentsFromContentId(int contentId)
         {
-            var comments = await _repo.GetCommentsByContentId(contentId);
+            var (comments, result) = await _repo.GetCommentsByContentId(contentId);
 
-            if (comments.Item2 == OperationResult.NotFound)
+            if (result == OperationResult.NotFound)
             {
                 throw new Exception("The content that the comments belongs to could not be found");
             }
 
-            return comments.Item1;
+            return comments;
         }
 
         public async Task<Comment> GetCommentFromCommentId(int commentId)
