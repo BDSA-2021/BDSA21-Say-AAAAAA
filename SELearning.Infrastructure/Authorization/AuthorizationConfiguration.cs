@@ -12,9 +12,6 @@ public static class AuthorizationConfiguration
         services.AddSingleton<IAuthorizationHandler, CredibilityAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
-        // Add permission service
-        services.AddSingleton<IPermissionService, PermissionDecider>();
-
         return new(services);
     }
 }

@@ -12,24 +12,12 @@ public class PermissionBuilder
 {
     public IServiceCollection Services { get; }
 
-    private Dictionary<Permission, IList<Rule>> _permissions = new();
-
     public PermissionBuilder(IServiceCollection services) 
         => Services = services;
 
-    /// <summary>
-    /// Adds a rule to permission
-    /// </summary>
-    /// <param name="permissionKey">Permission to add the rule to</param>
-    /// <param name="rule">Rule to add to the permission</param>
-    /// <returns>Returns the current builder</returns>
-    public PermissionBuilder AddRule(Permission permissionKey, Rule rule)
+    public PermissionBuilder AddPermissionCredibilityService(IPermissionCredibilityService service)
     {
-        if(!_permissions.ContainsKey(permissionKey))
-            _permissions[permissionKey] = new List<Rule>();
-
-        _permissions[permissionKey].Add(rule);
-
+        Services.TryAddSingleton<IPermissionCredibilityService>(service);
         return this;
     }
 
@@ -38,7 +26,6 @@ public class PermissionBuilder
     /// </summary>
     public void Build()
     {
-        Services.TryAddSingleton<IDictionary<Permission, IEnumerable<Rule>>>(
-            x => (IDictionary<Permission, IEnumerable<Rule>>)_permissions);
+        Services.TryAddSingleton<IPermissionCredibilityService>(); // TODO: Add default service
     }
 }

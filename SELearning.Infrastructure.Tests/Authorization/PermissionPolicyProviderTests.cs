@@ -11,7 +11,7 @@ public class PermissionPolicyProviderTests
 
     public PermissionPolicyProviderTests()
     {
-        _policyProvider = new PermissionPolicyProvider(Options.Create<AuthorizationOptions>(new AuthorizationOptions()));
+        _policyProvider = new PermissionPolicyProvider(Options.Create<AuthorizationOptions>(new AuthorizationOptions()), null);
     }
 
     [Fact]

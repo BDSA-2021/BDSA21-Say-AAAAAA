@@ -4,7 +4,7 @@ using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.Infrastructure.Tests;
 
-public class PermissionAuthorizationHandlerTests
+public class CredibilityAuthorizationHandlerTests
 {
     AuthorizationHandlerContext HandleAsync_WithIsPermitted(bool isPermitted)
     {
@@ -13,10 +13,10 @@ public class PermissionAuthorizationHandlerTests
 
         var authContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, null);
 
-        var permissionService = new Mock<IPermissionService>();
-        permissionService.Setup(m => m.IsAllowed(user, Permission.CreateContent)).ReturnsAsync(isPermitted);
+        var permissionService = new Mock<ICredibilityService>();
+        permissionService.Setup(m => m.GetCredibilityScore(user)).ReturnsAsync(1000);
 
-        var authHandler = new PermissionAuthorizationHandler(permissionService.Object);
+        var authHandler = new CredibilityAuthorizationHandler(permissionService.Object);
         authHandler.HandleAsync(authContext).Wait();
 
         return authContext;

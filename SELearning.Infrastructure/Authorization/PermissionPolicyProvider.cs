@@ -11,7 +11,13 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {
     private DefaultAuthorizationPolicyProvider DefaultProvider { get; }
 
-    public PermissionPolicyProvider(IOptions<AuthorizationOptions> options) => DefaultProvider = new DefaultAuthorizationPolicyProvider(options);
+    private readonly IPermissionCredibilityService _permissionCredibilityService;
+
+    public PermissionPolicyProvider(IOptions<AuthorizationOptions> options, IPermissionCredibilityService permissionCredibilityService) 
+    { 
+        DefaultProvider = new DefaultAuthorizationPolicyProvider(options);
+        _permissionCredibilityService = permissionCredibilityService;
+    }
 
     public async Task<AuthorizationPolicy> GetDefaultPolicyAsync() => await DefaultProvider.GetDefaultPolicyAsync();
 
@@ -30,10 +36,10 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         if (!TryParsePolicyPermission(policyName, out Permission parsedPermission))
             return await DefaultProvider.GetPolicyAsync(policyName); // Could not parse permission... fallback to default implementation
 
-        // TODO: Get Credibility score for specific permission
+        int requiredCredibilityScore = await _permissionCredibilityService.GetRequiredCredibility(parsedPermission);
 
         var policy = new AuthorizationPolicyBuilder();
-        policy.AddRequirements(new PermissionRequirement(parsedPermission), new CredibilityPermissionRequirement(0));
+        policy.AddRequirements(new CredibilityPermissionRequirement(requiredCredibilityScore));
 
         return policy.Build();
     }
