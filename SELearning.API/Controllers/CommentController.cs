@@ -34,10 +34,8 @@ public class CommentController : ControllerBase
     public async Task<ActionResult<List<Comment>>> GetCommentsByContentID(int contentID)
     {
         var (created, result) = await _repository.GetCommentsByContentId(contentID);
-        if(result == OperationResult.NotFound){
-            return new NotFoundResult();
-        }
-        else return Ok(created);
+        if (result == OperationResult.NotFound) return new NotFoundResult();
+        return Ok(created);
     }
 
     [Authorize]
@@ -46,6 +44,7 @@ public class CommentController : ControllerBase
     public async Task<IActionResult> CreateComment(int contentID, CommentCreateDTO comment)
     {
         var (result, created) = await _repository.AddComment(comment);
+        if (result == OperationResult.NotFound) { return new NotFoundResult(); }
         return CreatedAtRoute(nameof(GetComment), new { created.Id }, created);
     }
 
