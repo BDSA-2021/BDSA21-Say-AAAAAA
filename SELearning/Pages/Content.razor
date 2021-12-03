@@ -10,9 +10,18 @@
         <p>@_Content.Author | @_Content.CreatedAt.ToString("dddd, dd MMMM yyyy")</p>
     </div>
     <div class="rating-container">
-        <div role="button" class="arrow-up"></div>
+        <div
+            role="button"
+            class="@((RateAmount > 0 ? "active" : "") + " arrow-up")"
+            onclick="@OnUpvoteClicked"
+        ></div>
         <span class="rating">@_Content.Rating</span>
-        <div role="button" class="arrow-down"></div>
+        <div role="button"  ></div>
+        <div
+            role="button"
+            class="@((RateAmount < 0 ? "active" : "") + " arrow-down")"
+            onclick="@OnDownvoteClicked"
+        ></div>
     </div>
 </section>
 <p class="description">@_Content.Description</p>
@@ -32,6 +41,8 @@
         Description = "ZywOO skilled player but that is not normally, This very very insane....They need to check him pc and game.....Maybe he not cheating but maybe he using the game deficit ...and this cant seem on game screen..He needs to check-up....Day0s FPL Cheater with Streaming.....I think day0s still cheating...Zyw00 using game deficit on PRO scene ,ON BIG Events.Maybe everyone dont knows him trick.He incredible....I want to ask his where is the comming of your skill's ?"
     };
 
+    public int RateAmount { get; set; } = 0;
+
     record ContentPlaceholder
     {
         public string Title { get; init; }
@@ -41,4 +52,8 @@
         public DateTime CreatedAt { get; init; } // TODO: custom user object from backend?
         public int Rating { get; init; }
     }
+
+    void OnUpvoteClicked() => RateAmount = RateAmount > 0 ? 0 : 1;
+
+    void OnDownvoteClicked() => RateAmount = RateAmount < 0 ? 0 : -1;
 }
