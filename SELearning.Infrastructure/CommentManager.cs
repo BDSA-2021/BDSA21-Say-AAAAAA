@@ -35,16 +35,24 @@ namespace SELearning.Infrastructure
         }
         public void UpvoteComment(int id)
         {
-            Comment comment = _repo.GetCommentByCommentId(id).Result;
-            comment.Rating++;
-            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Text,comment.Rating);
+            var comment = _repo.GetCommentByCommentId(id).Result;
+            if(comment.IsNone)
+            {
+                throw new Exception("The comment could not be found");    
+            }
+            comment.Value.Rating++;
+            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text,comment.Value.Rating);
             UpdateComment(id,dto);
         }
         public void DownvoteComment(int id)
         {
-            Comment comment = _repo.GetCommentByCommentId(id).Result;
-            comment.Rating--;
-            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Text,comment.Rating);
+            var comment = _repo.GetCommentByCommentId(id).Result;
+            if(comment.IsNone)
+            {
+                throw new Exception("The comment could not be found");    
+            }
+            comment.Value.Rating--;
+            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text,comment.Value.Rating);
             UpdateComment(id,dto);
         }
 
@@ -59,7 +67,12 @@ namespace SELearning.Infrastructure
         }
 
         public Comment GetCommentFromCommentId(int commentId){
-            return _repo.GetCommentByCommentId(commentId).Result;
+            var comment = _repo.GetCommentByCommentId(commentId).Result;
+            if(comment.IsNone)
+            {
+                throw new Exception("The comment could not be found");    
+            }
+            return comment.Value;
         }
 
     }
