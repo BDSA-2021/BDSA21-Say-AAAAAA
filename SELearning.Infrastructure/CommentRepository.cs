@@ -69,16 +69,9 @@ namespace SELearning.Infrastructure
             return (OperationResult.Deleted);
         }
 
-        public async Task<(Comment?, OperationResult)> GetCommentByCommentId(int commentId)
+        public async Task<Option<Comment>> GetCommentByCommentId(int commentId)
         {
-            Comment comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
-
-            if (comment == null)
-            {
-                return (null, OperationResult.NotFound);
-            }
-
-            return (comment, OperationResult.Succes);
+            return await _context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
         }
 
         public async Task<(List<Comment>?, OperationResult)> GetCommentsByContentId(int contentId)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.Comment;
 
 namespace SELearning.API.Controllers;
 
@@ -21,22 +22,22 @@ public class CommentController : ControllerBase
 
     [Authorize]
     [HttpGet("{ID}")]
-    [ProducesResponseType(typeof(CommentDTO), 200)] // OK
+    [ProducesResponseType(typeof(Comment), 200)] // OK
     [ProducesResponseType(404)] // Not Found
-    public async Task<ActionResult<CommentDTO>> GetComment(int id)
-        => (await _repository.GetAsync(id)).ToActionResult();
+    public async Task<ActionResult<Comment>> GetComment(int id)
+        => (await _repository.GetCommentByCommentId(id)).ToActionResult();
 
     [Authorize]
     [HttpGet("{contentID}")]
-    [ProducesResponseType(typeof(CommentDTO), 200)] // OK
+    [ProducesResponseType(typeof(List<Comment>), 200)] // OK
     [ProducesResponseType(404)] // Not Found
-    public async Task<IReadOnlyCollection<CommentDTO>> GetCommentsByContentID(int contentID)
-        => await _repository.GetAsyncByContentID(contentID);
+    public async Task<List<Comment>> GetCommentsByContentID(int contentID)
+        => (await _repository.GetCommentsByContentId(contentID));
 
     [Authorize]
     [HttpPost]
     [ProducesResponseType(201)] // Created
-    public async Task<IActionResult> CreateComment(int contentID, CommentDTO comment)
+    public async Task<IActionResult> CreateComment(int contentID, CommentCreateDTO comment)
     {
         var (result, created) = await _repository.CreateAsync(contentID, comment);
         return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);

@@ -5,15 +5,20 @@ using System;
 
 namespace SELearning.Infrastructure
 {
+
     public class CommentManager : ICommentService
     {
+        ICommentService _service;
+        public CommentManager(ICommentService service){
+            _service = service;
+        }
         public void PostComment(string author, string content)
         {
 
         }
         public void UpdateComment(Comment cmt)
         {
-
+            
         }
         public void RemoveComment(Comment cmt)
         {
@@ -33,6 +38,10 @@ namespace SELearning.Infrastructure
         public List<Comment> GetCommentsFromContentId(int contentId)
         {
             return new List<Comment>();
+        }
+
+        public Comment GetCommentFromCommentId(int commentId){
+            return new Comment();
         }
 
     }

@@ -10,5 +10,7 @@ namespace SELearning.Core.Comment
 
         List<Comment> GetCommentsFromContentId(int contentId);
 
+        Comment GetCommentFromCommentId(int commentId);
+
     }
 }
