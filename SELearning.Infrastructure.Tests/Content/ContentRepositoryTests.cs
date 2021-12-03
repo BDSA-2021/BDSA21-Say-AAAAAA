@@ -68,7 +68,7 @@ public class ContentRepositoryTests : IDisposable
         var contentList = new List<Content>();
         var section = new SectionCreateDto { Title = "title", Description = "description", Content = contentList };
 
-        var (status, created) = await _repository.CreateSectionAsync(section);
+        var (status, created) = await _repository.AddSection(section);
 
         Assert.NotNull(created.Id);
         Assert.Equal("title", created.Title);
@@ -82,7 +82,7 @@ public class ContentRepositoryTests : IDisposable
         var contentList = new List<Content>();
         var section = new SectionCreateDto { Title = "title", Description = "description", Content = contentList };
 
-        var (status, created) = await _repository.CreateSectionAsync(section);
+        var (status, created) = await _repository.AddSection(section);
 
         var sectionDto = new SectionDto { Id = 2, Title = "title", Description = "description", Content = contentList };
 
@@ -109,7 +109,7 @@ public class ContentRepositoryTests : IDisposable
             Content = contentList
         };
 
-        var reponse = await _repository.UpdateSectionAsync(42, section);
+        var reponse = await _repository.UpdateSection(42, section);
 
         Assert.Equal(OperationResult.NotFound, reponse);
     }
@@ -146,7 +146,7 @@ public class ContentRepositoryTests : IDisposable
             Content = contentList
         };
 
-        var updated = await _repository.UpdateSectionAsync(1, section);
+        var updated = await _repository.UpdateSection(1, section);
 
         Assert.Equal(OperationResult.Updated, updated);
     }
@@ -162,7 +162,7 @@ public class ContentRepositoryTests : IDisposable
             Content = contentList
         };
 
-        var response = await _repository.UpdateSectionAsync(42, section);
+        var response = await _repository.UpdateSection(42, section);
 
         Assert.Equal(OperationResult.NotFound, response);
     }
@@ -178,7 +178,7 @@ public class ContentRepositoryTests : IDisposable
             Content = contentList
         };
 
-        var response = await _repository.UpdateSectionAsync(1, section);
+        var response = await _repository.UpdateSection(1, section);
 
         var entity = await _context.Section.FirstAsync(c => c.Title == "new title");
 
@@ -188,7 +188,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task DeleteSectionAsync_given_non_existing_Id_returns_NotFound()
     {
-        var response = await _repository.DeleteSectionAsync(42);
+        var response = await _repository.DeleteSection(42);
 
         Assert.Equal(OperationResult.NotFound, response);
     }
@@ -196,12 +196,31 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task DeleteSectionAsync_deletes_and_returns_Deleted()
     {
-        var response = await _repository.DeleteSectionAsync(1);
+        var response = await _repository.DeleteSection(1);
 
         var entity = await _context.Section.FindAsync(1);
 
         Assert.Equal(OperationResult.Deleted, response);
         Assert.Null(entity);
+    }
+
+    [Fact]
+    public async Task GetContentInSection_returns_Content()
+    {
+        var contentInSection = await _repository.GetContentInSection(1);
+
+        var content = from c in _section.Content
+                         select new ContentDto {
+                             Id = c.Id,
+                             Author = c.Author,
+                             Title = c.Title,
+                             Description = c.Description,
+                             Section = c.Section,
+                             VideoLink = c.VideoLink,
+                             Rating = c.Rating
+                         };
+
+        Assert.Equal(content, contentInSection);
     }
 
 
@@ -223,7 +242,7 @@ public class ContentRepositoryTests : IDisposable
             Rating = 3,
         };
 
-        var (status, created) = await _repository.CreateContentAsync(content);
+        var (status, created) = await _repository.AddContent(content);
 
         Assert.NotNull(created.Id);
         Assert.Equal(_section, created.Section);
@@ -247,7 +266,7 @@ public class ContentRepositoryTests : IDisposable
             Rating = 3,
         };
 
-        var (status, created) = await _repository.CreateContentAsync(content);
+        var (status, created) = await _repository.AddContent(content);
 
         var contentDto = new ContentDto {
             Id = 5,
@@ -266,7 +285,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task ReadContentAsync_given_non_existing_id_returns_None()
     {
-        var option = await _repository.ReadContentAsync(42);
+        var option = await _repository.GetContent(42);
 
         Assert.True(option.IsNone);
     }
@@ -284,7 +303,7 @@ public class ContentRepositoryTests : IDisposable
             Rating = 3,
         };
 
-        var reponse = await _repository.UpdateContentAsync(42, content);
+        var reponse = await _repository.UpdateContent(42, content);
 
         Assert.Equal(OperationResult.NotFound, reponse);
     }
@@ -292,7 +311,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task ReadContentAsync_given_existing_id_returns_Content()
     {
-        var option = await _repository.ReadContentAsync(1);
+        var option = await _repository.GetContent(1);
 
         var content = new ContentDto { Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
@@ -303,7 +322,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task ReadContentAsync_returns_all_content()
     {
-    var allContent = await _repository.ReadContentAsync();
+    var allContent = await _repository.GetContent();
         var contentDto1 = new ContentDto {Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
         var contentDto2 = new ContentDto {Id = 2, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
         var contentDto3 = new ContentDto {Id = 3, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
@@ -323,7 +342,7 @@ public class ContentRepositoryTests : IDisposable
     {
         var content = new ContentUpdateDto { Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
-        var updated = await _repository.UpdateContentAsync(1, content);
+        var updated = await _repository.UpdateContent(1, content);
 
         Assert.Equal(OperationResult.Updated, updated);
     }
@@ -333,7 +352,7 @@ public class ContentRepositoryTests : IDisposable
     {
         var content = new ContentUpdateDto { Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
-        var response = await _repository.UpdateContentAsync(42, content);
+        var response = await _repository.UpdateContent(42, content);
 
         Assert.Equal(OperationResult.NotFound, response);
     }
@@ -344,7 +363,7 @@ public class ContentRepositoryTests : IDisposable
     {
         var contentDto = new ContentUpdateDto {Section = _section, Author = "author", Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
-        var response = await _repository.UpdateContentAsync(1, contentDto);
+        var response = await _repository.UpdateContent(1, contentDto);
 
         var entity = await _context.Content.FirstAsync(c => c.Title == "new title");
 
@@ -354,7 +373,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task DeleteContentAsync_given_non_existing_Id_returns_NotFound()
     {
-        var response = await _repository.DeleteContentAsync(42);
+        var response = await _repository.DeleteContent(42);
 
         Assert.Equal(OperationResult.NotFound, response);
     }
@@ -362,7 +381,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task DeleteContentAsync_deletes_and_returns_Deleted()
     {
-        var response = await _repository.DeleteContentAsync(2);
+        var response = await _repository.DeleteContent(2);
 
         var entity = await _context.Content.FindAsync(2);
 

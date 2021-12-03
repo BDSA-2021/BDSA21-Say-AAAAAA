@@ -7,7 +7,7 @@ public class ContentRepository : IContentRepository
     {
         _context = context;
     }
-    public async Task<(OperationResult, ContentDto)> CreateContentAsync(ContentCreateDto content)
+    public async Task<(OperationResult, ContentDto)> AddContent(ContentCreateDto content)
     {
         var entity = new Content {
            Section = content.Section,
@@ -35,7 +35,7 @@ public class ContentRepository : IContentRepository
         return (OperationResult.Created, contentDto);
     }
 
-    public async Task<OperationResult> UpdateContentAsync(int id, ContentUpdateDto content)
+    public async Task<OperationResult> UpdateContent(int id, ContentUpdateDto content)
     {
         var entity = await _context.Content.FirstOrDefaultAsync(c => c.Id == id);
 
@@ -53,7 +53,7 @@ public class ContentRepository : IContentRepository
         return OperationResult.Updated;
     }
 
-    public async Task<Option<ContentDto>> ReadContentAsync(int contentId)
+    public async Task<Option<ContentDto>> GetContent(int contentId)
     {
         var content = from c in _context.Content
                          where c.Id == contentId
@@ -70,7 +70,7 @@ public class ContentRepository : IContentRepository
         return await content.FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyCollection<ContentDto>> ReadContentAsync() =>
+    public async Task<IReadOnlyCollection<ContentDto>> GetContent() =>
         (await _context.Content
                        .Select(c => new ContentDto {
                            Id  = c.Id,  Section = c.Section, Author = c.Author, Title = c.Title, Description = c.Description, VideoLink = c.VideoLink, Rating = c.Rating
@@ -78,7 +78,7 @@ public class ContentRepository : IContentRepository
                        .ToListAsync())
                        .AsReadOnly();
 
-    public async Task<OperationResult> DeleteContentAsync(int contentId)
+    public async Task<OperationResult> DeleteContent(int contentId)
     {
         var entity = await _context.Content.FindAsync(contentId);
 
@@ -92,13 +92,8 @@ public class ContentRepository : IContentRepository
 
         return OperationResult.Deleted;
     }
-
-    public List<Content> GetContent()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<(OperationResult, SectionDto)> CreateSectionAsync(SectionCreateDto section)
+    
+    public async Task<(OperationResult, SectionDto)> AddSection(SectionCreateDto section)
     {
         var entity = new Section {
            Title = section.Title,
@@ -120,7 +115,7 @@ public class ContentRepository : IContentRepository
         return (OperationResult.Created, contentDto);
     }
 
-    public async Task<OperationResult> UpdateSectionAsync(int id, SectionUpdateDto section)
+    public async Task<OperationResult> UpdateSection(int id, SectionUpdateDto section)
     {
         var entity = await _context.Section.FirstOrDefaultAsync(s => s.Id == id);
 
@@ -138,7 +133,7 @@ public class ContentRepository : IContentRepository
         return OperationResult.Updated;
     }
 
-    public async Task<OperationResult> DeleteSectionAsync(int id)
+    public async Task<OperationResult> DeleteSection(int id)
     {
         var entity = await _context.Section.FindAsync(id);
 
@@ -151,11 +146,6 @@ public class ContentRepository : IContentRepository
         await _context.SaveChangesAsync();
 
         return OperationResult.Deleted;
-    }
-
-    public List<Content> GetContentInSection(int id)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<IReadOnlyCollection<SectionDto>> ReadSectionAsync() =>
@@ -178,5 +168,25 @@ public class ContentRepository : IContentRepository
                          };
 
         return await section.FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyCollection<ContentDto>?> GetContentInSection(int id)
+    {
+        var section = _context.Section.Single(s => s.Id == id);
+
+                var content = from c in _context.Content
+                         where c.Section == section
+                         select new ContentDto {
+                             Id = c.Id,
+                             Author = c.Author,
+                             Title = c.Title,
+                             Description = c.Description,
+                             Section = c.Section,
+                             VideoLink = c.VideoLink,
+                             Rating = c.Rating
+                         };
+
+                        return (await content.ToListAsync()).AsReadOnly();
+                        
     }
 }
