@@ -122,7 +122,7 @@ namespace SELearning.Infrastructure.Tests
             Assert.Equal(OperationResult.Deleted, removed);
 
             var tryRead = await _repository.GetCommentByCommentId(2);
-            Assert.Null(tryRead.Value);
+            Assert.True(tryRead.IsNone);
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace SELearning.Infrastructure.Tests
         {
             var read = await _repository.GetCommentByCommentId(90);
 
-            Assert.Null(read.Value);
+            Assert.True(read.IsNone);
         }
 
         [Fact]
