@@ -33,8 +33,7 @@ builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(co
 builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
 
-builder.Services.AddPermissionAuthorization()
-                    .Build();
+builder.Services.AddPermissionAuthorization().Build();
 #endregion
 
 var app = builder.Build();
