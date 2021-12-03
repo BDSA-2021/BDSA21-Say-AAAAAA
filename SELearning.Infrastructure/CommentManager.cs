@@ -8,9 +8,9 @@ namespace SELearning.Infrastructure
 
     public class CommentManager : ICommentService
     {
-        ICommentService _service;
-        public CommentManager(ICommentService service){
-            _service = service;
+        ICommentRepository _repo;
+        public CommentManager(ICommentRepository repo){
+            _repo = repo;
         }
         public void PostComment(string author, string content)
         {
