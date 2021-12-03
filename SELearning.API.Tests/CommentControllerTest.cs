@@ -183,4 +183,68 @@ public class CommentControllerTest
         // Assert
         Assert.IsType<NotFoundResult>(response);
     }
+
+    [Fact]
+    public async Task UpvoteComment_Given_Valid_ID_Returns_NoContent()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var service = new Mock<ICommentService>();
+        var controller = new CommentController(logger.Object, service.Object);
+
+        // Act
+        var response = await controller.UpvoteComment(1);
+
+        // Assert
+        Assert.IsType<NoContentResult>(response);
+    }
+
+    [Fact]
+    public async Task UpvoteComment_Given_Invalid_ID_Returns_NotFound()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var service = new Mock<ICommentService>();
+        var controller = new CommentController(logger.Object, service.Object);
+
+        service.Setup(m => m.UpvoteComment(-1)).ThrowsAsync(new Exception());
+
+        // Act
+        var response = await controller.UpvoteComment(-1);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(response);
+    }
+
+    [Fact]
+    public async Task DownvoteComment_Given_Valid_ID_Returns_NoContent()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var service = new Mock<ICommentService>();
+        var controller = new CommentController(logger.Object, service.Object);
+
+        // Act
+        var response = await controller.DownvoteComment(1);
+
+        // Assert
+        Assert.IsType<NoContentResult>(response);
+    }
+
+    [Fact]
+    public async Task DownvoteComment_Given_Invalid_ID_Returns_NotFound()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<CommentController>>();
+        var service = new Mock<ICommentService>();
+        var controller = new CommentController(logger.Object, service.Object);
+
+        service.Setup(m => m.DownvoteComment(-1)).ThrowsAsync(new Exception());
+
+        // Act
+        var response = await controller.DownvoteComment(-1);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(response);
+    }
 }
