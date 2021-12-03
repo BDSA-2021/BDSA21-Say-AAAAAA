@@ -26,7 +26,7 @@ public class CommentControllerTest
         var expected = new Comment { Id = 1 };
         repository.Setup(m => m.GetCommentByCommentId(1)).ReturnsAsync(expected);
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var actual = (await controller.GetComment(1)).Value;
@@ -44,7 +44,7 @@ public class CommentControllerTest
 
         repository.Setup(m => m.GetCommentByCommentId(42)).ReturnsAsync(default(Comment));
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var response = await controller.GetComment(42);
@@ -63,7 +63,7 @@ public class CommentControllerTest
         var expected = new List<Comment>();
         repository.Setup(m => m.GetCommentsByContentId(1)).ReturnsAsync((expected, OperationResult.Succes));
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var actual = ((await controller.GetCommentsByContentID(1)).Result as OkObjectResult)!.Value;
@@ -83,7 +83,7 @@ public class CommentControllerTest
         var expected = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 42, new Content());
         repository.Setup(m => m.AddComment(comment)).ReturnsAsync((OperationResult.Created, expected));
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var result = await controller.CreateComment(1, comment) as CreatedAtRouteResult;
@@ -104,7 +104,7 @@ public class CommentControllerTest
         var comment = new CommentCreateDTO("Author", "Text", 42);
         repository.Setup(m => m.AddComment(comment)).ReturnsAsync((OperationResult.NotFound, default(CommentDetailsDTO)!));
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var response = await controller.CreateComment(1, comment);
@@ -123,7 +123,7 @@ public class CommentControllerTest
         var comment = new CommentUpdateDTO("Text", 42);
         repository.Setup(m => m.UpdateComment(1, comment)).ReturnsAsync((OperationResult.Updated, default(CommentDetailsDTO)!));
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var response = await controller.UpdateComment(1, comment);
@@ -142,7 +142,7 @@ public class CommentControllerTest
         var comment = new CommentUpdateDTO("Text", 42);
         repository.Setup(m => m.UpdateComment(42, comment)).ReturnsAsync((OperationResult.NotFound, default(CommentDetailsDTO)!));
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var response = await controller.UpdateComment(42, comment);
@@ -160,7 +160,7 @@ public class CommentControllerTest
 
         repository.Setup(m => m.RemoveComment(1)).ReturnsAsync(OperationResult.Deleted);
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var response = await controller.DeleteComment(1);
@@ -178,7 +178,7 @@ public class CommentControllerTest
 
         repository.Setup(m => m.RemoveComment(42)).ReturnsAsync(OperationResult.NotFound);
 
-        var controller = new CommentController(logger.Object, repository.Object);
+        var controller = new CommentController(logger.Object, (ICommentService)repository.Object);
 
         // Act
         var response = await controller.DeleteComment(42);
