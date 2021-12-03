@@ -9,6 +9,29 @@ namespace SELearning.Infrastructure.Tests
     public class CommentManagerTests
     {
         ICommentService _service;
+        private static readonly Section section = new Section
+        {
+            Id = "1",
+            Title = "C#",
+            Description = "C# tools",
+            Content = new List<Content>()
+        };
+        private static readonly Content content = new Content
+        {
+            Author = "Sarah",
+            Section = section,
+            Id = 1,
+            Title = "Video on Entity Core",
+            Description = "Nice",
+            VideoLink = "www.hej.dk"
+        };
+        private IEnumerable<Comment> _comments = new List<Comment>()
+        {
+            new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content, Rating = -10 },
+                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
+                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
+                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content, Rating = 28 }
+        };
         public CommentManagerTests()
         {
             //setting up the comment connection
@@ -21,147 +44,93 @@ namespace SELearning.Infrastructure.Tests
 
             ICommentRepository _repo = new CommentRepository(_context);
             _service = new CommentManager(_repo);
+
+            section.Content.Add(content);
+
+            _context.Comments.AddRange(
+                _comments
+            );
+
+            _context.SaveChanges();
         }
 
-        [Theory]
-        [InlineData("Amalie", "A really nice and professional video!")]
-        [InlineData("Y84Gmig", "Found this very confusing...")]
-        [InlineData("Anonymous user from ITU", "Cool explanation, but i didn't exactly get the part on regression testing. Can someone elaborate?")]
-        public void Post_given_acceptable_input_does_post(string author, string content)
+        public void Post_given_acceptable_input_does_post()
         {
 
-            //TODO: how do i check that this has actually been done?
         }
 
-        [Theory]
-        [InlineData("Amalie", "")]
-        [InlineData("Y84Gmig", "    ")]
-        [InlineData("", "")]
-        public void Post_given_empty_content_throws_exception(string author, string content)
+
+        public void Post_given_empty_content_throws_exception()
         {
         
-
-            //TODO: how do i assert that it throws something and what do we want it to throw?
         }
 
         [Fact]
         public void Update_given_new_content_succeeds()
         {
-            //TODO: how to do this? 
+           
         }
 
         [Fact]
         public void Remove_given_comment_succeeds()
         {
-            //TODO: how to do this? 
+             
         }
 
         [Fact]
-        public void Upvote_plusses_1_given_zero_rating()
+        public async void Upvote_plusses_1_given_zero_rating()
         {
-            Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Text = "Really like this",
-                Id = 3
-            };
-            _service.UpvoteComment(3);
+            await _service.UpvoteComment(3);
 
-            Assert.Equal(1, cmt.Rating);
+            Assert.Equal(1, (await _service.GetCommentFromCommentId(3)).Rating);
         }
 
         [Fact]
-        public void Upvote_plusses_1_given_negative_rating()
+        public async void Upvote_plusses_1_given_negative_rating()
         {
-            Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Text = "Really like this",
-                Id = 3,
-                Rating = -10
-            };
-
-            _service.UpvoteComment(cmt);
-            Assert.Equal(-9, cmt.Rating);
-
-            _service.UpvoteComment(cmt);
-            _service.UpvoteComment(cmt);
-            _service.UpvoteComment(cmt);
-            Assert.Equal(-6, cmt.Rating);
+            await _service.UpvoteComment(1);
+            Assert.Equal(-9, (await _service.GetCommentFromCommentId(1)).Rating);
+            
+            await _service.UpvoteComment(1);
+            await _service.UpvoteComment(1);
+            await _service.UpvoteComment(1);
+            await _service.UpvoteComment(1);
+            Assert.Equal(-5, (await _service.GetCommentFromCommentId(1)).Rating);
         }
 
         [Fact]
-        public void Upvote_plusses_1_given_positive_rating()
+        public async void Upvote_plusses_1_given_positive_rating()
         {
-            Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Text = "Really like this",
-                Id = 3,
-                Rating = 7
-            };
-
-            _service.UpvoteComment(cmt);
-            Assert.Equal(8, cmt.Rating);
-
-            _service.UpvoteComment(cmt);
-            _service.UpvoteComment(cmt);
-            _service.UpvoteComment(cmt);
-            Assert.Equal(11, cmt.Rating);
+            await _service.UpvoteComment(4);
+            Assert.Equal(29, (await _service.GetCommentFromCommentId(4)).Rating);
         }
 
         [Fact]
-        public void Downvote_subtracts_1_given_zero_rating()
+        public async void Downvote_subtracts_1_given_zero_rating()
         {
-            Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Text = "Really like this",
-                Id = 3
-            };
-            _service.DownvoteComment(cmt);
+            await _service.DownvoteComment(3);
 
-            Assert.Equal(-1, cmt.Rating);
+            Assert.Equal(-1, (await _service.GetCommentFromCommentId(3)).Rating);
         }
 
         [Fact]
-        public void Downvote_subtracts_1_given_negative_rating()
+        public async void Downvote_subtracts_1_given_negative_rating()
         {
-            Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Text = "Really like this",
-                Id = 3,
-                Rating = -10
-            };
-
-            _service.DownvoteComment(cmt);
-            Assert.Equal(-11, cmt.Rating);
-
-            _service.DownvoteComment(cmt);
-            _service.DownvoteComment(cmt);
-            _service.DownvoteComment(cmt);
-            Assert.Equal(-14, cmt.Rating);
+            await _service.DownvoteComment(1);
+            Assert.Equal(-11, (await _service.GetCommentFromCommentId(1)).Rating);
+            
+            await _service.DownvoteComment(1);
+            await _service.DownvoteComment(1);
+            await _service.DownvoteComment(1);
+            await _service.DownvoteComment(1);
+            Assert.Equal(-15, (await _service.GetCommentFromCommentId(1)).Rating);
         }
 
         [Fact]
-        public void Downvote_subtracts_1_given_positive_rating()
+        public async void Downvote_subtracts_1_given_positive_rating()
         {
-            Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Text = "Really like this",
-                Id = 3,
-                Rating = 7
-            };
-
-            _service.DownvoteComment(cmt);
-            Assert.Equal(6, cmt.Rating);
-
-            _service.DownvoteComment(cmt);
-            _service.DownvoteComment(cmt);
-            _service.DownvoteComment(cmt);
-            Assert.Equal(3, cmt.Rating);
+            await _service.DownvoteComment(4);
+            Assert.Equal(27, (await _service.GetCommentFromCommentId(4)).Rating);    
         }
 
         /* [Fact]
