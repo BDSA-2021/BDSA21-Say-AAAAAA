@@ -54,20 +54,12 @@ namespace SELearning.Infrastructure.Tests
             _context.SaveChanges();
         }
 
-        [Theory]
-        [InlineData("Amalie", "A really nice and professional video!")]
-        [InlineData("Y84Gmig", "Found this very confusing...")]
-        [InlineData("Anonymous user from ITU", "Cool explanation, but i didn't exactly get the part on regression testing. Can someone elaborate?")]
-        public void Post_given_acceptable_input_does_post(string author, string content)
+        public void Post_given_acceptable_input_does_post()
         {
 
-            //TODO: how do i check that this has actually been done?
         }
 
-        [Theory]
-        [InlineData("Amalie", "")]
-        [InlineData("Y84Gmig", "    ")]
-        [InlineData("", "")]
+
         public void Post_given_empty_content_throws_exception()
         {
         
