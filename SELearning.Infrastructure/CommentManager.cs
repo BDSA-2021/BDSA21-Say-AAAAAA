@@ -12,30 +12,30 @@ namespace SELearning.Infrastructure
         public CommentManager(ICommentRepository repo){
             _repo = repo;
         }
-        public void PostComment(CommentCreateDTO dto)
+        public async Task PostComment(CommentCreateDTO dto)
         {
-            if(_repo.AddComment(dto).Result.Item1 == OperationResult.NotFound)
+            if((await _repo.AddComment(dto)).Item1 == OperationResult.NotFound)
             {
                 throw new Exception("The content that the comment belongs to could not be found");    
             }
         }
-        public void UpdateComment(int id, CommentUpdateDTO dto)
+        public async Task UpdateComment(int id, CommentUpdateDTO dto)
         {
-            if(_repo.UpdateComment(id, dto).Result.Item1 == OperationResult.NotFound)
+            if((await _repo.UpdateComment(id, dto)).Item1 == OperationResult.NotFound)
             {
                 throw new Exception("The comment could not be found");
             }   
         }
-        public void RemoveComment(int id)
+        public async Task RemoveComment(int id)
         {
-            if(_repo.RemoveComment(id).Result == OperationResult.NotFound)
+            if((await _repo.RemoveComment(id)) == OperationResult.NotFound)
             {
                 throw new Exception("The comment could not be found");
             }     
         }
-        public void UpvoteComment(int id)
+        public async Task UpvoteComment(int id)
         {
-            var comment = _repo.GetCommentByCommentId(id).Result;
+            var comment = (await _repo.GetCommentByCommentId(id));
             if(comment.IsNone)
             {
                 throw new Exception("The comment could not be found");    
@@ -44,9 +44,9 @@ namespace SELearning.Infrastructure
             CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text,comment.Value.Rating);
             UpdateComment(id,dto);
         }
-        public void DownvoteComment(int id)
+        public async Task DownvoteComment(int id)
         {
-            var comment = _repo.GetCommentByCommentId(id).Result;
+            var comment = (await _repo.GetCommentByCommentId(id));
             if(comment.IsNone)
             {
                 throw new Exception("The comment could not be found");    
@@ -56,9 +56,9 @@ namespace SELearning.Infrastructure
             UpdateComment(id,dto);
         }
 
-        public List<Comment> GetCommentsFromContentId(int contentId)
+        public async Task<List<Comment>> GetCommentsFromContentId(int contentId)
         {
-            var comments = _repo.GetCommentsByContentId(contentId).Result;
+            var comments = (await _repo.GetCommentsByContentId(contentId));
             if(comments.Item2 == OperationResult.NotFound)
             {
                 throw new Exception("The content that the comments belongs to could not be found");    
@@ -66,14 +66,13 @@ namespace SELearning.Infrastructure
             return comments.Item1;
         }
 
-        public Comment GetCommentFromCommentId(int commentId){
-            var comment = _repo.GetCommentByCommentId(commentId).Result;
+        public async Task<Comment> GetCommentFromCommentId(int commentId){
+            var comment = (await _repo.GetCommentByCommentId(commentId));
             if(comment.IsNone)
             {
                 throw new Exception("The comment could not be found");    
             }
             return comment.Value;
         }
-
     }
 }

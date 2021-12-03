@@ -65,7 +65,7 @@ namespace SELearning.Infrastructure.Tests
                 Text = "Really like this",
                 Id = 3
             };
-            _service.UpvoteComment(cmt);
+            _service.UpvoteComment(3);
 
             Assert.Equal(1, cmt.Rating);
         }
