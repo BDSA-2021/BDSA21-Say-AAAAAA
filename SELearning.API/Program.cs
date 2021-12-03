@@ -30,6 +30,9 @@ else
 builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<WeatherContext>();
 #endregion
 
 var app = builder.Build();
@@ -66,6 +69,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapRazorPages();
     endpoints.MapControllers();
     endpoints.MapFallbackToFile("index.html");
+    endpoints.MapHealthChecks("/healthz");
 });
 
 app.Migrate();
