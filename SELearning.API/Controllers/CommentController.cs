@@ -32,7 +32,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
@@ -48,7 +48,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
@@ -61,11 +61,11 @@ public class CommentController : ControllerBase
         try
         {
             await _service.PostComment(comment);
-            return Created(nameof(GetComment), new { comment.ContentId });
+            return CreatedAtRoute(nameof(GetComment), comment.ContentId);
         }
         catch (Exception)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
@@ -82,7 +82,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
@@ -99,7 +99,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
@@ -116,7 +116,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
@@ -133,7 +133,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 }
