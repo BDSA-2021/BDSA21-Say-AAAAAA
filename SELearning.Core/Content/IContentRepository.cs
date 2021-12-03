@@ -14,5 +14,7 @@ public interface IContentRepository
     public Task<OperationResult> UpdateSectionAsync(int id, SectionUpdateDto content);
     public Task<OperationResult> DeleteSectionAsync(int id);
     public List<Content> GetContentInSection(int id);
+    public Task<IReadOnlyCollection<SectionDto>> ReadSectionAsync();
+    public Task<Option<SectionDto>> ReadSectionAsync(int id);
     
 }
