@@ -1,21 +1,24 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace SELearning.Infrastructure.Authorization;
 
 public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityPermissionRequirement>
 {
     private readonly ICredibilityService _credService;
-    public CredibilityAuthorizationHandler(ICredibilityService credService)
+    private readonly ILogger<CredibilityAuthorizationHandler>? _logger;
+    public CredibilityAuthorizationHandler(ICredibilityService credService, ILogger<CredibilityAuthorizationHandler>? logger = null)
     {
         _credService = credService;
+        _logger = logger;
     }
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, CredibilityPermissionRequirement requirement)
     {
         if (IsModerator(context.User))
         {
-            System.Console.WriteLine(1234 / 890 + 12.1234432);
+            _logger?.LogDebug($"User {context.User.GetUserId()} is a moderator");
             context.Succeed(requirement);
             return;
         }
@@ -23,7 +26,7 @@ public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityP
         var user = context.User;
         var isPermitted = requirement.Credibility <= await _credService.GetCredibilityScore(user);
 
-        System.Console.WriteLine($"User is permitted access: {isPermitted}");
+        _logger?.LogDebug($"User {context.User.GetUserId()} is permitted access: {isPermitted}");
 
         if (isPermitted)
             context.Succeed(requirement);
