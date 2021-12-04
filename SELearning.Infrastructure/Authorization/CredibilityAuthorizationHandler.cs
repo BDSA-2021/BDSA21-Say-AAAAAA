@@ -24,7 +24,8 @@ public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityP
         }
 
         var user = context.User;
-        var isPermitted = requirement.Credibility <= await _credService.GetCredibilityScore(user);
+        var userCredibilityScore = await _credService.GetCredibilityScore(user);
+        var isPermitted = requirement.RequiredCredibilityScores.Any(requiredScore => requiredScore <= userCredibilityScore);
 
         _logger?.LogDebug($"User {context.User.GetUserId()} is permitted access: {isPermitted}");
 
@@ -34,5 +35,6 @@ public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityP
             context.Fail();
     }
 
-    private bool IsModerator(ClaimsPrincipal user) => user.FindAll(ClaimTypes.Role).Any(x => x.Value == AuthorizationConstants.ROLE_MODERATOR);
+    private bool IsModerator(ClaimsPrincipal user)
+        => user.FindAll(ClaimTypes.Role).Any(x => x.Value == AuthorizationConstants.ROLE_MODERATOR);
 }

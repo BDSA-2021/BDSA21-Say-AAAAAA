@@ -12,8 +12,8 @@ public class PermissionAttributeTests
     [InlineData("PermissionCreateComment", CreateComment)]
     [InlineData("PermissionEditAnyComment", EditAnyComment)]
     [InlineData("PermissionCreateContent", CreateContent)]
-    [InlineData("PermissionCreateComment OR EditAnyComment", CreateComment, EditAnyComment)]
-    [InlineData("PermissionEditAnyComment OR Rate OR DeleteAnyContent", EditAnyComment, Rate, DeleteAnyContent)]
+    [InlineData("PermissionCreateComment OR PermissionEditAnyComment", CreateComment, EditAnyComment)]
+    [InlineData("PermissionEditAnyComment OR PermissionRate OR PermissionDeleteAnyContent", EditAnyComment, Rate, DeleteAnyContent)]
     public void Init_WithPermission_SetsPolicyWithPrefixAndPermissionName(string expectedPolicyName, params Permission[] p)
     {
         AuthorizePermissionAttribute attr = new(p);

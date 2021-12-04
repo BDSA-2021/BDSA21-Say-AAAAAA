@@ -50,7 +50,7 @@ public class CredibilityAuthorizationHandlerTests
     public void HandleAsync_GivenPermittedUserForOneOfMultipleRequirements_YieldsHasSucceeded()
     {
         var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson") }));
-        var authContext = HandleAsync_WithUserScore(user, 1000, new[] { 1000, 1200 });
+        var authContext = HandleAsync_WithUserScore(user, 1000, new[] { 1200, 1000 });
         Assert.True(authContext.HasSucceeded);
     }
 }
