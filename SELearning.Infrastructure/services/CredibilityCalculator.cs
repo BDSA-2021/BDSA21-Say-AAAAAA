@@ -15,7 +15,7 @@ public class CredibilityCalculator : ICredibilityService
     {
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
 
-        if(userIdClaim == null)
+        if (userIdClaim == null)
             throw new NullReferenceException("User id claim not found!");
 
         var commentCredibilityScore = _credibilityRepository.GetCommentCredibilityScore(userIdClaim.Value);

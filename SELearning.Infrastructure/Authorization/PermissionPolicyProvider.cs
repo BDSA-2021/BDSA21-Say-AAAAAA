@@ -13,8 +13,8 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 
     private readonly IPermissionCredibilityService _permissionCredibilityService;
 
-    public PermissionPolicyProvider(IOptions<AuthorizationOptions> options, IPermissionCredibilityService permissionCredibilityService) 
-    { 
+    public PermissionPolicyProvider(IOptions<AuthorizationOptions> options, IPermissionCredibilityService permissionCredibilityService)
+    {
         DefaultProvider = new DefaultAuthorizationPolicyProvider(options);
         _permissionCredibilityService = permissionCredibilityService;
     }

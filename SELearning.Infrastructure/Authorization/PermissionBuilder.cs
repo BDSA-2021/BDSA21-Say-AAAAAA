@@ -12,7 +12,7 @@ public class PermissionBuilder
 {
     public IServiceCollection Services { get; }
 
-    public PermissionBuilder(IServiceCollection services) 
+    public PermissionBuilder(IServiceCollection services)
         => Services = services;
 
     public PermissionBuilder AddPermissionCredibilityService(IPermissionCredibilityService service)

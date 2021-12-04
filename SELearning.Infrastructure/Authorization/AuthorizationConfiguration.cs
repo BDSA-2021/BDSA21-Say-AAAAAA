@@ -6,7 +6,7 @@ namespace SELearning.Infrastructure.Authorization;
 
 public static class AuthorizationConfiguration
 {
-    public static PermissionBuilder AddPermissionAuthorization(this IServiceCollection services) 
+    public static PermissionBuilder AddPermissionAuthorization(this IServiceCollection services)
     {
         // Inject asp net Authorization handler and policy implementations
         services.AddSingleton<IAuthorizationHandler, CredibilityAuthorizationHandler>();

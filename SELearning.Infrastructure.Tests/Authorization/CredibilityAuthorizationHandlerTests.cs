@@ -8,7 +8,7 @@ public class CredibilityAuthorizationHandlerTests
 {
     AuthorizationHandlerContext HandleAsync_WithUserScore(ClaimsPrincipal user, int score)
     {
-        
+
         var requirement = new CredibilityPermissionRequirement(1000);
 
         var authContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, null);

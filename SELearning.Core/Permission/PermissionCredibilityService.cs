@@ -17,7 +17,7 @@ public class PermissionCredibilityService : IPermissionCredibilityService
             case Permission.DeleteAnyContent:
             case Permission.CreateContent:
                 return await Task.Run<int>(() => 1000);
-            
+
             default:
                 return await Task.Run<int>(() => int.MinValue);
         }
