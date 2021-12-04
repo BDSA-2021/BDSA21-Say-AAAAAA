@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.Content;
+using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -20,14 +21,13 @@ public class ContentController : ControllerBase
         _repository = repository;
     }
 
-    [Authorize]
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(ContentDTO), 200)] // OK
     [ProducesResponseType(404)] // Not Found
     public async Task<ActionResult<ContentDTO>> GetContent(string ID)
         => (await _repository.GetContent(ID)).ToActionResult();
 
-    [Authorize]
+    [AuthorizePermission(Permission.CreateContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPost]
     [ProducesResponseType(201)] // Created
     public async Task<IActionResult> CreateContent(ContentDTO content)
@@ -36,14 +36,14 @@ public class ContentController : ControllerBase
         return CreatedAtRoute(nameof(GetContent), new { created.ID }, created);
     }
 
-    [Authorize]
+    [AuthorizePermission(Permission.EditAnyContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPut("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> UpdateContent(string ID, ContentDTO content)
         => (await _repository.UpdateContent(ID, content)).ToActionResult();
 
-    [Authorize]
+    [AuthorizePermission(Permission.DeleteAnyContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using SELearning.Core.Permission;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
 
@@ -30,6 +32,8 @@ else
 builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
+
+builder.Services.AddPermissionAuthorization().Build();
 #endregion
 
 var app = builder.Build();
