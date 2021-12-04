@@ -4,6 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace SELearning.Infrastructure.Authorization;
 
+
+/// <summary>
+/// Evaluates the credibility permission requirement and notifies the Authorization context about the result.
+/// </summary>
 public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityPermissionRequirement>
 {
     private readonly ICredibilityService _credService;

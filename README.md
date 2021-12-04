@@ -55,3 +55,9 @@ This will build the Blazor project and serve it along with the API
 docker-compose up
 ```
 The command above will create a database server, a database and build the app for production as well as serving it on port 7207
+
+## Documentation
+
+We have embedded some examples and explanations in source code documentation comments, following [the guidelines from the official docs](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments#seealso).
+
+Unfortunately, many of the extra suggested tags do not show up when hovering over the symbol name in Visual Studio Code or Visual Studio. For example, see `SELearning.Infrastructure.Authorization.AuthorizePermissionAttribute`.
