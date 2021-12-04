@@ -12,7 +12,7 @@ namespace SELearning.Infrastructure
 
         public async Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
         {
-            Content content = await _context.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);
+            Content? content = await _context.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);
             if (content == null)
             {
                 return (OperationResult.NotFound, null!);
@@ -76,7 +76,7 @@ namespace SELearning.Infrastructure
 
         public async Task<(List<Comment>?, OperationResult)> GetCommentsByContentId(int contentId)
         {
-            Content content = await _context.Content.FirstOrDefaultAsync(c => c.Id == contentId);
+            Content? content = await _context.Content.FirstOrDefaultAsync(c => c.Id == contentId);
             if (content == null)
             {
                 return (null, OperationResult.NotFound);
