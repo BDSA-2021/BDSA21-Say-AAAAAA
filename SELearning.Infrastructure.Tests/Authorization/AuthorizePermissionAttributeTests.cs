@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using SELearning.Infrastructure.Authorization;
 using static SELearning.Core.Permission.Permission;
@@ -8,15 +9,21 @@ namespace SELearning.Infrastructure.Tests.Authorization;
 public class PermissionAttributeTests
 {
     [Theory]
-    [InlineData(CreateComment)]
-    [InlineData(EditAnyComment)]
-    [InlineData(CreateContent)]
-    public void Init_WithPermission_SetsPolicyWithPrefixAndPermissionName(Permission p)
+    [InlineData("PermissionCreateComment", CreateComment)]
+    [InlineData("PermissionEditAnyComment", EditAnyComment)]
+    [InlineData("PermissionCreateContent", CreateContent)]
+    [InlineData("PermissionCreateComment OR EditAnyComment", CreateComment, EditAnyComment)]
+    [InlineData("PermissionEditAnyComment OR Rate OR DeleteAnyContent", EditAnyComment, Rate, DeleteAnyContent)]
+    public void Init_WithPermission_SetsPolicyWithPrefixAndPermissionName(string expectedPolicyName, params Permission[] p)
     {
-        string prefix = "Permission";
-
         AuthorizePermissionAttribute attr = new(p);
 
-        Assert.Equal($"{prefix}{Enum.GetName(typeof(Permission), p)}", attr.Policy);
+        Assert.Equal(expectedPolicyName, attr.Policy);
+    }
+
+    [Fact]
+    public void Init_WithoutPermissions_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => new AuthorizePermissionAttribute());
     }
 }
