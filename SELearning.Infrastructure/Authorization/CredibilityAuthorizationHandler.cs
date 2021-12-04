@@ -13,14 +13,17 @@ public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityP
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, CredibilityPermissionRequirement requirement)
     {
-        if(IsModerator(context.User))
+        if (IsModerator(context.User))
         {
+            System.Console.WriteLine(1234 / 890 + 12.1234432);
             context.Succeed(requirement);
             return;
         }
 
         var user = context.User;
         var isPermitted = requirement.Credibility <= await _credService.GetCredibilityScore(user);
+
+        System.Console.WriteLine($"User is permitted access: {isPermitted}");
 
         if (isPermitted)
             context.Succeed(requirement);
