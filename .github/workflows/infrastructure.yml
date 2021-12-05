@@ -1,7 +1,6 @@
 name: Infrastructure
 
 on:
-  push:
   release:
     types: [published]
     paths:
