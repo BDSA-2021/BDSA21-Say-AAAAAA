@@ -1,8 +1,8 @@
 namespace SELearning.Core.Content;
+
 public class ContentManager : IContentService
 {
-
-    private IContentRepository _repository;
+    private readonly IContentRepository _repository;
 
     public ContentManager(IContentRepository repository)
     {
@@ -11,9 +11,7 @@ public class ContentManager : IContentService
 
     public async Task AddContent(ContentCreateDto content)
     {
-        var (reponse, dto) = await _repository.AddContent(content);
-
-        if (reponse != OperationResult.Created)
+        if ((await _repository.AddContent(content)).Item1 != OperationResult.Created)
         {
             throw new Exception("The content was not created");
         }
@@ -21,13 +19,10 @@ public class ContentManager : IContentService
 
     public async Task AddSection(SectionCreateDto section)
     {
-        var (reponse, dto) = await _repository.AddSection(section);
-
-        if (reponse != OperationResult.Created)
+        if ((await _repository.AddSection(section)).Item1 != OperationResult.Created)
         {
             throw new Exception("The section was not created");
         }
-
     }
 
     public async Task DecreaseContentRating(int id)
@@ -39,7 +34,7 @@ public class ContentManager : IContentService
             throw new Exception("The comment could not be found");
         }
 
-        ContentUpdateDto dto = new ContentUpdateDto
+        ContentUpdateDto dto = new()
         {
             Title = content.Value.Title,
             Description = content.Value.Description,
@@ -80,7 +75,7 @@ public class ContentManager : IContentService
         return content;
     }
 
-    public async Task<Option<ContentDto>> GetContent(int id)
+    public async Task<ContentDto> GetContent(int id)
     {
         var content = await _repository.GetContent(id);
 
@@ -114,7 +109,7 @@ public class ContentManager : IContentService
             throw new Exception("The comment could not be found");
         }
 
-        ContentUpdateDto dto = new ContentUpdateDto
+        ContentUpdateDto dto = new()
         {
             Title = content.Value.Title,
             Description = content.Value.Description,
@@ -139,7 +134,7 @@ public class ContentManager : IContentService
         return section;
     }
 
-    public async Task<Option<SectionDto>> GetSection(int id)
+    public async Task<SectionDto> GetSection(int id)
     {
         var section = await _repository.GetSection(id);
 
@@ -161,11 +156,9 @@ public class ContentManager : IContentService
 
     public async Task UpdateSectionAsync(int id, SectionUpdateDto section)
     {
-        var reponse = await _repository.UpdateSection(id, section);
-        if (reponse == OperationResult.NotFound)
+        if (await _repository.UpdateSection(id, section) == OperationResult.NotFound)
         {
             throw new Exception("The section could not be found");
         }
     }
-
 }
