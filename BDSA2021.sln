@@ -1,45 +1,40 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning", "SELearning\SELearning.csproj", "{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning", "SELearning\SELearning.csproj", "{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.API", "SELearning.API\SELearning.API.csproj", "{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.API", "SELearning.API\SELearning.API.csproj", "{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Tests", "SELearning.Tests\SELearning.Tests.csproj", "{21B40677-B0F2-4321-B651-0AF9453266A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Tests", "SELearning.Tests\SELearning.Tests.csproj", "{21B40677-B0F2-4321-B651-0AF9453266A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Core", "SELearning.Core\SELearning.Core.csproj", "{BABA3890-C896-473F-91B5-B4D17DB1044D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Core", "SELearning.Core\SELearning.Core.csproj", "{BABA3890-C896-473F-91B5-B4D17DB1044D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Infrastructure", "SELearning.Infrastructure\SELearning.Infrastructure.csproj", "{F98A132B-C6E0-4772-BE16-C3B50FE03C0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Infrastructure", "SELearning.Infrastructure\SELearning.Infrastructure.csproj", "{F98A132B-C6E0-4772-BE16-C3B50FE03C0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELearning.Infrastructure.Tests", "SELearning.Infrastructure.Tests\SELearning.Infrastructure.Tests.csproj", "{E76DC1CC-B726-4CFF-AC58-65DBC90E1235}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.Infrastructure.Tests", "SELearning.Infrastructure.Tests\SELearning.Infrastructure.Tests.csproj", "{E76DC1CC-B726-4CFF-AC58-65DBC90E1235}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SELearning.API.Tests", "SELearning.API.Tests\SELearning.API.Tests.csproj", "{6DEBF6CC-2271-425D-A17B-05C007D07F98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{278CA1D2-C2EB-4B95-B497-3B6809A46CA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F988BA1-211F-465E-98B8-82ACBD1DDA5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{21B40677-B0F2-4321-B651-0AF9453266A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{21B40677-B0F2-4321-B651-0AF9453266A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21B40677-B0F2-4321-B651-0AF9453266A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21B40677-B0F2-4321-B651-0AF9453266A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63F41038-53B6-46BF-A31A-B276F0AE908D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63F41038-53B6-46BF-A31A-B276F0AE908D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63F41038-53B6-46BF-A31A-B276F0AE908D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63F41038-53B6-46BF-A31A-B276F0AE908D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45593ABC-CA84-4F72-939D-1E8B34957AF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45593ABC-CA84-4F72-939D-1E8B34957AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45593ABC-CA84-4F72-939D-1E8B34957AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45593ABC-CA84-4F72-939D-1E8B34957AF8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BABA3890-C896-473F-91B5-B4D17DB1044D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BABA3890-C896-473F-91B5-B4D17DB1044D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BABA3890-C896-473F-91B5-B4D17DB1044D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,11 +47,15 @@ Global
 		{E76DC1CC-B726-4CFF-AC58-65DBC90E1235}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E76DC1CC-B726-4CFF-AC58-65DBC90E1235}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E76DC1CC-B726-4CFF-AC58-65DBC90E1235}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DEBF6CC-2271-425D-A17B-05C007D07F98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DEBF6CC-2271-425D-A17B-05C007D07F98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DEBF6CC-2271-425D-A17B-05C007D07F98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DEBF6CC-2271-425D-A17B-05C007D07F98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E12DAD81-3343-4BE2-AAFF-37BB47D2DC4F}
-	EndGlobalSection	
+	EndGlobalSection
 EndGlobal
