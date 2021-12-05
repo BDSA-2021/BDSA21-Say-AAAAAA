@@ -89,6 +89,7 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
       netFrameworkVersion: 'v6.0'
       acrUseManagedIdentityCreds: true
       httpLoggingEnabled: true
+      healthCheckPath: '/healthz'
     }
   }
 
