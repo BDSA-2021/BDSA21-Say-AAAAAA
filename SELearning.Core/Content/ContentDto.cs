@@ -1,5 +1,6 @@
 namespace SELearning.Core.Content;
-public record ContentDto {
+public record ContentDto
+{
 
     public int? Id { get; set; }
     public Section? Section { get; set; }
@@ -8,7 +9,7 @@ public record ContentDto {
     public string? Description { get; set; }
     public string? VideoLink { get; set; }
     public int Rating { get; set; }
-    }
+}
 
 public record ContentCreateDto
 {

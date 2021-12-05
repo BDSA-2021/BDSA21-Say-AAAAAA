@@ -10,6 +10,6 @@ public class ContentContext : DbContext, IContentContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+
     }
 }
