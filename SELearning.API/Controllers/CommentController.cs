@@ -135,7 +135,7 @@ public class CommentController : ControllerBase
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
-    [HttpDelete("{ID}")]
+    [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> UpvoteComment(int ID)
@@ -157,7 +157,7 @@ public class CommentController : ControllerBase
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
-    [HttpDelete("{ID}")]
+    [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> DownvoteComment(int ID)
