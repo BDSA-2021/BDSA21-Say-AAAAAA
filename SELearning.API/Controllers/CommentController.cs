@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -19,21 +20,19 @@ public class CommentController : ControllerBase
         _repository = repository;
     }
 
-    [Authorize]
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(CommentDTO), 200)] // OK
     [ProducesResponseType(404)] // Not Found
     public async Task<ActionResult<CommentDTO>> GetComment(int id)
         => (await _repository.GetAsync(id)).ToActionResult();
 
-    [Authorize]
     [HttpGet("{contentID}")]
     [ProducesResponseType(typeof(CommentDTO), 200)] // OK
     [ProducesResponseType(404)] // Not Found
     public async Task<IReadOnlyCollection<CommentDTO>> GetCommentsByContentID(int contentID)
         => await _repository.GetAsyncByContentID(contentID);
 
-    [Authorize]
+    [AuthorizePermission(Permission.CreateComment)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPost]
     [ProducesResponseType(201)] // Created
     public async Task<IActionResult> CreateComment(int contentID, CommentDTO comment)
@@ -42,14 +41,14 @@ public class CommentController : ControllerBase
         return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);
     }
 
-    [Authorize]
+    [AuthorizePermission(Permission.EditAnyComment)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider. EditOwnComment missing
     [HttpPut("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
     public async Task<IActionResult> UpdateComment(int ID, CommentDTO comment)
         => (await _repository.UpdateAsync(ID, comment)).Item1.ToActionResult();
 
-    [Authorize]
+    [AuthorizePermission(Permission.DeleteAnyComment)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
