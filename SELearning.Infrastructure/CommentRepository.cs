@@ -42,7 +42,7 @@ namespace SELearning.Infrastructure
             {
                 return (OperationResult.NotFound, null);
             }
-            
+
             c.Text = cmt.Text;
             c.Rating = cmt.Rating;
 
