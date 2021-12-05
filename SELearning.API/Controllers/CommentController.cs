@@ -103,10 +103,15 @@ public class CommentController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// <c>UpvoteComment</c> increases the rating of the comment with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the comment.</param>
+    /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
     [HttpDelete("{ID}")]
-    [ProducesResponseType(204)] // No Content
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> UpvoteComment(int ID)
     {
         try
@@ -120,10 +125,15 @@ public class CommentController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// <c>DownvoteComment</c> decreases the rating of the comment with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the comment.</param>
+    /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
     [HttpDelete("{ID}")]
-    [ProducesResponseType(204)] // No Content
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> DownvoteComment(int ID)
     {
         try
