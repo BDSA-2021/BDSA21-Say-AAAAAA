@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 namespace SELearning.Infrastructure.Tests;
 
 public class CredibilityCalculatorTests
@@ -12,11 +14,12 @@ public class CredibilityCalculatorTests
     [InlineData(-11, 11, 0)]
     async public void GetCredibilityScore_GivenUser_ReturnSumOfCommentAndContentCredibilityScore(int contentScore, int commentScore, int expectedScore)
     {
-        var user = new User { };
+        var claimIdentity = new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "userId") });
+        var user = new ClaimsPrincipal(claimIdentity);
 
         var repository = new Mock<ICredibilityRepository>();
-        repository.Setup(m => m.GetContentCredibilityScore(user)).ReturnsAsync(contentScore);
-        repository.Setup(m => m.GetCommentCredibilityScore(user)).ReturnsAsync(commentScore);
+        repository.Setup(m => m.GetContentCredibilityScore("userId")).ReturnsAsync(contentScore);
+        repository.Setup(m => m.GetCommentCredibilityScore("userId")).ReturnsAsync(commentScore);
 
         var service = new CredibilityCalculator(repository.Object);
 
