@@ -4,7 +4,7 @@ namespace SELearning.Core
     {
         public CommentNotFoundException(int id)
             : base("Comment with id could not be found. ID: " + id)
-        {    
+        {
         }
-    }   
+    }
 }

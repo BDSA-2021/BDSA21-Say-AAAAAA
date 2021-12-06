@@ -4,7 +4,7 @@ namespace SELearning.Core
     {
         public ContentNotFoundException(int id)
             : base("Content with id could not be found. ID: " + id)
-        {    
+        {
         }
-    }   
+    }
 }

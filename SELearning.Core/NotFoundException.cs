@@ -15,5 +15,5 @@ namespace SELearning.Core
             : base(message, inner)
         {
         }
-    }   
+    }
 }
