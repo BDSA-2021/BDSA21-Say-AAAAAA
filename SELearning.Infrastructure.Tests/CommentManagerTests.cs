@@ -55,9 +55,14 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void Post_given_acceptable_input_does_post()
+        public async void Post_given_acceptable_input_does_post()
         {
-
+            var dto = new CommentCreateDTO("Christine","Nice explanation",1); 
+            await _service.PostComment(dto); 
+            Assert.Equal("Christine",(await _service.GetCommentFromCommentId(5)).Author);  
+            Assert.Equal("Nice explanation",(await _service.GetCommentFromCommentId(5)).Text);
+            Assert.Equal(1,(await _service.GetCommentFromCommentId(5)).Content.Id);
+            Assert.Equal(0,(await _service.GetCommentFromCommentId(5)).Rating);
         }
 
         [Fact]
@@ -69,9 +74,19 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void Update_given_new_text_succeeds()
+        public async void Update_given_new_text_succeeds()
         {
+            var dto = new CommentUpdateDTO("Very cool",-10);
+            await _service.UpdateComment(1,dto);   
+            Assert.Equal("Very cool",(await _service.GetCommentFromCommentId(1)).Text);     
+        }
 
+        [Fact]
+        public async void Update_given_new_rating_succeeds()
+        {
+            var dto = new CommentUpdateDTO("Very inappropriate",29);
+            await _service.UpdateComment(4,dto);   
+            Assert.Equal(29,(await _service.GetCommentFromCommentId(4)).Rating);     
         }
 
         [Fact]
@@ -83,9 +98,12 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void Remove_given_existing_id_succeeds()
+        public async void Remove_given_existing_id_succeeds()
         {
-
+            Comment comment = await _service.GetCommentFromCommentId(1);
+            Assert.NotNull(comment);
+            await _service.RemoveComment(1);
+            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.GetCommentFromCommentId(1));
         }
 
         [Fact]
@@ -151,21 +169,15 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
+        public async void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
         {
-            /*Comment cmt = new Comment
-            {
-                Author = "Ida",
-                Content = "Really like this",
-                Id = 3,
-                Rating = 7,
-                ContentId = 6
-            };
+            List<Comment> comments = await _service.GetCommentsFromContentId(1);
 
-            List<Comment> comments = _service.GetCommentsFromContentId(6);
-
-            Assert.Contains(cmt, comments);
-            Assert.Equal(1, comments.Count);*/
+            Assert.Contains((await _service.GetCommentFromCommentId(1)), comments);
+            Assert.Contains((await _service.GetCommentFromCommentId(2)), comments);
+            Assert.Contains((await _service.GetCommentFromCommentId(3)), comments);
+            Assert.Contains((await _service.GetCommentFromCommentId(4)), comments);
+            Assert.Equal(4, comments.Count);
         }
 
         [Fact]
@@ -175,9 +187,15 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void GetCommentFromCommentId_given_existing_commentId_returns_comment()
+        public async void GetCommentFromCommentId_given_existing_commentId_returns_comment()
         {
+            var comment = await _service.GetCommentFromCommentId(2);
 
+            Assert.Equal("Cool but boring",comment.Text); 
+            Assert.Equal("Albert",comment.Author); 
+            Assert.Equal(1,comment.Content.Id); 
+            Assert.Equal(2,comment.Id); 
+            Assert.Equal(0,comment.Rating); 
         }
 
         [Fact]
