@@ -54,15 +54,18 @@ namespace SELearning.Infrastructure.Tests
             _context.SaveChanges();
         }
 
+        [Fact]
         public void Post_given_acceptable_input_does_post()
         {
 
         }
 
-
-        public void Post_given_non_existing_content_throws_exception()
+        [Fact]
+        public async void Post_given_non_existing_content_throws_exception()
         {
-
+            var dto = new CommentCreateDTO("Amalie","Nice explanation",50);
+            
+            await Assert.ThrowsAsync <ContentNotFoundException> (() => _service.PostComment(dto));
         }
 
         [Fact]
@@ -72,9 +75,11 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void Update_given_non_existing_id_throws_exception()
+        public async void Update_given_non_existing_id_throws_exception()
         {
+            var dto = new CommentUpdateDTO("Very cool",20);
 
+            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.UpdateComment(6,dto));
         }
 
         [Fact]
@@ -84,9 +89,9 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void Remove_given_non_existing_id_throws_exception()
+        public async void Remove_given_non_existing_id_throws_exception()
         {
-
+            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.RemoveComment(7));
         }
 
         [Fact]
@@ -164,9 +169,9 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void GetCommentsFromContentId_given_non_existing_contentId_throws_exception()
+        public async void GetCommentsFromContentId_given_non_existing_contentId_throws_exception()
         {
-
+            await Assert.ThrowsAsync <ContentNotFoundException> (() => _service.GetCommentsFromContentId(9));
         }
 
         [Fact]
@@ -176,9 +181,9 @@ namespace SELearning.Infrastructure.Tests
         }
 
         [Fact]
-        public void GetCommentFromCommentId_given_non_existing_commentId_throws_exception()
+        public async void GetCommentFromCommentId_given_non_existing_commentId_throws_exception()
         {
-
+            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.GetCommentFromCommentId(9));    
         }
     }
 }
