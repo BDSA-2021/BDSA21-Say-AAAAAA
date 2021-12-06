@@ -57,44 +57,44 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async void Post_given_acceptable_input_does_post()
         {
-            var dto = new CommentCreateDTO("Christine","Nice explanation",1); 
-            await _service.PostComment(dto); 
-            Assert.Equal("Christine",(await _service.GetCommentFromCommentId(5)).Author);  
-            Assert.Equal("Nice explanation",(await _service.GetCommentFromCommentId(5)).Text);
-            Assert.Equal(1,(await _service.GetCommentFromCommentId(5)).Content.Id);
-            Assert.Equal(0,(await _service.GetCommentFromCommentId(5)).Rating);
+            var dto = new CommentCreateDTO("Christine", "Nice explanation", 1);
+            await _service.PostComment(dto);
+            Assert.Equal("Christine", (await _service.GetCommentFromCommentId(5)).Author);
+            Assert.Equal("Nice explanation", (await _service.GetCommentFromCommentId(5)).Text);
+            Assert.Equal(1, (await _service.GetCommentFromCommentId(5)).Content.Id);
+            Assert.Equal(0, (await _service.GetCommentFromCommentId(5)).Rating);
         }
 
         [Fact]
         public async void Post_given_non_existing_content_throws_exception()
         {
-            var dto = new CommentCreateDTO("Amalie","Nice explanation",50);
-            
-            await Assert.ThrowsAsync <ContentNotFoundException> (() => _service.PostComment(dto));
+            var dto = new CommentCreateDTO("Amalie", "Nice explanation", 50);
+
+            await Assert.ThrowsAsync<ContentNotFoundException>(() => _service.PostComment(dto));
         }
 
         [Fact]
         public async void Update_given_new_text_succeeds()
         {
-            var dto = new CommentUpdateDTO("Very cool",-10);
-            await _service.UpdateComment(1,dto);   
-            Assert.Equal("Very cool",(await _service.GetCommentFromCommentId(1)).Text);     
+            var dto = new CommentUpdateDTO("Very cool", -10);
+            await _service.UpdateComment(1, dto);
+            Assert.Equal("Very cool", (await _service.GetCommentFromCommentId(1)).Text);
         }
 
         [Fact]
         public async void Update_given_new_rating_succeeds()
         {
-            var dto = new CommentUpdateDTO("Very inappropriate",29);
-            await _service.UpdateComment(4,dto);   
-            Assert.Equal(29,(await _service.GetCommentFromCommentId(4)).Rating);     
+            var dto = new CommentUpdateDTO("Very inappropriate", 29);
+            await _service.UpdateComment(4, dto);
+            Assert.Equal(29, (await _service.GetCommentFromCommentId(4)).Rating);
         }
 
         [Fact]
         public async void Update_given_non_existing_id_throws_exception()
         {
-            var dto = new CommentUpdateDTO("Very cool",20);
+            var dto = new CommentUpdateDTO("Very cool", 20);
 
-            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.UpdateComment(6,dto));
+            await Assert.ThrowsAsync<CommentNotFoundException>(() => _service.UpdateComment(6, dto));
         }
 
         [Fact]
@@ -103,13 +103,13 @@ namespace SELearning.Infrastructure.Tests
             Comment comment = await _service.GetCommentFromCommentId(1);
             Assert.NotNull(comment);
             await _service.RemoveComment(1);
-            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.GetCommentFromCommentId(1));
+            await Assert.ThrowsAsync<CommentNotFoundException>(() => _service.GetCommentFromCommentId(1));
         }
 
         [Fact]
         public async void Remove_given_non_existing_id_throws_exception()
         {
-            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.RemoveComment(7));
+            await Assert.ThrowsAsync<CommentNotFoundException>(() => _service.RemoveComment(7));
         }
 
         [Fact]
@@ -183,7 +183,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async void GetCommentsFromContentId_given_non_existing_contentId_throws_exception()
         {
-            await Assert.ThrowsAsync <ContentNotFoundException> (() => _service.GetCommentsFromContentId(9));
+            await Assert.ThrowsAsync<ContentNotFoundException>(() => _service.GetCommentsFromContentId(9));
         }
 
         [Fact]
@@ -191,17 +191,17 @@ namespace SELearning.Infrastructure.Tests
         {
             var comment = await _service.GetCommentFromCommentId(2);
 
-            Assert.Equal("Cool but boring",comment.Text); 
-            Assert.Equal("Albert",comment.Author); 
-            Assert.Equal(1,comment.Content.Id); 
-            Assert.Equal(2,comment.Id); 
-            Assert.Equal(0,comment.Rating); 
+            Assert.Equal("Cool but boring", comment.Text);
+            Assert.Equal("Albert", comment.Author);
+            Assert.Equal(1, comment.Content.Id);
+            Assert.Equal(2, comment.Id);
+            Assert.Equal(0, comment.Rating);
         }
 
         [Fact]
         public async void GetCommentFromCommentId_given_non_existing_commentId_throws_exception()
         {
-            await Assert.ThrowsAsync <CommentNotFoundException> (() => _service.GetCommentFromCommentId(9));    
+            await Assert.ThrowsAsync<CommentNotFoundException>(() => _service.GetCommentFromCommentId(9));
         }
     }
 }
