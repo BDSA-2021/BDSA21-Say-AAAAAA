@@ -60,19 +60,31 @@ namespace SELearning.Infrastructure.Tests
         }
 
 
-        public void Post_given_empty_content_throws_exception()
+        public void Post_given_non_existing_content_throws_exception()
         {
 
         }
 
         [Fact]
-        public void Update_given_new_content_succeeds()
+        public void Update_given_new_text_succeeds()
         {
 
         }
 
         [Fact]
-        public void Remove_given_comment_succeeds()
+        public void Update_given_non_existing_id_throws_exception()
+        {
+
+        }
+
+        [Fact]
+        public void Remove_given_existing_id_succeeds()
+        {
+
+        }
+
+        [Fact]
+        public void Remove_given_non_existing_id_throws_exception()
         {
 
         }
@@ -133,10 +145,10 @@ namespace SELearning.Infrastructure.Tests
             Assert.Equal(27, (await _service.GetCommentFromCommentId(4)).Rating);
         }
 
-        /* [Fact]
+         [Fact]
          public void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
          {
-             Comment cmt = new Comment
+             /*Comment cmt = new Comment
              {
                  Author = "Ida",
                  Content = "Really like this",
@@ -148,8 +160,25 @@ namespace SELearning.Infrastructure.Tests
              List<Comment> comments = _service.GetCommentsFromContentId(6);
 
              Assert.Contains(cmt, comments);
-             Assert.Equal(1, comments.Count);
-         }*/
+             Assert.Equal(1, comments.Count);*/
+         }
 
+         [Fact]
+         public void GetCommentsFromContentId_given_non_existing_contentId_throws_exception()
+         {
+             
+         }
+
+         [Fact]
+         public void GetCommentFromCommentId_given_existing_commentId_returns_comment()
+         {
+             
+         }
+
+         [Fact]
+         public void GetCommentFromCommentId_given_non_existing_commentId_throws_exception()
+         {
+             
+         }
     }
 }
