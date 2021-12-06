@@ -15,7 +15,7 @@ public class PermissionAttributeTests
     {
         string prefix = "Permission";
 
-        PermissionAttribute attr = new(p);
+        AuthorizePermissionAttribute attr = new(p);
 
         Assert.Equal($"{prefix}{Enum.GetName(typeof(Permission), p)}", attr.Policy);
     }

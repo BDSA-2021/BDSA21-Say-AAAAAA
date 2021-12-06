@@ -6,9 +6,9 @@ namespace SELearning.Infrastructure.Authorization;
 /// <summary>
 /// Authorization attribute with the required permission
 /// </summary>
-public class PermissionAttribute : AuthorizeAttribute
+public class AuthorizePermissionAttribute : AuthorizeAttribute
 {
-    public PermissionAttribute(Permission p)
+    public AuthorizePermissionAttribute(Permission p)
     {
         var permissionString = Enum.GetName(typeof(Permission), p);
         Policy = $"{AuthorizationConstants.POLICY_PREFIX}{permissionString}";

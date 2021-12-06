@@ -12,6 +12,6 @@ namespace SELearning.Core.Comment
 
         public int Id { get; init; }
 
-        public Content.Content Content { get; init; }
+        public Content.Content Content { get; init; } = default!;
     }
 }
