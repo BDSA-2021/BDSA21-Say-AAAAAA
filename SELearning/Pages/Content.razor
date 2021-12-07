@@ -1,30 +1,40 @@
 @page "/content/{contentId}"
 
+@using SELearning.Core
+@using SELearning.Core.Comment;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@attribute [Authorize]
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
+
+
 <section class="video-wrapper">
-    <iframe width="560" height="315" src="@_Content.Link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="@_content.VideoLink" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </section>
 
 <section class="about-section">
     <div class="header-section">
-        <h1>@_Content.Title</h1>
-        <p>@_Content.Author | @_Content.CreatedAt.ToString("dddd, dd MMMM yyyy")</p>
+        <h1>@_content.Title</h1>
+        <p>@_content.Author | @_content.CreatedAt.ToString("dddd, dd MMMM yyyy")</p>
     </div>
     <div class="rating-container">
         <div
             role="button"
-            class="@((RateAmount > 0 ? "active" : "") + " arrow-up")"
-            onclick="@OnUpvoteClicked"
+            class="@((_rateAmount > 0 ? "active" : "") + " arrow-up")"
+            @onclick="OnUpvoteClicked"
         ></div>
-        <span class="rating">@_Content.Rating</span>
+        <span class="rating">@_content.Rating</span>
         <div role="button"  ></div>
         <div
             role="button"
-            class="@((RateAmount < 0 ? "active" : "") + " arrow-down")"
-            onclick="@OnDownvoteClicked"
+            class="@((_rateAmount ? "active" : "") + " arrow-down")"
+            @onclick="OnDownvoteClicked"
         ></div>
     </div>
 </section>
-<p class="description">@_Content.Description</p>
+<p class="description">@_content.Description</p>
 
 <SELearning.Shared.Comment.CommentSection ContentId="@ContentId" />
 
@@ -32,28 +42,65 @@
     [Parameter]
     public string ContentId { get; set; }
 
-    ContentPlaceholder _Content = new ContentPlaceholder {
-        Title = "A short introduction to internet practice",
-        Link = "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        Author = "Mickey Mouse",
-        Rating = 1234,
-        CreatedAt = DateTime.Now,
-        Description = "ZywOO skilled player but that is not normally, This very very insane....They need to check him pc and game.....Maybe he not cheating but maybe he using the game deficit ...and this cant seem on game screen..He needs to check-up....Day0s FPL Cheater with Streaming.....I think day0s still cheating...Zyw00 using game deficit on PRO scene ,ON BIG Events.Maybe everyone dont knows him trick.He incredible....I want to ask his where is the comming of your skill's ?"
-    };
+    private ContentDTO _content;
 
-    public int RateAmount { get; set; } = 0;
+    private int _rateAmount = 0;
 
-    record ContentPlaceholder
-    {
-        public string Title { get; init; }
-        public string Description { get; init; }
-        public string Link { get; init; } // TODO: custom storage?
-        public string Author { get; init; } // TODO: custom user object from backend?
-        public DateTime CreatedAt { get; init; } // TODO: custom user object from backend?
-        public int Rating { get; init; }
+    protected override async void OnInitialized() {
+        await this.GetContent();
     }
 
-    void OnUpvoteClicked() => RateAmount = RateAmount > 0 ? 0 : 1;
+    protected async Task GetContent() {
+        try
+        {
+            _content = await Http.GetFromJsonAsync<ContentDTO>($"Content/{this.ContentId}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception exception)
+        {
+            await this.Alert(exception);
+        }
+    }
 
-    void OnDownvoteClicked() => RateAmount = RateAmount < 0 ? 0 : -1;
+    protected async void OnUpvoteClicked() {
+        try
+        {
+            await Http.PutAsync($"Content/{this.ContentId}/upvote");
+            _content.Rating += 1;
+            _rateAmount = _rateAmount > 0 ? 0 : 1;
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception exception)
+        {
+            await this.Alert(exception);
+        }
+    }
+
+    protected async void OnDownvoteClicked() {
+        try
+        {
+            await Http.PutAsync($"Content/{this.ContentId}/downvote");
+            _content.Rating -= 1;
+            _rateAmount = _rateAmount < 0 ? 0 : -1;
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception exception)
+        {
+            await this.Alert(exception);
+        }
+    }
+
+    private async Task Alert(Exception exception) {
+        await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
+        System.Console.WriteLine(exception);
+    }
 }
