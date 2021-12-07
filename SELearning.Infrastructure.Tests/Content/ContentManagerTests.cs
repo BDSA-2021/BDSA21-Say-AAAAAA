@@ -1,10 +1,6 @@
-using System;
-using Microsoft.Data.Sqlite;
-using Xunit;
 using SELearning.Core.Content;
+using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SELearning.Infrastructure.Tests;
 
@@ -20,43 +16,34 @@ public class ContentManagerTests : IDisposable
     {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
+
         var builder = new DbContextOptionsBuilder<ContentContext>();
         builder.UseSqlite(connection);
+
         var context = new ContentContext(builder.Options);
         context.Database.EnsureCreated();
-
-        _section = new Section { Id = 1, Title = "python", Description = "description" };
 
         var content1 = new Content { Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
         var content2 = new Content { Id = 2, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
         var content3 = new Content { Id = 3, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
         var content4 = new Content { Id = 4, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
-        var contentList = new List<Content>();
-        contentList.Add(content1);
-        contentList.Add(content2);
-        contentList.Add(content3);
-        contentList.Add(content4);
-
-        _section.Content = contentList;
-
-        context.Content.AddRange(
+        _section = new Section { Id = 1, Title = "python", Description = "description" };
+        _section.Content = new List<Content>
+        {
             content1,
             content2,
             content3,
             content4
-        );
+        };
 
-        context.Section.AddRange(
-            _section
-        );
-
+        context.Content.AddRange(content1, content2, content3, content4);
+        context.Section.Add(_section);
         context.SaveChanges();
 
         _context = context;
         _repository = new ContentRepository(_context);
         _manager = new ContentManager(_repository);
-
     }
 
     [Fact]
@@ -130,15 +117,15 @@ public class ContentManagerTests : IDisposable
 
         await _manager.AddContent(content);
 
-        var option = await _repository.GetContent(5);
+        var contentWithID = (await _repository.GetContent(5)).Value;
 
-        Assert.NotNull(option.Value.Id);
-        Assert.Equal(_section, option.Value.Section);
-        Assert.Equal("author", option.Value.Author);
-        Assert.Equal("title", option.Value.Title);
-        Assert.Equal("description", option.Value.Description);
-        Assert.Equal("video link", option.Value.VideoLink);
-        Assert.Equal(3, option.Value.Rating);
+        Assert.NotNull(contentWithID.Id);
+        Assert.Equal(_section, contentWithID.Section);
+        Assert.Equal("author", contentWithID.Author);
+        Assert.Equal("title", contentWithID.Title);
+        Assert.Equal("description", contentWithID.Description);
+        Assert.Equal("video link", contentWithID.VideoLink);
+        Assert.Equal(3, contentWithID.Rating);
     }
 
     [Fact]
@@ -182,10 +169,10 @@ public class ContentManagerTests : IDisposable
         var allContent = await _manager.GetContent();
 
         Assert.Collection(allContent,
-            content => Assert.Equal(content.Id, 1),
-            content => Assert.Equal(content.Id, 2),
-            content => Assert.Equal(content.Id, 3),
-            content => Assert.Equal(content.Id, 4)
+            content => Assert.Equal(1, content.Id),
+            content => Assert.Equal(2, content.Id),
+            content => Assert.Equal(3, content.Id),
+            content => Assert.Equal(4, content.Id)
         );
     }
 
@@ -195,10 +182,10 @@ public class ContentManagerTests : IDisposable
         var allContent = await _manager.GetContentInSection(1);
 
         Assert.Collection(allContent,
-            content => Assert.Equal(content.Id, 1),
-            content => Assert.Equal(content.Id, 2),
-            content => Assert.Equal(content.Id, 3),
-            content => Assert.Equal(content.Id, 4)
+            content => Assert.Equal(1, content.Id),
+            content => Assert.Equal(2, content.Id),
+            content => Assert.Equal(3, content.Id),
+            content => Assert.Equal(4, content.Id)
         );
     }
 
@@ -219,8 +206,6 @@ public class ContentManagerTests : IDisposable
 
         Assert.Equal(option.Value.Title, updateSection.Title);
     }
-
-
 
     protected virtual void Dispose(bool disposing)
     {
