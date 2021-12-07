@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
+using SELearning.Core;
 using SELearning.Core.Comment;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -38,7 +38,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        service.Setup(m => m.GetCommentFromCommentId(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.GetCommentFromCommentId(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
         var response = (await controller.GetComment(-1)).Result;
@@ -73,7 +73,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        service.Setup(m => m.GetCommentsFromContentId(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.GetCommentsFromContentId(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
         var response = (await controller.GetCommentsByContentID(-1)).Result;
@@ -109,7 +109,7 @@ public class CommentControllerTest
         var controller = new CommentController(logger.Object, service.Object);
 
         var comment = new CommentCreateDTO("Author", "Text", -1);
-        service.Setup(m => m.PostComment(comment)).ThrowsAsync(new Exception());
+        service.Setup(m => m.PostComment(comment)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
         var response = await controller.CreateComment(comment);
@@ -141,7 +141,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
 
         var comment = new CommentUpdateDTO("Text", -1);
-        service.Setup(m => m.UpdateComment(-1, comment)).ThrowsAsync(new Exception());
+        service.Setup(m => m.UpdateComment(-1, comment)).ThrowsAsync(new CommentNotFoundException(-1));
 
         var controller = new CommentController(logger.Object, service.Object);
 
@@ -175,7 +175,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        service.Setup(m => m.RemoveComment(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.RemoveComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
         var response = await controller.DeleteComment(-1);
@@ -207,7 +207,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        service.Setup(m => m.UpvoteComment(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.UpvoteComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
         var response = await controller.UpvoteComment(-1);
@@ -239,7 +239,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        service.Setup(m => m.DownvoteComment(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.DownvoteComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
         var response = await controller.DownvoteComment(-1);

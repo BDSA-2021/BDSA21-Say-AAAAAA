@@ -35,7 +35,7 @@ public class CommentController : ControllerBase
         {
             return Ok(await _service.GetCommentFromCommentId(id));
         }
-        catch (Exception)
+        catch (CommentNotFoundException)
         {
             return NotFound();
         }
@@ -55,7 +55,7 @@ public class CommentController : ControllerBase
         {
             return Ok(await _service.GetCommentsFromContentId(contentID));
         }
-        catch (Exception)
+        catch (ContentNotFoundException)
         {
             return NotFound();
         }
@@ -78,7 +78,7 @@ public class CommentController : ControllerBase
             await _service.PostComment(comment);
             return CreatedAtRoute(nameof(GetComment), comment.ContentId);
         }
-        catch (Exception)
+        catch (ContentNotFoundException)
         {
             return NotFound();
         }
@@ -101,7 +101,7 @@ public class CommentController : ControllerBase
             await _service.UpdateComment(ID, comment);
             return NoContent();
         }
-        catch (Exception)
+        catch (CommentNotFoundException)
         {
             return NotFound();
         }
@@ -123,7 +123,7 @@ public class CommentController : ControllerBase
             await _service.RemoveComment(ID);
             return NoContent();
         }
-        catch (Exception)
+        catch (CommentNotFoundException)
         {
             return NotFound();
         }
@@ -145,7 +145,7 @@ public class CommentController : ControllerBase
             await _service.UpvoteComment(ID);
             return NoContent();
         }
-        catch (Exception)
+        catch (CommentNotFoundException)
         {
             return NotFound();
         }
@@ -167,7 +167,7 @@ public class CommentController : ControllerBase
             await _service.DownvoteComment(ID);
             return NoContent();
         }
-        catch (Exception)
+        catch (CommentNotFoundException)
         {
             return NotFound();
         }
