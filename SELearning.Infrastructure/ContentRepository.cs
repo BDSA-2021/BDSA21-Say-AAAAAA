@@ -1,4 +1,5 @@
 namespace SELearning.Infrastructure;
+
 public class ContentRepository : IContentRepository
 {
     private readonly IContentContext _context;
@@ -7,6 +8,7 @@ public class ContentRepository : IContentRepository
     {
         _context = context;
     }
+
     public async Task<(OperationResult, ContentDto)> AddContent(ContentCreateDto content)
     {
         var entity = new Content

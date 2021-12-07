@@ -1,4 +1,5 @@
 namespace SELearning.Core.Content;
+
 public interface IContentRepository
 {
     // Content

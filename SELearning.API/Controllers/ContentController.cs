@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.Content;
+using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -20,10 +21,15 @@ public class ContentController : ControllerBase
         _service = service;
     }
 
+    /// <summary>
+    /// <c>GetContent</c> returns the content with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the content.</param>
+    /// <returns>A content with the given ID if it exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
     [HttpGet("{ID}")]
-    [ProducesResponseType(typeof(ContentDto), 200)] // OK
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(typeof(ContentDto), 200)]
+    [ProducesResponseType(404)]
     public async Task<ActionResult<ContentDto>> GetContent(int ID)
     {
         try
@@ -77,10 +83,15 @@ public class ContentController : ControllerBase
         }
     }
 
-    [Authorize]
+    /// <summary>
+    /// <c>CreateContent</c> creates a content.
+    /// </summary>
+    /// <param name="content">The record of the content.</param>
+    /// <returns>A response type 201: Created if the serice can create it, otherwise response type 404: Not Found.</returns>
+    [AuthorizePermission(Permission.CreateContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPost]
-    [ProducesResponseType(201)] // Created
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(201)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> CreateContent(ContentCreateDto content)
     {
         try
@@ -94,11 +105,16 @@ public class ContentController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// <c>UpdateContent</c> updates the content with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the content.</param>
+    /// <param name="content">The record of the updated content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
+    [AuthorizePermission(Permission.EditAnyContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPut("{ID}")]
-    [ProducesResponseType(204)] // No Content
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDto content)
     {
         try
@@ -112,10 +128,15 @@ public class ContentController : ControllerBase
         }
     }
 
-    [Authorize]
+    /// <summary>
+    /// <c>GetContent</c> deletes the content with the given ID, and its associated comments.
+    /// </summary>
+    /// <param name="ID">The ID of the content.</param>
+    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
+    [AuthorizePermission(Permission.DeleteAnyContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpDelete("{ID}")]
-    [ProducesResponseType(204)] // No Content
-    [ProducesResponseType(404)] // Not Found
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteContent(int ID)
     {
         try
