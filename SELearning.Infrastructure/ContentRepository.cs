@@ -190,7 +190,7 @@ public class ContentRepository : IContentRepository
         return await section.FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyCollection<ContentDto>?> GetContentInSection(int id)
+    public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
     {
         var section = _context.Section.Single(s => s.Id == id);
 
@@ -208,6 +208,5 @@ public class ContentRepository : IContentRepository
                       };
 
         return (await content.ToListAsync()).AsReadOnly();
-
     }
 }
