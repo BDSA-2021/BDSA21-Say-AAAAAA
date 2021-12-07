@@ -144,16 +144,15 @@ public class ContentManagerTests : IDisposable
     [Fact]
     public async Task GetContent_by_id_returns_content()
     {
-        var option = await _manager.GetContent(1);
+        var content = await _manager.GetContent(1);
 
-        Assert.Equal(1, option.Value.Id);
-        Assert.Equal(_section, option.Value.Section);
-        Assert.Equal("author", option.Value.Author);
-        Assert.Equal("title", option.Value.Title);
-        Assert.Equal("description", option.Value.Description);
-        Assert.Equal("VideoLink", option.Value.VideoLink);
-        Assert.Equal(3, option.Value.Rating);
-
+        Assert.Equal(1, content.Id);
+        Assert.Equal(_section, content.Section);
+        Assert.Equal("author", content.Author);
+        Assert.Equal("title", content.Title);
+        Assert.Equal("description", content.Description);
+        Assert.Equal("VideoLink", content.VideoLink);
+        Assert.Equal(3, content.Rating);
     }
 
     [Fact]
@@ -169,12 +168,12 @@ public class ContentManagerTests : IDisposable
     [Fact]
     public async Task GetSection_by_id_returns_section()
     {
-        var option = await _manager.GetSection(1);
+        var section = await _manager.GetSection(1);
 
-        Assert.Equal(1, option.Value.Id);
-        Assert.Equal("python", option.Value.Title);
-        Assert.Equal("description", option.Value.Description);
-        Assert.Equal(_section.Content, option.Value.Content);
+        Assert.Equal(1, section.Id);
+        Assert.Equal("python", section.Title);
+        Assert.Equal("description", section.Description);
+        Assert.Equal(_section.Content, section.Content);
     }
 
     [Fact]
