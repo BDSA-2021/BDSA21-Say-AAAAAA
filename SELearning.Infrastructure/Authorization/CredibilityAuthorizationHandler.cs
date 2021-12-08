@@ -29,7 +29,7 @@ public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityP
 
         var user = context.User;
         var userCredibilityScore = await _credService.GetCredibilityScore(user);
-        var isPermitted = requirement.RequiredCredibilityScores.Any(requiredScore => requiredScore <= userCredibilityScore);
+        var isPermitted = requirement.RequiredCredibilityScores.Any(requiredScore => requiredScore.Credibility <= userCredibilityScore);
 
         _logger?.LogDebug($"User {context.User.GetUserId()} is permitted access: {isPermitted}");
 

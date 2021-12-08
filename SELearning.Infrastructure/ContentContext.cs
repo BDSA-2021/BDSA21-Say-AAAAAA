@@ -8,8 +8,11 @@ public class ContentContext : DbContext, IContentContext
 
     public ContentContext(DbContextOptions<ContentContext> options) : base(options) { }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-
+        // Rules for entity creation for DB
+        builder.Entity<Content>()
+               .HasIndex(t => t.Id)
+               .IsUnique();
     }
 }

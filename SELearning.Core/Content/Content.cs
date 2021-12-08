@@ -1,4 +1,5 @@
 namespace SELearning.Core.Content;
+
 public class Content
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -10,5 +11,4 @@ public class Content
     public string? Description { get; set; }
     public string? VideoLink { get; set; }
     public int Rating { get; set; }
-
 }
