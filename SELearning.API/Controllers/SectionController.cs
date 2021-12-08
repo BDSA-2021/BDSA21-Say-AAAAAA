@@ -24,7 +24,6 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="sectionID">The ID of the section.</param>
     /// <returns>A collection of contents in the section if it exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet("{ID}/Content")]
     [ProducesResponseType(typeof(IReadOnlyCollection<ContentDto>), 200)]
     [ProducesResponseType(404)]
@@ -45,7 +44,6 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the section.</param>
     /// <returns>A section with the given ID if it exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(SectionDto), 200)]
     [ProducesResponseType(404)]
@@ -66,7 +64,6 @@ public class SectionController : ControllerBase
     /// <c>GetSections</c> returns all sections.
     /// </summary>
     /// <returns>all sections if they can be found, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<SectionDto>), 200)]
     [ProducesResponseType(404)]
@@ -80,7 +77,6 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="section">The record of the section.</param>
     /// <returns>A response type 201: Created</returns>
-    [Authorize]
     [HttpPost]
     [ProducesResponseType(201)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
@@ -95,7 +91,6 @@ public class SectionController : ControllerBase
     /// <param name="ID">The ID of the section.</param>
     /// <param name="section">The record of the updated section.</param>
     /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -117,7 +112,6 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the section.</param>
     /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]

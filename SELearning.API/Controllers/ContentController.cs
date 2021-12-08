@@ -24,7 +24,6 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A content with the given ID if it exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(ContentDto), 200)]
     [ProducesResponseType(404)]
@@ -45,7 +44,6 @@ public class ContentController : ControllerBase
     /// <c>GetAllContent</c> returns all contents.
     /// </summary>
     /// <returns>all contents if they can be found, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<ContentDto>), 200)]
     [ProducesResponseType(404)]
@@ -115,7 +113,6 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -137,7 +134,6 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]

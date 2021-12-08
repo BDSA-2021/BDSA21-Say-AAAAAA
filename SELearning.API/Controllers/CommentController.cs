@@ -130,7 +130,6 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -152,7 +151,6 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
