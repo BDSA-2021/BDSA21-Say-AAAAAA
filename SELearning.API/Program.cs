@@ -37,8 +37,6 @@ builder.Services.AddDbContext<CommentContext>(options => options.UseSqlServer(co
 builder.Services.AddScoped<ICommentContext, CommentContext>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentManager>();
-
-builder.Services.AddPermissionAuthorization().Build();
 #endregion
 
 var app = builder.Build();
