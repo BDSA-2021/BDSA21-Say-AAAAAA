@@ -1,9 +1,6 @@
 using System;
-using Microsoft.Data.Sqlite;
-using Xunit;
 using SELearning.Core.Content;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace SELearning.Infrastructure.Tests;
@@ -31,11 +28,13 @@ public class ContentRepositoryTests : IDisposable
         var content3 = new Content { Id = 3, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
         var content4 = new Content { Id = 4, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
-        var contentList = new List<Content>();
-        contentList.Add(content1);
-        contentList.Add(content2);
-        contentList.Add(content3);
-        contentList.Add(content4);
+        var contentList = new List<Content>
+        {
+            content1,
+            content2,
+            content3,
+            content4
+        };
 
         _section.Content = contentList;
 
@@ -68,7 +67,7 @@ public class ContentRepositoryTests : IDisposable
         var contentList = new List<Content>();
         var section = new SectionCreateDto { Title = "title", Description = "description", Content = contentList };
 
-        var (status, created) = await _repository.AddSection(section);
+        var created = (await _repository.AddSection(section)).Item2;
 
         Assert.NotNull(created.Id);
         Assert.Equal("title", created.Title);
@@ -232,7 +231,7 @@ public class ContentRepositoryTests : IDisposable
             Rating = 3,
         };
 
-        var (status, created) = await _repository.AddContent(content);
+        var created = (await _repository.AddContent(content)).Item2;
 
         Assert.NotNull(created.Id);
         Assert.Equal(_section, created.Section);
@@ -390,18 +389,9 @@ public class ContentRepositoryTests : IDisposable
                 // TODO: dispose managed state (managed objects)
             }
 
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
             disposedValue = true;
         }
     }
-
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    // ~CharacterRepositoryTests()
-    // {
-    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-    //     Dispose(disposing: false);
-    // }
 
     public void Dispose()
     {

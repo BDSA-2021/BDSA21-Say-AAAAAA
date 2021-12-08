@@ -4,7 +4,7 @@ namespace SELearning.Infrastructure
 {
     public class CommentManager : ICommentService
     {
-        ICommentRepository _repo;
+        readonly ICommentRepository _repo;
         public CommentManager(ICommentRepository repo)
         {
             _repo = repo;
@@ -43,7 +43,7 @@ namespace SELearning.Infrastructure
                 throw new CommentNotFoundException(id);
             }
 
-            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating + 1);
+            CommentUpdateDTO dto = new(comment.Value.Text, comment.Value.Rating + 1);
             await UpdateComment(id, dto);
         }
 
@@ -56,7 +56,7 @@ namespace SELearning.Infrastructure
                 throw new CommentNotFoundException(id);
             }
 
-            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating - 1);
+            CommentUpdateDTO dto = new(comment.Value.Text, comment.Value.Rating - 1);
             await UpdateComment(id, dto);
         }
 

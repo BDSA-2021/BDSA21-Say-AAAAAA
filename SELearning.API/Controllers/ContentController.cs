@@ -36,7 +36,7 @@ public class ContentController : ControllerBase
         {
             return Ok(await _service.GetContent(ID));
         }
-        catch (Exception)
+        catch (ContentNotFoundException)
         {
             return NotFound();
         }
@@ -52,14 +52,7 @@ public class ContentController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<ActionResult<IReadOnlyCollection<ContentDto>>> GetAllContent()
     {
-        try
-        {
-            return Ok(await _service.GetContent());
-        }
-        catch (Exception)
-        {
-            return NotFound();
-        }
+        return Ok(await _service.GetContent());
     }
 
     /// <summary>
@@ -77,7 +70,7 @@ public class ContentController : ControllerBase
         {
             return Ok(await _service.GetContentInSection(sectionID));
         }
-        catch (Exception)
+        catch (SectionNotFoundException)
         {
             return NotFound();
         }
@@ -87,21 +80,13 @@ public class ContentController : ControllerBase
     /// <c>CreateContent</c> creates a content.
     /// </summary>
     /// <param name="content">The record of the content.</param>
-    /// <returns>A response type 201: Created.</returns>
+    /// <returns>A response type 201: Created</returns>
     [HttpPost]
     [ProducesResponseType(201)]
-    [ProducesResponseType(404)]
     public async Task<IActionResult> CreateContent(ContentCreateDto content)
     {
-        try
-        {
-            await _service.AddContent(content);
-            return CreatedAtRoute(nameof(GetContent), content);
-        }
-        catch (Exception)
-        {
-            return NotFound();
-        }
+        await _service.AddContent(content);
+        return CreatedAtRoute(nameof(GetContent), content);
     }
 
     /// <summary>
@@ -109,7 +94,7 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <param name="content">The record of the updated content.</param>
-    /// <returns></returns>
+    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -120,7 +105,7 @@ public class ContentController : ControllerBase
             await _service.UpdateContent(ID, content);
             return NoContent();
         }
-        catch (Exception)
+        catch (ContentNotFoundException)
         {
             return NotFound();
         }
@@ -141,7 +126,7 @@ public class ContentController : ControllerBase
             await _service.DeleteContent(ID);
             return NoContent();
         }
-        catch (Exception)
+        catch (ContentNotFoundException)
         {
             return NotFound();
         }
@@ -153,7 +138,7 @@ public class ContentController : ControllerBase
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
-    [HttpPut("{ID}")]
+    [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> UpvoteContent(int ID)
@@ -163,7 +148,7 @@ public class ContentController : ControllerBase
             await _service.IncreaseContentRating(ID);
             return NoContent();
         }
-        catch (Exception)
+        catch (ContentNotFoundException)
         {
             return NotFound();
         }
@@ -175,7 +160,7 @@ public class ContentController : ControllerBase
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
-    [HttpPut("{ID}")]
+    [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> DownvoteContent(int ID)
@@ -185,7 +170,7 @@ public class ContentController : ControllerBase
             await _service.DecreaseContentRating(ID);
             return NoContent();
         }
-        catch (Exception)
+        catch (ContentNotFoundException)
         {
             return NotFound();
         }
@@ -206,7 +191,7 @@ public class ContentController : ControllerBase
         {
             return Ok(await _service.GetSection(ID));
         }
-        catch (Exception)
+        catch (SectionNotFoundException)
         {
             return NotFound();
         }
@@ -222,21 +207,14 @@ public class ContentController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<ActionResult<IReadOnlyCollection<SectionDto>>> GetAllSections()
     {
-        try
-        {
-            return Ok(await _service.GetSections());
-        }
-        catch (Exception)
-        {
-            return NotFound();
-        }
+        return Ok(await _service.GetSections());
     }
 
     /// <summary>
     /// <c>CreateSection</c> creates a section.
     /// </summary>
     /// <param name="section">The record of the section.</param>
-    /// <returns>A response type 201: Created.</returns>
+    /// <returns>A response type 201: Created</returns>
     [Authorize]
     [HttpPost]
     [ProducesResponseType(201)]
@@ -263,7 +241,7 @@ public class ContentController : ControllerBase
             await _service.UpdateSection(ID, section);
             return NoContent();
         }
-        catch (Exception)
+        catch (SectionNotFoundException)
         {
             return NotFound();
         }
@@ -285,7 +263,7 @@ public class ContentController : ControllerBase
             await _service.DeleteSection(ID);
             return NoContent();
         }
-        catch (Exception)
+        catch (SectionNotFoundException)
         {
             return NotFound();
         }
