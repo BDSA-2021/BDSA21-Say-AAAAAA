@@ -1,38 +1,87 @@
-using SELearning.Core.Services;
-using SELearning.Core;
-using System;
+using SELearning.Core.Comment;
 
 namespace SELearning.Infrastructure
 {
     public class CommentManager : ICommentService
     {
-        public void PostComment(string author, string content)
+        ICommentRepository _repo;
+        public CommentManager(ICommentRepository repo)
         {
-
-        }
-        public void UpdateComment(Comment cmt)
-        {
-
-        }
-        public void RemoveComment(Comment cmt)
-        {
-
-        }
-        public void UpvoteComment(Comment cmt)
-        {
-            cmt.Rating++;
-            UpdateComment(cmt);
-        }
-        public void DownvoteComment(Comment cmt)
-        {
-            cmt.Rating--;
-            UpdateComment(cmt);
+            _repo = repo;
         }
 
-        public List<Comment> GetCommentsFromContentId(int contentId)
+        public async Task PostComment(CommentCreateDTO dto)
         {
-            return new List<Comment>();
+            if ((await _repo.AddComment(dto)).Item1 == OperationResult.NotFound)
+            {
+                throw new ContentNotFoundException(dto.ContentId);
+            }
         }
 
+        public async Task UpdateComment(int id, CommentUpdateDTO dto)
+        {
+            if ((await _repo.UpdateComment(id, dto)).Item1 == OperationResult.NotFound)
+            {
+                throw new CommentNotFoundException(id);
+            }
+        }
+
+        public async Task RemoveComment(int id)
+        {
+            if (await _repo.RemoveComment(id) == OperationResult.NotFound)
+            {
+                throw new CommentNotFoundException(id);
+            }
+        }
+
+        public async Task UpvoteComment(int id)
+        {
+            var comment = await _repo.GetCommentByCommentId(id);
+
+            if (comment.IsNone)
+            {
+                throw new CommentNotFoundException(id);
+            }
+
+            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating + 1);
+            await UpdateComment(id, dto);
+        }
+
+        public async Task DownvoteComment(int id)
+        {
+            var comment = await _repo.GetCommentByCommentId(id);
+
+            if (comment.IsNone)
+            {
+                throw new CommentNotFoundException(id);
+            }
+
+            CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating - 1);
+            await UpdateComment(id, dto);
+        }
+
+        public async Task<List<Comment>> GetCommentsFromContentId(int contentId)
+        {
+            var (comments, result) = await _repo.GetCommentsByContentId(contentId);
+
+            if (result == OperationResult.NotFound || comments == null)
+            {
+                throw new ContentNotFoundException(contentId);
+            }
+
+            return comments;
+        }
+
+        public async Task<Comment> GetCommentFromCommentId(int id)
+        {
+            var comment = await _repo.GetCommentByCommentId(id);
+
+            if (comment.IsNone)
+            {
+                throw new CommentNotFoundException(id);
+            }
+
+            return comment.Value;
+        }
     }
 }

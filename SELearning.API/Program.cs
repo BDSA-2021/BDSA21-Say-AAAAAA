@@ -33,10 +33,14 @@ builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(co
 builder.Services.AddScoped<IWeatherContext, WeatherContext>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
 
-builder.Services.AddHealthChecks()
-    .AddDbContextCheck<WeatherContext>();
+builder.Services.AddDbContext<CommentContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddScoped<ICommentContext, CommentContext>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentService, CommentManager>();
 
-builder.Services.AddPermissionAuthorization().Build();
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<WeatherContext>()
+    .AddDbContextCheck<CommentContext>();
 #endregion
 
 var app = builder.Build();
