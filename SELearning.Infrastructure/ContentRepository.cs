@@ -119,7 +119,7 @@ public class ContentRepository : IContentRepository
 
         await _context.SaveChangesAsync();
 
-        var contentDto = new SectionDto
+        var sectionDto = new SectionDto
         {
             Id = entity.Id,
             Title = entity.Title,
@@ -127,7 +127,7 @@ public class ContentRepository : IContentRepository
             Content = entity.Content
         };
 
-        return (OperationResult.Created, contentDto);
+        return (OperationResult.Created, sectionDto);
     }
 
     public async Task<OperationResult> UpdateSection(int id, SectionUpdateDto section)

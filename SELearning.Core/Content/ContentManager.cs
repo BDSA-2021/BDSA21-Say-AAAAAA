@@ -9,14 +9,14 @@ public class ContentManager : IContentService
         _repository = repository;
     }
 
-    public async Task AddContent(ContentCreateDto content)
+    public async Task<ContentDto> AddContent(ContentCreateDto content)
     {
-        await _repository.AddContent(content);
+        return (await _repository.AddContent(content)).Item2;
     }
 
-    public async Task AddSection(SectionCreateDto section)
+    public async Task<SectionDto> AddSection(SectionCreateDto section)
     {
-        await _repository.AddSection(section);
+        return (await _repository.AddSection(section)).Item2;
     }
 
     public async Task DecreaseContentRating(int id)

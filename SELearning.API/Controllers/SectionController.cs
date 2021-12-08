@@ -48,6 +48,7 @@ public class SectionController : ControllerBase
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(SectionDto), 200)]
     [ProducesResponseType(404)]
+    [ActionName(nameof(GetSection))]
     public async Task<ActionResult<SectionDto>> GetSection(int ID)
     {
         try
@@ -81,8 +82,8 @@ public class SectionController : ControllerBase
     [ProducesResponseType(201)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
     {
-        await _service.AddSection(section);
-        return NoContent();
+        var createdSection = await _service.AddSection(section);
+        return CreatedAtAction(nameof(GetSection), new { ID = createdSection.Id }, createdSection);
     }
 
     /// <summary>

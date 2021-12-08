@@ -5,6 +5,8 @@ using SELearning.API.Controllers;
 using SELearning.Core;
 using SELearning.Core.Content;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -91,14 +93,17 @@ public class SectionControllerTest
         var service = new Mock<IContentService>();
         var controller = new SectionController(logger.Object, service.Object);
 
-        var section = new SectionCreateDto { Title = "Title" };
+        var toCreate = new SectionCreateDto { Title = "Title" };
+        var expected = new SectionDto { Title = "Title", Id = 1 };
+        service.Setup(m => m.AddSection(toCreate)).ReturnsAsync(expected);
 
         // Act
-        var result = (await controller.CreateSection(section) as CreatedAtRouteResult)!;
+        var actual = (await controller.CreateSection(toCreate) as CreatedAtActionResult)!;
 
         // Assert
-        Assert.Equal("GetSection", result.RouteName);
-        Assert.Equal(section, result.Value);
+        Assert.Equal(expected, actual.Value);
+        Assert.Equal("GetSection", actual.ActionName);
+        Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
     }
 
     [Fact]

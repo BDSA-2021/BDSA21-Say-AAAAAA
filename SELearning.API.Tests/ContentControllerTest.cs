@@ -5,6 +5,8 @@ using SELearning.API.Controllers;
 using SELearning.Core;
 using SELearning.Core.Content;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -66,21 +68,24 @@ public class ContentControllerTest
     }
 
     [Fact]
-    public async Task CreateContent_Returns_CreatedAtRoutee()
+    public async Task CreateContent_Returns_CreatedAtRoute()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        var content = new ContentCreateDto { Title = "Title" };
+        var toCreate = new ContentCreateDto { Title = "Title" };
+        var expected = new ContentDto { Title = "Title", Id = 1 };
+        service.Setup(m => m.AddContent(toCreate)).ReturnsAsync(expected);
 
         // Act
-        var result = (await controller.CreateContent(content) as CreatedAtRouteResult)!;
+        var actual = (await controller.CreateContent(toCreate) as CreatedAtActionResult)!;
 
         // Assert
-        Assert.Equal("GetContent", result.RouteName);
-        Assert.Equal(content, result.Value);
+        Assert.Equal(expected, actual.Value);
+        Assert.Equal("GetContent", actual.ActionName);
+        Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
     }
 
     [Fact]
