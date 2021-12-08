@@ -1,18 +1,18 @@
-@using SELearning.Core
+@using SELearning.Core.Content
 
 <div class="card content" style="width: 18rem;">
   <div class="card-body">
-    <h5 class="card-title">@Content.Title</h5>
-    <p class="card-text">@Content.Description</p>
+    <h5 class="card-title">@content.Title</h5>
+    <p class="card-text">@content.Description</p>
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">Author: @Content.Author</li>
-    <li class="list-group-item">Video link: @Content.VideoLink</li>
-    <li class="list-group-item">Rating: @Content.Rating</li>
+    <li class="list-group-item">Author: @content.Author</li>
+    <li class="list-group-item">Video link: @content.VideoLink</li>
+    <li class="list-group-item">Rating: @content.Rating</li>
   </ul>
   <div class="card-body">
     <div class="btn-group">
-        <a href='@string.Format("/content/{0}", Content.Id)' class="btn btn-primary">View Content</a>
+        <a href='@string.Format("/content/{0}", content.Id)' class="btn btn-primary">View Content</a>
         <button @onclick="Delete" class="btn btn-default text-danger">Delete</button>
     </div>
   </div>
@@ -21,10 +21,10 @@
 @code {
 
     [Parameter]
-    public Content Content { get; set; }
+    public ContentDto content { get; set; }
 
     [Parameter]
-    public EventCallback<Content> OnContentDeleted { get; set; }
+    public EventCallback<ContentDto> OnContentDeleted { get; set; }
 
     private async Task Delete()
     {
@@ -33,14 +33,14 @@
         // TODO: Check if return code is not an error
 
         if(OnContentDeleted.HasDelegate)
-            await OnContentDeleted.InvokeAsync(Content);
+            await OnContentDeleted.InvokeAsync(content);
     }
 
     private Task UpVote()
     {
         // Call up vote api
 
-        Content.Rating++;
+        content.Rating++;
 
         return Task.CompletedTask;
     }
@@ -49,7 +49,7 @@
     {
         // Call down vote api
 
-        Content.Rating--;
+        content.Rating--;
 
         return Task.CompletedTask;
     }

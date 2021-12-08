@@ -1,11 +1,12 @@
-@using SELearning.Core
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SELearning.Core.Content
 
 @inject HttpClient Http
 
 <section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
     <div class="row">
         <!-- List of comments -->
-        @foreach(Content content in _allContent)
+        @foreach(ContentDto content in forecasts)
         {
             <ContentTile Content="@content" OnContentDeleted="@OnContentDeleted"/>
         }
@@ -16,28 +17,47 @@
     [Parameter]
     public string SectionId { get; set; }
 
-    private Content _content = new();
+    private ContentDto _content = new();
 
     private IList<Content> _allContent;
     
-    protected override void OnInitialized()
+    private ContentDto[] forecasts = {};
+    
+    protected async override void OnInitialized()
     {
-        _allContent = new List<Content>()
-        {
-            new Content { Id = "1", Author = "Asger", Title = "Hello", Description = "Some quick example text to build on the card title and make up the bulk of the card's content.", VideoLink = "Video", Rating = 3 },
-            new Content { Id = "2", Author = "Asger", Title = "Hello", Description = "Some quick example text to build on the card title and make up the bulk of the card's content.", VideoLink = "Video", Rating = 3 },
-            new Content { Id = "3", Author = "Asger", Title = "Hello", Description = "Some quick example text to build on the card title and make up the bulk of the card's content.", VideoLink = "Video", Rating = 3 },
-            new Content { Id = "4", Author = "Asger", Title = "Hello", Description = "Some quick example text to build on the card title and make up the bulk of the card's content.", VideoLink = "Video", Rating = 3 },
-            new Content { Id = "5", Author = "Asger", Title = "Hello", Description = "Some quick example text to build on the card title and make up the bulk of the card's content.", VideoLink = "Video", Rating = 3 },
-            new Content { Id = "6", Author = "Asger", Title = "Hello", Description = "Some quick example text to build on the card title and make up the bulk of the card's content.", VideoLink = "Video", Rating = 3 },
-            new Content { Id = "7", Author = "Asger", Title = "Hello", Description = "Some quick example text to build on the card title and make up the bulk of the card's content.", VideoLink = "Video", Rating = 3 },
-        };
+        await Generate();
     }
 
-    private void OnContentDeleted(Content content)
+    protected async Task Generate()
+    {
+        try
+        {
+            await Http.GetAsync("Content");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+        await RetrieveForecasts();
+    }
+
+    private void OnContentDeleted(ContentDto content)
     {
         System.Console.WriteLine($"Comment from {content.Author} is deleted!");
-        _allContent.Remove(content);
+        @* forecasts.Remove(content); *@
+    }
+
+    protected async Task RetrieveForecasts()
+    {
+        try
+        {
+            forecasts = await Http.GetFromJsonAsync<ContentDto[]>("Content");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
     }
 
 }
