@@ -16,9 +16,6 @@ public record SectionCreateDto
 
     [StringLength(50)]
     public string? Description { get; set; }
-
-    public List<Content>? Content { get; set; }
-
 }
 
 public record SectionUpdateDto : SectionCreateDto

@@ -90,7 +90,7 @@ public class ContentManagerTests : IDisposable
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
         var contentList = new List<Content>();
-        var section = new SectionCreateDto { Title = "title", Description = "description", Content = contentList };
+        var section = new SectionCreateDto { Title = "title", Description = "description" };
 
         await _manager.AddSection(section);
 
@@ -197,7 +197,6 @@ public class ContentManagerTests : IDisposable
         {
             Title = "new title",
             Description = "description",
-            Content = contentList
         };
 
         await _manager.UpdateSection(1, updateSection);

@@ -63,7 +63,7 @@ public class ContentController : ControllerBase
     public async Task<IActionResult> CreateContent(ContentCreateDto content)
     {
         await _service.AddContent(content);
-        return CreatedAtRoute(nameof(GetContent), content);
+        return CreatedAtAction(nameof(GetContent), content);
     }
 
     /// <summary>

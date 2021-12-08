@@ -112,7 +112,7 @@ public class ContentRepository : IContentRepository
         {
             Title = section.Title,
             Description = section.Description,
-            Content = section.Content,
+            Content = new List<Content>(),
         };
 
         _context.Section.Add(entity);
@@ -141,7 +141,7 @@ public class ContentRepository : IContentRepository
 
         entity.Title = section.Title;
         entity.Description = section.Description;
-        entity.Content = section.Content;
+        entity.Content = new List<Content>();
 
         await _context.SaveChangesAsync();
 

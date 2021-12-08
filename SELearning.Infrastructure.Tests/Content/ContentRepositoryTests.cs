@@ -65,27 +65,29 @@ public class ContentRepositoryTests : IDisposable
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
         var contentList = new List<Content>();
-        var section = new SectionCreateDto { Title = "title", Description = "description", Content = contentList };
+        var section = new SectionCreateDto { Title = "title", Description = "description" };
 
         var created = (await _repository.AddSection(section)).Item2;
 
         Assert.NotNull(created.Id);
         Assert.Equal("title", created.Title);
         Assert.Equal("description", created.Description);
-        Assert.Equal(contentList, created.Content);
     }
 
     [Fact]
     public async Task CreateSectionAsync_given_Section_returns_Section_with_Section()
     {
         var contentList = new List<Content>();
-        var section = new SectionCreateDto { Title = "title", Description = "description", Content = contentList };
+        var section = new SectionCreateDto { Title = "title", Description = "description" };
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDto { Id = 2, Title = "title", Description = "description", Content = contentList };
+        var sectionDto = new SectionDto { Id = 2, Title = "title", Description = "description", Content = new List<Content>() };
 
-        Assert.Equal(sectionDto, created);
+        Assert.Equal(sectionDto.Id, created.Id);
+        Assert.Equal(sectionDto.Title, created.Title);
+        Assert.Equal(sectionDto.Description, created.Description);
+        Assert.Equal(sectionDto.Content.Count, created.Content?.Count);
         Assert.Equal(OperationResult.Created, status);
     }
 
@@ -105,7 +107,6 @@ public class ContentRepositoryTests : IDisposable
         {
             Title = "title",
             Description = "description",
-            Content = contentList
         };
 
         var reponse = await _repository.UpdateSection(42, section);
@@ -131,7 +132,6 @@ public class ContentRepositoryTests : IDisposable
         {
             Title = "title",
             Description = "description",
-            Content = contentList
         };
 
         var updated = await _repository.UpdateSection(1, section);
@@ -147,7 +147,6 @@ public class ContentRepositoryTests : IDisposable
         {
             Title = "title",
             Description = "description",
-            Content = contentList
         };
 
         var response = await _repository.UpdateSection(42, section);
@@ -163,7 +162,6 @@ public class ContentRepositoryTests : IDisposable
         {
             Title = "new title",
             Description = "description",
-            Content = contentList
         };
 
         var response = await _repository.UpdateSection(1, section);
