@@ -377,6 +377,23 @@ public class ContentRepositoryTests : IDisposable
         Assert.Null(entity);
     }
 
+    [Fact]
+    public async Task GetContentByAuthor_GivenContent_ReturnsContentFromSpecifiedAuthor()
+    {
+        await _context.Content.AddRangeAsync(new[]
+        {
+            new Content { Id = 1234, Author = "homer", Rating = 1 },
+            new Content { Id = 1235, Author = "bart", Rating = 2 },
+            new Content { Id = 1236, Author = "homer", Rating = 3 },
+        });
+        await _context.SaveChangesAsync();
+
+        var contents = await _repository.GetContentByAuthor("homer");
+
+        var expectedIds = new[] { 1234, 1236 };
+        var actualIds = contents.OrderBy(c => c.Id).Select(c => (int)c.Id!).ToList();
+        Assert.Equal(expectedIds, actualIds);
+    }
 
     protected virtual void Dispose(bool disposing)
     {

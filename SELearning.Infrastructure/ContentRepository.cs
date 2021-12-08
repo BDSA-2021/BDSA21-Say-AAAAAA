@@ -209,4 +209,22 @@ public class ContentRepository : IContentRepository
 
         return (await content.ToListAsync()).AsReadOnly();
     }
+
+    public async Task<IEnumerable<ContentDto>> GetContentByAuthor(string userId)
+    {
+        var content = from c in _context.Content
+                      where c.Author == userId
+                      select new ContentDto
+                      {
+                          Id = c.Id,
+                          Author = c.Author,
+                          Title = c.Title,
+                          Description = c.Description,
+                          Section = c.Section,
+                          VideoLink = c.VideoLink,
+                          Rating = c.Rating
+                      };
+
+        return (await content.ToListAsync()).AsReadOnly();
+    }
 }

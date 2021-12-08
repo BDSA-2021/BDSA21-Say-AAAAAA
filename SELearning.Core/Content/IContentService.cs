@@ -10,6 +10,7 @@ public interface IContentService
     public Task<ContentDto> GetContent(int id);
     public Task IncreaseContentRating(int id);
     public Task DecreaseContentRating(int id);
+    public Task<IEnumerable<ContentDto>> GetContentByAuthor(string userId);
 
     // Section
     public Task<SectionDto> AddSection(SectionCreateDto section);
