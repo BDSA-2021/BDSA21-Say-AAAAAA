@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -12,12 +11,12 @@ namespace SELearning.API.Controllers;
 public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;
-    private readonly ICommentRepository _repository;
+    private readonly ICommentService _service;
 
-    public CommentController(ILogger<CommentController> logger, ICommentRepository repository)
+    public CommentController(ILogger<CommentController> logger, ICommentService service)
     {
         _logger = logger;
-        _repository = repository;
+        _service = service;
     }
 
     /// <summary>
@@ -26,10 +25,20 @@ public class CommentController : ControllerBase
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A comment with the given ID if it exists, otherwise response type 404: Not Found.</returns>
     [HttpGet("{ID}")]
-    [ProducesResponseType(typeof(CommentDTO), 200)]
+    [ProducesResponseType(typeof(Comment), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<CommentDTO>> GetComment(int ID)
-        => (await _repository.GetAsync(ID)).ToActionResult();
+    [ActionName(nameof(GetComment))]
+    public async Task<ActionResult<Comment>> GetComment(int ID)
+    {
+        try
+        {
+            return Ok(await _service.GetCommentFromCommentId(ID));
+        }
+        catch (CommentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 
     /// <summary>
     /// <c>GetCommentsByContentID</c> returns all comments in the content with the given content ID.
@@ -37,10 +46,19 @@ public class CommentController : ControllerBase
     /// <param name="contentID">The ID of the content.</param>
     /// <returns>A collection of comments in the content if it exists, otherwise response type 404: Not Found.</returns>
     [HttpGet("{contentID}")]
-    [ProducesResponseType(typeof(CommentDTO), 200)]
-    [ProducesResponseType(404)]
-    public async Task<IReadOnlyCollection<CommentDTO>> GetCommentsByContentID(int contentID)
-        => await _repository.GetAsyncByContentID(contentID);
+    [ProducesResponseType(typeof(List<Comment>), 200)] // OK
+    [ProducesResponseType(404)] // Not Found
+    public async Task<ActionResult<List<Comment>>> GetCommentsByContentID(int contentID)
+    {
+        try
+        {
+            return Ok(await _service.GetCommentsFromContentId(contentID));
+        }
+        catch (ContentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 
     /// <summary>
     /// <c>CreateComment</c> creates a comment in the content with the given content ID.
@@ -51,11 +69,17 @@ public class CommentController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> CreateComment(int contentID, CommentDTO comment)
+    public async Task<IActionResult> CreateComment(CommentCreateDTO comment)
     {
-        var (result, created) = await _repository.CreateAsync(contentID, comment);
-        if (result == OperationResult.NotFound) return result.ToActionResult();
-        return CreatedAtRoute(nameof(GetComment), new { created.ID }, created);
+        try
+        {
+            var createdComment = await _service.PostComment(comment);
+            return CreatedAtAction(nameof(GetComment), new { ID = createdComment.Id }, createdComment);
+        }
+        catch (ContentNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     /// <summary>
@@ -65,10 +89,20 @@ public class CommentController : ControllerBase
     /// <param name="comment">The record of the updated comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
     [HttpPut("{ID}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> UpdateComment(int ID, CommentDTO comment)
-        => (await _repository.UpdateAsync(ID, comment)).Item1.ToActionResult();
+    [ProducesResponseType(204)] // No Content
+    [ProducesResponseType(404)] // Not Found
+    public async Task<IActionResult> UpdateComment(int ID, CommentUpdateDTO comment)
+    {
+        try
+        {
+            await _service.UpdateComment(ID, comment);
+            return NoContent();
+        }
+        catch (CommentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 
     /// <summary>
     /// <c>DeleteComment</c> deletes the comment with the given ID.
@@ -79,5 +113,59 @@ public class CommentController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteComment(int ID)
-        => (await _repository.DeleteAsync(ID)).ToActionResult();
+    {
+        try
+        {
+            await _service.RemoveComment(ID);
+            return NoContent();
+        }
+        catch (CommentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
+    /// <c>UpvoteComment</c> increases the rating of the comment with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the comment.</param>
+    /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
+    [Authorize]
+    [HttpPut("{ID}/Upvote")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> UpvoteComment(int ID)
+    {
+        try
+        {
+            await _service.UpvoteComment(ID);
+            return NoContent();
+        }
+        catch (CommentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
+    /// <c>DownvoteComment</c> decreases the rating of the comment with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the comment.</param>
+    /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
+    [Authorize]
+    [HttpPut("{ID}/Downvote")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> DownvoteComment(int ID)
+    {
+        try
+        {
+            await _service.DownvoteComment(ID);
+            return NoContent();
+        }
+        catch (CommentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 }
