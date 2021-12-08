@@ -21,13 +21,15 @@
       <label for="videoLink">Video link:</label>
       <InputText id="videoLink" @bind-Value="Content.VideoLink" class="form-control"/>
     </div>
-    <InputSelect class="form-control" @bind-Value="Content.SectionId">
-      @foreach (var sec in sections)
-      {
-        <option value="@sec.Id">@sec.Title</option>        
-      }
-    </InputSelect>
-    <div class="form-group col-lg-3 col-lg-offset-9">
+    <div class="form-group">
+      <InputSelect class="form-control" @bind-Value="Content.SectionId">
+        @foreach (var sec in sections)
+        {
+          <option value="@sec.Id">@sec.Title</option>        
+        }
+      </InputSelect>
+    </div>
+    <div class="form-group">
       <button class="btn btn-primary" type="submit">Create Content</button>
     </div>
 </EditForm> 
@@ -47,6 +49,10 @@
 }
 
 @code{
+  protected override async Task OnInitializedAsync()
+  {
+    await this.RetrieveSections();
+  }
   record ContentUserDTO
   {
     public string Title{get; set;}
@@ -55,9 +61,7 @@
     public string SectionId {get; set;}
   }
   
-  private static Section section = new Section{Title = "Wow", Description = "hej", Id="1"}; //TODO: remove these two sections and fetch from database
-  private static Section se = new Section{Title = "Wowqww", Description = "hej", Id="2"};
-  private Section[] sections = {section,se};
+  private SectionDto[] sections = {}; 
   private ContentUserDTO Content { get; set; } = new();
   private bool isPosted = false;
   private bool isNotPosted = false;
@@ -71,7 +75,8 @@
       if(response.IsSuccessStatusCode)
       {
         isPosted = true;
-      }else
+      }
+      else
       {
         isNotPosted = true;
       }
@@ -89,5 +94,16 @@
   private async Task Alert(Exception exception) {
     await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
     System.Console.WriteLine(exception);
+  }
+  protected async Task RetrieveSections()
+  {
+    try
+    {
+      sections = await Http.GetFromJsonAsync<SectionDto[]>("Section");
+    }
+    catch (AccessTokenNotAvailableException exception)
+    {
+      exception.Redirect();
+    }
   }
 }
