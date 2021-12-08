@@ -3,6 +3,7 @@ using SELearning.Core.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
+using SELearning.Infrastructure.Credibility;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration
@@ -41,6 +42,11 @@ builder.Services.AddScoped<IContentService, ContentManager>();
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentManager>();
+
+builder.Services.AddScoped<ICredibilityRepository, CredibilityRepository>();
+builder.Services.AddScoped<ICredibilityService, CredibilityCalculator>();
+
+builder.Services.AddPermissionAuthorization().Build();
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<WeatherContext>()
