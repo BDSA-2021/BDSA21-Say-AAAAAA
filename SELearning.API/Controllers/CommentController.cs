@@ -6,7 +6,7 @@ namespace SELearning.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("/Api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class CommentController : ControllerBase
 {
@@ -45,7 +45,7 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="contentID">The ID of the content.</param>
     /// <returns>A collection of comments in the content if it exists, otherwise response type 404: Not Found.</returns>
-    [HttpGet("{contentID}")]
+    [HttpGet("content/{contentID}")]
     [ProducesResponseType(typeof(List<Comment>), 200)] // OK
     [ProducesResponseType(404)] // Not Found
     public async Task<ActionResult<List<Comment>>> GetCommentsByContentID(int contentID)

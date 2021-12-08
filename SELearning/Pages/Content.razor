@@ -1,7 +1,6 @@
-@page "/content/{contentId}"
+@page "/content/{contentId:int}"
 
-@using SELearning.Core
-@using SELearning.Core.Comment;
+@using SELearning.Core.Content;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
@@ -9,40 +8,45 @@
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
 
+<div>
+@if (_content != null) {
+    <section class="video-wrapper">
+        <iframe width="560" height="315" src="@_content.VideoLink" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </section>
 
-<section class="video-wrapper">
-    <iframe width="560" height="315" src="@_content.VideoLink" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</section>
+    <section class="about-section">
+        <div class="header-section">
+            <h1>@_content.Title</h1>
+            <p>@_content.Author</p>
+        </div>
+        <div class="rating-container">
+            <div
+                role="button"
+                class="@((_rateAmount > 0 ? "active" : "") + " arrow-up")"
+                @onclick="OnUpvoteClicked"
+            ></div>
+            <span class="rating">@_content.Rating</span>
+            <div role="button"  ></div>
+            <div
+                role="button"
+                class="@((_rateAmount < 0 ? "active" : "") + " arrow-down")"
+                @onclick="OnDownvoteClicked"
+            ></div>
+        </div>
+    </section>
+    <p class="description">@_content.Description</p>
 
-<section class="about-section">
-    <div class="header-section">
-        <h1>@_content.Title</h1>
-        <p>@_content.Author | @_content.CreatedAt.ToString("dddd, dd MMMM yyyy")</p>
-    </div>
-    <div class="rating-container">
-        <div
-            role="button"
-            class="@((_rateAmount > 0 ? "active" : "") + " arrow-up")"
-            @onclick="OnUpvoteClicked"
-        ></div>
-        <span class="rating">@_content.Rating</span>
-        <div role="button"  ></div>
-        <div
-            role="button"
-            class="@((_rateAmount ? "active" : "") + " arrow-down")"
-            @onclick="OnDownvoteClicked"
-        ></div>
-    </div>
-</section>
-<p class="description">@_content.Description</p>
-
-<SELearning.Shared.Comment.CommentSection ContentId="@ContentId" />
+    <SELearning.Shared.Comment.CommentSection ContentId="@ContentId" />
+} else {
+    <p>Loading</p>
+}
+</div>
 
 @code {
     [Parameter]
-    public string ContentId { get; set; }
+    public int ContentId { get; set; }
 
-    private ContentDTO _content;
+    private ContentDto _content;
 
     private int _rateAmount = 0;
 
@@ -53,7 +57,8 @@
     protected async Task GetContent() {
         try
         {
-            _content = await Http.GetFromJsonAsync<ContentDTO>($"Content/{this.ContentId}");
+            _content = await Http.GetFromJsonAsync<ContentDto>($"Content/{this.ContentId}");
+            StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -68,7 +73,7 @@
     protected async void OnUpvoteClicked() {
         try
         {
-            await Http.PutAsync($"Content/{this.ContentId}/upvote");
+            await Http.PutAsync($"Content/{this.ContentId}/upvote", null);
             _content.Rating += 1;
             _rateAmount = _rateAmount > 0 ? 0 : 1;
         }
@@ -85,7 +90,7 @@
     protected async void OnDownvoteClicked() {
         try
         {
-            await Http.PutAsync($"Content/{this.ContentId}/downvote");
+            await Http.PutAsync($"Content/{this.ContentId}/downvote", null);
             _content.Rating -= 1;
             _rateAmount = _rateAmount < 0 ? 0 : -1;
         }

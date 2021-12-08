@@ -1,6 +1,4 @@
-@using SELearning.Core
 @using SELearning.Core.Comment;
-@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 @inject HttpClient Http
@@ -56,7 +54,7 @@
     {
         try
         {
-            await Http.DeleteAsync($"Comment/{Comment.ID}");
+            await Http.DeleteAsync($"Comment/{Comment.Id}");
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -72,7 +70,7 @@
     {
         try
         {
-            await Http.PutAsync($"Comment/{Comment.ID}/Upvote");
+            await Http.PutAsync($"Comment/{Comment.Id}/Upvote", null);
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -88,7 +86,7 @@
     {
         try
         {
-            await Http.PutAsync($"Comment/{Comment.ID}/Downvote");
+            await Http.PutAsync($"Comment/{Comment.Id}/Downvote", null);
         }
         catch (AccessTokenNotAvailableException exception)
         {
