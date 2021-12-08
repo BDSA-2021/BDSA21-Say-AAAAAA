@@ -1,40 +1,36 @@
-using System;
-using Xunit;
-using Microsoft.EntityFrameworkCore;
-using SELearning.Core.Comment;
 using System.Threading.Tasks;
-using SELearning.Core;
-using System.Collections.Generic;
 
 namespace SELearning.Infrastructure.Tests
 {
     public class CommentRepositoryTests
     {
         private readonly CommentRepository _repository;
-        private readonly CommentContext _context;
+        private readonly SELearningContext _context;
 
-        private static readonly Section section = new Section
+        private static readonly Section section = new()
         {
-            Id = "1",
+            Id = 1,
             Title = "C#",
             Description = "C# tools",
             Content = new List<Content>()
         };
-        private static readonly Content content = new Content
+
+        private static readonly Content content = new()
         {
+            Id = 1,
             Author = "Sarah",
             Section = section,
-            Id = 1,
             Title = "Video on Entity Core",
             Description = "Nice",
             VideoLink = "www.hej.dk"
         };
-        private IEnumerable<Comment> _comments = new List<Comment>()
+
+        private readonly IEnumerable<Comment> _comments = new List<Comment>()
         {
             new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content },
-                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
-                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
-                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
+            new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
+            new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
+            new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
         };
 
         public CommentRepositoryTests()
@@ -42,14 +38,14 @@ namespace SELearning.Infrastructure.Tests
             //setting up the comment connection
             var connection = new SqliteConnection("Filename=:memory:");
             connection.Open();
-            var builder = new DbContextOptionsBuilder<CommentContext>();
+            var builder = new DbContextOptionsBuilder<SELearningContext>();
             builder.UseSqlite(connection);
-            _context = new CommentContext(builder.Options);
+            _context = new SELearningContext(builder.Options);
             _context.Database.EnsureCreated();
 
             _repository = new CommentRepository(_context);
 
-            section.Content.Add(content);
+            section.Content!.Add(content);
 
             _context.Comments.AddRange(
                 _comments
@@ -61,7 +57,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment_creates_new_comment_with_generated_id()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content", 1);
+            CommentCreateDTO comment = new("Harleen", "Nice content", 1);
 
             var created = await _repository.AddComment(comment);
 
@@ -74,7 +70,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
         {
-            CommentCreateDTO comment = new CommentCreateDTO("Harleen", "Nice content", 2);
+            CommentCreateDTO comment = new("Harleen", "Nice content", 2);
 
             var created = await _repository.AddComment(comment);
 
@@ -84,7 +80,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task UpdateComment_given_non_existing_id_returns_NotFound()
         {
-            CommentUpdateDTO dto = new CommentUpdateDTO("Really like this content", 0);
+            CommentUpdateDTO dto = new("Really like this content", 0);
 
             var updated = await _repository.UpdateComment(42, dto);
 
@@ -94,16 +90,16 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async Task UpdateComment_updates_existing_comment()
         {
-            CommentUpdateDTO dto = new CommentUpdateDTO("Nice but also confusing", 1);
+            CommentUpdateDTO dto = new("Nice but also confusing", 1);
 
-            var updated = await _repository.UpdateComment(1, dto);
+            var (result, updated) = await _repository.UpdateComment(1, dto);
 
-            Assert.Equal(1, updated.Item2.Id);
-            Assert.Equal("Amalie", updated.Item2.Author);
-            Assert.Equal("Nice but also confusing", updated.Item2.Text);
-            Assert.Equal(1, updated.Item2.Rating);
+            Assert.Equal(1, updated!.Id);
+            Assert.Equal("Amalie", updated.Author);
+            Assert.Equal("Nice but also confusing", updated.Text);
+            Assert.Equal(1, updated.Rating);
 
-            Assert.Equal(OperationResult.Updated, updated.Item1);
+            Assert.Equal(OperationResult.Updated, result);
         }
 
         [Fact]

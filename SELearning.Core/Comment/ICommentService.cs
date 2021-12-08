@@ -2,7 +2,7 @@ namespace SELearning.Core.Comment
 {
     public interface ICommentService
     {
-        Task PostComment(CommentCreateDTO dto);
+        Task<CommentDetailsDTO> PostComment(CommentCreateDTO dto);
         Task UpdateComment(int id, CommentUpdateDTO dto);
         Task RemoveComment(int id);
         Task UpvoteComment(int id);
