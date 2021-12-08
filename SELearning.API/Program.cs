@@ -37,6 +37,10 @@ builder.Services.AddDbContext<CommentContext>(options => options.UseSqlServer(co
 builder.Services.AddScoped<ICommentContext, CommentContext>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentManager>();
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<WeatherContext>()
+    .AddDbContextCheck<CommentContext>();
 #endregion
 
 var app = builder.Build();
@@ -73,6 +77,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapRazorPages();
     endpoints.MapControllers();
     endpoints.MapFallbackToFile("index.html");
+    endpoints.MapHealthChecks("/healthz");
 });
 
 app.Migrate();
