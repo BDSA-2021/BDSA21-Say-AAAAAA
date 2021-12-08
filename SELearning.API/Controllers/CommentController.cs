@@ -48,7 +48,6 @@ public class CommentController : ControllerBase
     /// <param name="contentID">The ID of the content.</param>
     /// <param name="comment">The record of the comment.</param>
     /// <returns>A response type 201: Created if the content exists, otherwise response type 404: Not Found.</returns>
-    [AuthorizePermission(Permission.CreateComment)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
@@ -65,7 +64,6 @@ public class CommentController : ControllerBase
     /// <param name="ID">The ID of the comment.</param>
     /// <param name="comment">The record of the updated comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
-    [AuthorizePermission(Permission.EditAnyComment)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider. EditOwnComment missing
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -77,7 +75,6 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
-    [AuthorizePermission(Permission.DeleteAnyComment)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
