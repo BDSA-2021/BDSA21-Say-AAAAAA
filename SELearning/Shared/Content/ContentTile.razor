@@ -1,0 +1,56 @@
+@using SELearning.Core
+
+<div class="card content" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">@Content.Title</h5>
+    <p class="card-text">@Content.Description</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Author: @Content.Author</li>
+    <li class="list-group-item">Video link: @Content.VideoLink</li>
+    <li class="list-group-item">Rating: @Content.Rating</li>
+  </ul>
+  <div class="card-body">
+    <div class="btn-group">
+        <a href='@string.Format("/content/{0}", Content.Id)' class="btn btn-primary">View Content</a>
+        <button @onclick="Delete" class="btn btn-default text-danger">Delete</button>
+    </div>
+  </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Content Content { get; set; }
+
+    [Parameter]
+    public EventCallback<Content> OnContentDeleted { get; set; }
+
+    private async Task Delete()
+    {
+        // TODO: Delete comment with api
+
+        // TODO: Check if return code is not an error
+
+        if(OnContentDeleted.HasDelegate)
+            await OnContentDeleted.InvokeAsync(Content);
+    }
+
+    private Task UpVote()
+    {
+        // Call up vote api
+
+        Content.Rating++;
+
+        return Task.CompletedTask;
+    }
+
+    private Task DownVote() 
+    {
+        // Call down vote api
+
+        Content.Rating--;
+
+        return Task.CompletedTask;
+    }
+}
