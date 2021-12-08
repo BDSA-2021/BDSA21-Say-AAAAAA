@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
+using SELearning.Core;
 using SELearning.Core.Content;
 using System;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        service.Setup(m => m.GetContent(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.GetContent(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
         var response = (await controller.GetContent(-1)).Result;
@@ -47,7 +48,7 @@ public class ContentControllerTest
     }
 
     [Fact]
-    public async Task GetAllContent_Returns_Contents_If_Service_Can_Find()
+    public async Task GetAllContent_Returns_Collection_Of_Contents()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
@@ -62,23 +63,6 @@ public class ContentControllerTest
 
         // Assert
         Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public async Task GetAllContent_Returns_NotFound_If_Service_Can_Not_Find()
-    {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        service.Setup(m => m.GetContent()).ThrowsAsync(new Exception());
-
-        // Act
-        var response = (await controller.GetAllContent()).Result;
-
-        // Assert
-        Assert.IsType<NotFoundResult>(response);
     }
 
     [Fact]
@@ -108,7 +92,7 @@ public class ContentControllerTest
         var controller = new ContentController(logger.Object, service.Object);
 
         var expected = Array.Empty<ContentDto>();
-        service.Setup(m => m.GetContentInSection(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.GetContentInSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act
         var response = (await controller.GetContentsBySectionID(-1)).Result;
@@ -118,7 +102,7 @@ public class ContentControllerTest
     }
 
     [Fact]
-    public async Task CreateContent_Returns_CreatedAtRoute_If_Service_Can_Create()
+    public async Task CreateContent_Returns_CreatedAtRoutee()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
@@ -133,24 +117,6 @@ public class ContentControllerTest
         // Assert
         Assert.Equal("GetContent", result.RouteName);
         Assert.Equal(content, result.Value);
-    }
-
-    [Fact]
-    public async Task CreateContent_Returns_BadRequest_If_Service_Can_Not_Create()
-    {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        var content = new ContentCreateDto { Title = "Title" };
-        service.Setup(m => m.AddContent(content)).ThrowsAsync(new Exception());
-
-        // Act
-        var response = await controller.CreateContent(content);
-
-        // Assert
-        Assert.IsType<BadRequestResult>(response);
     }
 
     [Fact]
@@ -177,7 +143,7 @@ public class ContentControllerTest
         var controller = new ContentController(logger.Object, service.Object);
 
         var content = new ContentUpdateDto { Title = "Title" };
-        service.Setup(m => m.UpdateContent(-1, content)).ThrowsAsync(new Exception());
+        service.Setup(m => m.UpdateContent(-1, content)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
         var response = await controller.UpdateContent(-1, content);
@@ -209,7 +175,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        service.Setup(m => m.DeleteContent(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.DeleteContent(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
         var response = await controller.DeleteContent(-1);
@@ -241,7 +207,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        service.Setup(m => m.IncreaseContentRating(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.IncreaseContentRating(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
         var response = await controller.UpvoteContent(-1);
@@ -273,7 +239,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        service.Setup(m => m.DecreaseContentRating(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.DecreaseContentRating(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
         var response = await controller.DownvoteContent(-1);
@@ -308,7 +274,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        service.Setup(m => m.GetSection(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.GetSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act
         var response = (await controller.GetSection(-1)).Result;
@@ -318,7 +284,7 @@ public class ContentControllerTest
     }
 
     [Fact]
-    public async Task GetAllSections_Returns_Sections_If_Service_Can_Find()
+    public async Task GetAllSections_Returns_Collection_Of_Sections()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
@@ -336,24 +302,7 @@ public class ContentControllerTest
     }
 
     [Fact]
-    public async Task GetAllSections_Returns_NotFound_If_Service_Can_Not_Find()
-    {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        service.Setup(m => m.GetSections()).ThrowsAsync(new Exception());
-
-        // Act
-        var response = (await controller.GetAllSections()).Result;
-
-        // Assert
-        Assert.IsType<NotFoundResult>(response);
-    }
-
-    [Fact]
-    public async Task CreateSection_Returns_CreatedAtRoute_If_Service_Can_Create()
+    public async Task CreateSection_Returns_CreatedAtRoute()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
@@ -368,24 +317,6 @@ public class ContentControllerTest
         // Assert
         Assert.Equal("GetSection", result.RouteName);
         Assert.Equal(section, result.Value);
-    }
-
-    [Fact]
-    public async Task CreateService_Returns_BadRequest_If_Service_Can_Not_Create()
-    {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        var section = new SectionCreateDto { Title = "Title" };
-        service.Setup(m => m.AddSection(section)).ThrowsAsync(new Exception());
-
-        // Act
-        var response = await controller.CreateSection(section);
-
-        // Assert
-        Assert.IsType<BadRequestResult>(response);
     }
 
     [Fact]
@@ -412,7 +343,7 @@ public class ContentControllerTest
         var controller = new ContentController(logger.Object, service.Object);
 
         var section = new SectionUpdateDto { Title = "Title" };
-        service.Setup(m => m.UpdateSection(-1, section)).ThrowsAsync(new Exception());
+        service.Setup(m => m.UpdateSection(-1, section)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act
         var response = await controller.UpdateSection(-1, section);
@@ -444,7 +375,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        service.Setup(m => m.DeleteSection(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.DeleteSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act
         var response = await controller.DeleteSection(-1);
