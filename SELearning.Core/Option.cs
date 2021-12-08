@@ -1,4 +1,4 @@
-﻿namespace SELearning.Core;
+namespace SELearning.Core;
 
 // Created by Rasmys Lystrøm
 // https://github.com/ondfisk/BDSA2021/blob/main/MyApp.Core/Option.cs

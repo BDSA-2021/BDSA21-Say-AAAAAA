@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "northeurope"
+        },
+        "sqlServerName": {
+            "value": "selearning"
+        },
+        "sqlAzureAdLogin": {
+            "value": "SQL Administrators"
+        },
+        "sqlAzureAdPrincipalId": {
+            "value": "a896742d-0baa-45db-bced-6198835a2221"
+        },
+        "sqlDatabaseName": {
+            "value": "SELearning"
+        },
+        "appServicePlanName": {
+            "value": "SELearningServicePlan"
+        },
+        "appName": {
+            "value": "SELearningApp"
+        },
+        "containerRegistryName": {
+            "value": "SELearningRegistry"
+        },
+        "hostName": {
+            "value": "app.ituwu.dk"
+        },
+        "certificateName": {
+            "value": "app.ituwu.dk-SELearningApp"
+        }
+    }
+}

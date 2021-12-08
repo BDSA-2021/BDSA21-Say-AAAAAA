@@ -1,16 +1,21 @@
 namespace SELearning.Core.Content;
-interface IContentSverice
-{
-    public void AddContent(Content content);
-    public void UpdateContent(string id, Content content);
-    public void DeleteContent(string id);
-    public void IncreaseContentRating(string id);
-    public void DecreaseContentRating(string id);
-    public void AddSection(Section section);
-    public void EditSection(string id, Section section);
-    public void DeleteSection(string id);
-    public List<Content> GetContent();
-    public Content GetContent(string id);
-    public List<Content> GetContentInSection(string id);
 
+public interface IContentService
+{
+    // Content
+    public Task<ContentDto> AddContent(ContentCreateDto content);
+    public Task UpdateContent(int id, ContentUpdateDto content);
+    public Task DeleteContent(int id);
+    public Task<IReadOnlyCollection<ContentDto>> GetContent();
+    public Task<ContentDto> GetContent(int id);
+    public Task IncreaseContentRating(int id);
+    public Task DecreaseContentRating(int id);
+
+    // Section
+    public Task<SectionDto> AddSection(SectionCreateDto section);
+    public Task DeleteSection(int id);
+    public Task UpdateSection(int id, SectionUpdateDto section);
+    public Task<IReadOnlyCollection<SectionDto>> GetSections();
+    public Task<SectionDto> GetSection(int id);
+    public Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id);
 }
