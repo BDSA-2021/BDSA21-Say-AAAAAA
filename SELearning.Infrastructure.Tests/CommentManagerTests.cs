@@ -3,6 +3,7 @@ using SELearning.Core;
 using Xunit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SELearning.Infrastructure.Tests
 {
@@ -61,7 +62,7 @@ namespace SELearning.Infrastructure.Tests
             await _service.PostComment(dto);
             Assert.Equal("Christine", (await _service.GetCommentFromCommentId(5)).Author);
             Assert.Equal("Nice explanation", (await _service.GetCommentFromCommentId(5)).Text);
-            Assert.Equal(1, (await _service.GetCommentFromCommentId(5)).Content.Id);
+            Assert.Equal(1, (await _service.GetCommentFromCommentId(5)).ContentId);
             Assert.Equal(0, (await _service.GetCommentFromCommentId(5)).Rating);
         }
 
@@ -100,7 +101,7 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async void Remove_given_existing_id_succeeds()
         {
-            Comment comment = await _service.GetCommentFromCommentId(1);
+            CommentDetailsDTO comment = await _service.GetCommentFromCommentId(1);
             Assert.NotNull(comment);
             await _service.RemoveComment(1);
             await Assert.ThrowsAsync<CommentNotFoundException>(() => _service.GetCommentFromCommentId(1));
@@ -171,13 +172,13 @@ namespace SELearning.Infrastructure.Tests
         [Fact]
         public async void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
         {
-            List<Comment> comments = await _service.GetCommentsFromContentId(1);
+            IEnumerable<CommentDetailsDTO> comments = await _service.GetCommentsFromContentId(1);
 
             Assert.Contains((await _service.GetCommentFromCommentId(1)), comments);
             Assert.Contains((await _service.GetCommentFromCommentId(2)), comments);
             Assert.Contains((await _service.GetCommentFromCommentId(3)), comments);
             Assert.Contains((await _service.GetCommentFromCommentId(4)), comments);
-            Assert.Equal(4, comments.Count);
+            Assert.Equal(4, comments.Count());
         }
 
         [Fact]
@@ -193,7 +194,7 @@ namespace SELearning.Infrastructure.Tests
 
             Assert.Equal("Cool but boring", comment.Text);
             Assert.Equal("Albert", comment.Author);
-            Assert.Equal(1, comment.Content.Id);
+            Assert.Equal(1, comment.ContentId);
             Assert.Equal(2, comment.Id);
             Assert.Equal(0, comment.Rating);
         }

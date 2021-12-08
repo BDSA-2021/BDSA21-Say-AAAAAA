@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 using SELearning.Core.Comment;
@@ -32,9 +33,9 @@ namespace SELearning.Infrastructure.Tests
         private IEnumerable<Comment> _comments = new List<Comment>()
         {
             new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content },
-                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
-                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
-                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
+            new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
+            new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
+            new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
         };
 
         public CommentRepositoryTests()
@@ -148,7 +149,7 @@ namespace SELearning.Infrastructure.Tests
             var read = await _repository.GetCommentsByContentId(1);
 
             Assert.Equal(OperationResult.Succes, read.Item2);
-            Assert.Equal(_comments, read.Item1);
+            Assert.Equal(_comments.Select(x => new CommentDetailsDTO(x.Author, x.Text, x.Id, x.Timestamp, x.Rating, x.Content.Id)), read.Item1);
         }
 
         [Fact]

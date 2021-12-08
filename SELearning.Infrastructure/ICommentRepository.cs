@@ -7,7 +7,8 @@ namespace SELearning.Infrastructure
         Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt);
         Task<(OperationResult, CommentDetailsDTO?)> UpdateComment(int Id, CommentUpdateDTO cmt);
         Task<OperationResult> RemoveComment(int Id);
-        Task<Option<Comment>> GetCommentByCommentId(int commentId);
-        Task<(List<Comment>?, OperationResult)> GetCommentsByContentId(int contentId);
+        Task<Option<CommentDetailsDTO>> GetCommentByCommentId(int commentId);
+        Task<(IEnumerable<CommentDetailsDTO>?, OperationResult)> GetCommentsByContentId(int contentId);
+        Task<(IEnumerable<CommentDetailsDTO>, OperationResult)> GetCommentsByAuthor(string userId);
     }
 }
