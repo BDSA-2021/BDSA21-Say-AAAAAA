@@ -13,17 +13,14 @@ public class SELearningContext : DbContext, ISELearningContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<Content>()
-            .HasIndex(t => t.Id)
-            .IsUnique();
-
-        builder.Entity<Section>()
-            .HasIndex(t => t.Id)
-            .IsUnique();
-
         // Rules for entity creation for DB
         builder.Entity<Comment>()
             .HasIndex(t => t.Id)
             .IsUnique();
+
+        builder.Entity<Content>()
+            .HasIndex(t => t.Id)
+            .IsUnique();
+
     }
 }
