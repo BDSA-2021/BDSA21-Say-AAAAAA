@@ -23,7 +23,7 @@ public class ContentControllerTest
         service.Setup(m => m.GetContent(1)).ReturnsAsync(expected);
 
         // Act
-        var actual = (await controller.GetContent(1)).Value;
+        var actual = ((await controller.GetContent(1)).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -54,7 +54,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        var expected = Array.Empty<ContentDto>;
+        var expected = Array.Empty<ContentDto>();
         service.Setup(m => m.GetContent()).ReturnsAsync(expected);
 
         // Act
@@ -75,21 +75,21 @@ public class ContentControllerTest
         service.Setup(m => m.GetContent()).ThrowsAsync(new Exception());
 
         // Act
-        var response = (await controller.GetContentsBySectionID(-1)).Result;
+        var response = (await controller.GetAllContent()).Result;
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
     }
 
     [Fact]
-    public async Task GetContentsBySectionID_Given_Valid_ID_Returns_Contents()
+    public async Task GetContentsBySectionID_Given_Valid_Section_ID_Returns_Contents()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        var expected = Array.Empty<ContentDto>;
+        var expected = Array.Empty<ContentDto>();
         service.Setup(m => m.GetContentInSection(1)).ReturnsAsync(expected);
 
         // Act
@@ -100,14 +100,14 @@ public class ContentControllerTest
     }
 
     [Fact]
-    public async Task GetContentsBySectionID_Given_Invalid_ID_Returns_NotFound()
+    public async Task GetContentsBySectionID_Given_Invalid_Section_ID_Returns_NotFound()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        var expected = Array.Empty<ContentDto>;
+        var expected = Array.Empty<ContentDto>();
         service.Setup(m => m.GetContentInSection(-1)).ThrowsAsync(new Exception());
 
         // Act
@@ -131,12 +131,12 @@ public class ContentControllerTest
         var result = (await controller.CreateContent(content) as CreatedAtRouteResult)!;
 
         // Assert
-        Assert.Equal("GetComment", result.RouteName);
+        Assert.Equal("GetContent", result.RouteName);
         Assert.Equal(content, result.Value);
     }
 
     [Fact]
-    public async Task CreateContent_Returns_NotFound_If_Service_Can_Not_Create()
+    public async Task CreateContent_Returns_BadRequest_If_Service_Can_Not_Create()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
@@ -150,7 +150,7 @@ public class ContentControllerTest
         var response = await controller.CreateContent(content);
 
         // Assert
-        Assert.IsType<NotFoundResult>(response);
+        Assert.IsType<BadRequestResult>(response);
     }
 
     [Fact]
@@ -177,7 +177,7 @@ public class ContentControllerTest
         var controller = new ContentController(logger.Object, service.Object);
 
         var content = new ContentUpdateDto { Title = "Title" };
-        service.Setup(m => m.UpdateContentAsync(-1, content)).ThrowsAsync(new Exception());
+        service.Setup(m => m.UpdateContent(-1, content)).ThrowsAsync(new Exception());
 
         // Act
         var response = await controller.UpdateContent(-1, content);
@@ -241,7 +241,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        service.Setup(m => m.IncreaseContentRatingAsync(-1)).ThrowsAsync(new Exception());
+        service.Setup(m => m.IncreaseContentRating(-1)).ThrowsAsync(new Exception());
 
         // Act
         var response = await controller.UpvoteContent(-1);
@@ -294,7 +294,7 @@ public class ContentControllerTest
         service.Setup(m => m.GetSection(1)).ReturnsAsync(expected);
 
         // Act
-        var actual = (await controller.GetSection(1)).Value;
+        var actual = ((await controller.GetSection(1)).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -325,7 +325,7 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        var expected = Array.Empty<SectionDto>;
+        var expected = Array.Empty<SectionDto>();
         service.Setup(m => m.GetSections()).ReturnsAsync(expected);
 
         // Act
@@ -366,12 +366,12 @@ public class ContentControllerTest
         var result = (await controller.CreateSection(section) as CreatedAtRouteResult)!;
 
         // Assert
-        Assert.Equal("GetComment", result.RouteName);
+        Assert.Equal("GetSection", result.RouteName);
         Assert.Equal(section, result.Value);
     }
 
     [Fact]
-    public async Task CreateService_Returns_NotFound_If_Service_Can_Not_Create()
+    public async Task CreateService_Returns_BadRequest_If_Service_Can_Not_Create()
     {
         // Arrange
         var logger = new Mock<ILogger<ContentController>>();
@@ -385,7 +385,7 @@ public class ContentControllerTest
         var response = await controller.CreateSection(section);
 
         // Assert
-        Assert.IsType<NotFoundResult>(response);
+        Assert.IsType<BadRequestResult>(response);
     }
 
     [Fact]
@@ -412,7 +412,7 @@ public class ContentControllerTest
         var controller = new ContentController(logger.Object, service.Object);
 
         var section = new SectionUpdateDto { Title = "Title" };
-        service.Setup(m => m.UpdateSectionAsync(-1, section)).ThrowsAsync(new Exception());
+        service.Setup(m => m.UpdateSection(-1, section)).ThrowsAsync(new Exception());
 
         // Act
         var response = await controller.UpdateSection(-1, section);
