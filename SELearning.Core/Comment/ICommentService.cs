@@ -7,7 +7,8 @@ namespace SELearning.Core.Comment
         Task RemoveComment(int id);
         Task UpvoteComment(int id);
         Task DownvoteComment(int id);
-        Task<List<Comment>> GetCommentsFromContentId(int contentId);
-        Task<Comment> GetCommentFromCommentId(int commentId);
+        Task<IEnumerable<CommentDetailsDTO>> GetCommentsFromContentId(int contentId);
+        Task<CommentDetailsDTO> GetCommentFromCommentId(int commentId);
+        Task<IEnumerable<CommentDetailsDTO>> GetCommentsByAuthor(string userId);
     }
 }

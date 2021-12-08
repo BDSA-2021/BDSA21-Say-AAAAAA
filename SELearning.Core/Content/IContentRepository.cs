@@ -8,6 +8,7 @@ public interface IContentRepository
     public Task<OperationResult> DeleteContent(int id);
     public Task<IReadOnlyCollection<ContentDto>> GetContent();
     public Task<Option<ContentDto>> GetContent(int id);
+    public Task<IEnumerable<ContentDto>> GetContentByAuthor(string userId);
 
     // Section
     public Task<(OperationResult, SectionDto)> AddSection(SectionCreateDto section);

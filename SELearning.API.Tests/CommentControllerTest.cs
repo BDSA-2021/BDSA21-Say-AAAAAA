@@ -22,7 +22,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        var expected = new Comment { Id = 1 };
+        var expected = new CommentDetailsDTO("Adrian", "Hallooooo", 1, System.DateTime.Now, 1000, 0);
         service.Setup(m => m.GetCommentFromCommentId(1)).ReturnsAsync(expected);
 
         // Act
@@ -57,7 +57,7 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        var expected = new List<Comment>();
+        var expected = new List<CommentDetailsDTO>();
         service.Setup(m => m.GetCommentsFromContentId(1)).ReturnsAsync(expected);
 
         // Act

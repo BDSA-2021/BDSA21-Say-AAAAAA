@@ -145,4 +145,7 @@ public class ContentManager : IContentService
             throw new SectionNotFoundException(id);
         }
     }
+
+    public async Task<IEnumerable<ContentDto>> GetContentByAuthor(string userId)
+        => await _repository.GetContentByAuthor(userId);
 }
