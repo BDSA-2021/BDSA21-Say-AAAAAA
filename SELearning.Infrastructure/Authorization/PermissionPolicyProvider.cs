@@ -33,14 +33,14 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     /// </returns>
     public async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        var requiredScores = new List<int>();
+        var requiredScores = new List<(Permission, int)>();
         foreach (var permissionName in policyName.Split(AuthorizationConstants.POLICY_SEPERATOR))
         {
             if (!TryParsePolicyPermission(permissionName, out Permission parsedPermission))
                 return await DefaultProvider.GetPolicyAsync(permissionName); // Could not parse permission... fallback to default implementation
 
             int requiredCredibilityScore = await _permissionCredibilityService.GetRequiredCredibility(parsedPermission);
-            requiredScores.Add(requiredCredibilityScore);
+            requiredScores.Add(new(parsedPermission, requiredCredibilityScore));
         }
 
         var policy = new AuthorizationPolicyBuilder();
