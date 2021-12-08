@@ -21,12 +21,12 @@
       <label for="videoLink">Video link:</label>
       <InputText id="videoLink" @bind-Value="Content.VideoLink" class="form-control"/>
     </div>
-    <select class="form-control" @bind="Content.Section">
+    <InputSelect class="form-control" @bind-Value="Content.SectionId">
       @foreach (var sec in sections)
       {
-        <option>@sec.Title</option>        
+        <option value="@sec.Id">@sec.Title</option>        
       }
-    </select>
+    </InputSelect>
     <div class="form-group col-lg-3 col-lg-offset-9">
       <button class="btn btn-primary" type="submit">Create Content</button>
     </div>
@@ -52,11 +52,11 @@
     public string Title{get; set;}
     public string Description{get; set;}
     public string VideoLink{get; set;}
-    public Section Section{get; set;}
+    public string SectionId {get; set;}
   }
   
-  private static Section section = new Section{Title = "Wow", Description = "hej"}; //TODO: remove these two sections and fetch from database
-  private static Section se = new Section{Title = "Wowqww", Description = "hej"};
+  private static Section section = new Section{Title = "Wow", Description = "hej", Id="1"}; //TODO: remove these two sections and fetch from database
+  private static Section se = new Section{Title = "Wowqww", Description = "hej", Id="2"};
   private Section[] sections = {section,se};
   private ContentUserDTO Content { get; set; } = new();
   private bool isPosted = false;
@@ -67,6 +67,7 @@
     try
     {
       var response = await Http.PostAsJsonAsync<ContentUserDTO>("Content", Content);
+        
       if(response.IsSuccessStatusCode)
       {
         isPosted = true;
