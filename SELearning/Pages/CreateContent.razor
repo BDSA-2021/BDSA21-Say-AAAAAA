@@ -1,4 +1,46 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@page "/CreateContent"
+
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
+
+<h1>Create Content</h1>
+<form action="">
+  <label for="title">Title:</label>
+  <InputText id="title" @bind-Value="Content.Title" />
+  <label for="desc">Description:</label>
+  <InputText id="desc" @bind-Value="Content.Description" />
+  <label for="videoLink">Video link:</label>
+  <InputText id="videoLink" @bind-Value="Content.VideoLink" />
+  <input type="submit" value="Submit">
+</form>
+
 
 @code{
+  record ContentUserDTO
+  {
+    public string Title{get; set;}
+    public string Description{get; set;}
+    public string VideoLink{get; set;}
+  }
+
+  private ContentUserDTO Content { get; set; } = new();
+
+  private async Task CreateContentAsync()
+  {
+    try{
+      await Http.PostAsJsonAsync<ContentUserDTO>("Content", Content);
+    } catch(AccessTokenNotAvailableException exception){
+      exception.Redirect();
+    } catch(Exception exception){
+      await this.Alert(exception);
+    }
+  }
+
+  private async Task Alert(Exception exception) {
+    await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
+    System.Console.WriteLine(exception);
+  }
 
 }
