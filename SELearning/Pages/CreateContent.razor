@@ -21,23 +21,12 @@
       <label for="videoLink">Video link:</label>
       <InputText id="videoLink" @bind-Value="Content.VideoLink" class="form-control"/>
     </div>
-  @* <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Section
-    </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      @foreach (var section in sections)
-      {
-        <a class="dropdown-item" href="#">section.Title</a>        
-      }
-    </div>
-  </div> *@
-  <select class="form-control">
-    @foreach (var sec in sections)
+    <select class="form-control">
+      @foreach (var sec in sections)
       {
         <option>@sec.Title</option>        
       }
-  </select>
+    </select>
     <div class="form-group col-lg-3 col-lg-offset-9">
       <button class="btn btn-primary" type="submit">Create Content</button>
     </div>
