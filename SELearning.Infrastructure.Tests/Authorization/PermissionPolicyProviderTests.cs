@@ -14,20 +14,17 @@ public class PermissionPolicyProviderTests
         _policyProvider = new PermissionPolicyProvider(Options.Create<AuthorizationOptions>(new AuthorizationOptions()), new PermissionCredibilityService());
     }
 
-    [Fact]
-    public async Task GetPolicyAsync_ProvideEmptyString_ReturnNull()
+    [Theory]
+    [InlineData("PermissionCreateComment", 1)]
+    [InlineData("PermissionCreateComment OR PermissionCreateComment", 2)]
+    public async Task GetPolicyAsync_ProvideKnownPolicy_ReturnPolicyWithPermissionRequirement(string permissions, int expectedNumPermissions)
     {
-        var result = await _policyProvider.GetPolicyAsync("");
+        var result = await _policyProvider.GetPolicyAsync(permissions);
 
-        Assert.Null(result);
-    }
+        Assert.IsType<CredibilityPermissionRequirement>(result?.Requirements[0]);
 
-    [Fact]
-    public async Task GetPolicyAsync_ProvideKnownPolicy_ReturnPolicyWithPermissionRequirement()
-    {
-        var result = await _policyProvider.GetPolicyAsync("PermissionCreateComment");
-
-        Assert.Equal(new CredibilityPermissionRequirement(-10), result?.Requirements[0]);
+        var requirement = (CredibilityPermissionRequirement)result?.Requirements[0]!;
+        Assert.Equal(expectedNumPermissions, requirement.RequiredCredibilityScores.Count);
     }
 
     [Fact]

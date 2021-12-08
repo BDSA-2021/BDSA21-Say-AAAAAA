@@ -33,13 +33,18 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     /// </returns>
     public async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        if (!TryParsePolicyPermission(policyName, out Permission parsedPermission))
-            return await DefaultProvider.GetPolicyAsync(policyName); // Could not parse permission... fallback to default implementation
+        var requiredScores = new List<(Permission, int)>();
+        foreach (var permissionName in policyName.Split(AuthorizationConstants.POLICY_SEPERATOR))
+        {
+            if (!TryParsePolicyPermission(permissionName, out Permission parsedPermission))
+                return await DefaultProvider.GetPolicyAsync(permissionName); // Could not parse permission... fallback to default implementation
 
-        int requiredCredibilityScore = await _permissionCredibilityService.GetRequiredCredibility(parsedPermission);
+            int requiredCredibilityScore = await _permissionCredibilityService.GetRequiredCredibility(parsedPermission);
+            requiredScores.Add(new(parsedPermission, requiredCredibilityScore));
+        }
 
         var policy = new AuthorizationPolicyBuilder();
-        policy.AddRequirements(new CredibilityPermissionRequirement(requiredCredibilityScore));
+        policy.AddRequirements(new CredibilityPermissionRequirement(requiredScores.ToArray()));
 
         return policy.Build();
     }
@@ -51,6 +56,7 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     /// <param name="parsedPermission">The result of the parsed enum. If it is not able to parse, then it returns the default of the type</param>
     /// <returns>True if it is parsed and false if not</returns>
     private bool TryParsePolicyPermission(string policyName, out Permission parsedPermission)
+    // TODO: return IEnumerable<Permission>
     {
         // Permission name
         if (!policyName.StartsWith(AuthorizationConstants.POLICY_PREFIX))
