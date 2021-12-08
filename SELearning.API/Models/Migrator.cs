@@ -10,7 +10,8 @@ public static class Migrator
         return host;
     }
 
-    private static void MigrateContext<T>(IHost host) where T : DbContext {
+    private static void MigrateContext<T>(IHost host) where T : DbContext
+    {
         using (var scope = host.Services.CreateScope())
         {
             using var ctx = scope.ServiceProvider.GetRequiredService<T>();
