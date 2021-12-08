@@ -37,7 +37,7 @@ namespace SELearning.Infrastructure.Tests
             connection.Open();
             var builder = new DbContextOptionsBuilder<SELearningContext>();
             builder.UseSqlite(connection);
-            SELearningContext _context = new (builder.Options);
+            SELearningContext _context = new(builder.Options);
             _context.Database.EnsureCreated();
 
             ICommentRepository _repo = new CommentRepository(_context);
