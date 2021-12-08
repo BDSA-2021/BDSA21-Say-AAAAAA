@@ -87,10 +87,10 @@ public class ContentController : ControllerBase
     /// <c>CreateContent</c> creates a content.
     /// </summary>
     /// <param name="content">The record of the content.</param>
-    /// <returns>A response type 201: Created if the service can create it, otherwise response type 404: Not Found.</returns>
+    /// <returns>A response type 201: Created if the service can create it, otherwise response type 400: Bad Request.</returns>
     [HttpPost]
     [ProducesResponseType(201)]
-    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> CreateContent(ContentCreateDto content)
     {
         try
@@ -100,7 +100,7 @@ public class ContentController : ControllerBase
         }
         catch (Exception)
         {
-            return NotFound();
+            return BadRequest();
         }
     }
 
@@ -236,14 +236,22 @@ public class ContentController : ControllerBase
     /// <c>CreateSection</c> creates a section.
     /// </summary>
     /// <param name="section">The record of the section.</param>
-    /// <returns>A response type 201: Created.</returns>
+    /// <returns>A response type 201: Created if the service can create it, otherwise response type 400: Bad Request..</returns>
     [Authorize]
     [HttpPost]
     [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
     {
-        await _service.AddSection(section);
-        return CreatedAtRoute(nameof(GetSection), section);
+        try
+        {
+            await _service.AddSection(section);
+            return CreatedAtRoute(nameof(GetSection), section);
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
     }
 
     /// <summary>
