@@ -1,58 +1,148 @@
 namespace SELearning.Core.Content;
-public class ContentManager : IContentSverice
+
+public class ContentManager : IContentService
 {
-    public void AddContent(Content content)
+    private readonly IContentRepository _repository;
+
+    public ContentManager(IContentRepository repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
     }
 
-    public void AddSection(Section section)
+    public async Task<ContentDto> AddContent(ContentCreateDto content)
     {
-        throw new NotImplementedException();
+        return (await _repository.AddContent(content)).Item2;
     }
 
-    public void DecreaseContentRating(string id)
+    public async Task<SectionDto> AddSection(SectionCreateDto section)
     {
-        throw new NotImplementedException();
+        return (await _repository.AddSection(section)).Item2;
     }
 
-    public void DeleteContent(string id)
+    public async Task DecreaseContentRating(int id)
     {
-        throw new NotImplementedException();
+        var content = await _repository.GetContent(id);
+
+        if (content.IsNone)
+        {
+            throw new ContentNotFoundException(id);
+        }
+
+        ContentUpdateDto dto = new()
+        {
+            Title = content.Value.Title,
+            Description = content.Value.Description,
+            Author = content.Value.Author,
+            Rating = content.Value.Rating - 1,
+            Section = content.Value.Section,
+            VideoLink = content.Value.VideoLink
+        };
+
+        await UpdateContent(id, dto);
     }
 
-    public void DeleteSection(string id)
+    public async Task DeleteContent(int id)
     {
-        throw new NotImplementedException();
+        if (await _repository.DeleteContent(id) == OperationResult.NotFound)
+        {
+            throw new ContentNotFoundException(id);
+        }
     }
 
-    public void EditSection(string id, Section section)
+    public async Task DeleteSection(int id)
     {
-        throw new NotImplementedException();
+        if (await _repository.DeleteSection(id) == OperationResult.NotFound)
+        {
+            throw new SectionNotFoundException(id);
+        }
     }
 
-    public List<Content> GetContent()
+    public async Task<IReadOnlyCollection<ContentDto>> GetContent()
     {
-        throw new NotImplementedException();
+        var content = await _repository.GetContent();
+
+        return content;
     }
 
-    public Content GetContent(string id)
+    public async Task<ContentDto> GetContent(int id)
     {
-        throw new NotImplementedException();
+        var content = await _repository.GetContent(id);
+
+        if (content.IsNone)
+        {
+            throw new ContentNotFoundException(id);
+        }
+
+        return content.Value;
     }
 
-    public List<Content> GetContentInSection(string id)
+    public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
     {
-        throw new NotImplementedException();
+        var content = await _repository.GetContentInSection(id);
+
+        if (content == null)
+        {
+            throw new SectionNotFoundException(id);
+        }
+
+        return content;
     }
 
-    public void IncreaseContentRating(string id)
+    public async Task IncreaseContentRating(int id)
     {
-        throw new NotImplementedException();
+
+        var content = await _repository.GetContent(id);
+
+        if (content.IsNone)
+        {
+            throw new ContentNotFoundException(id);
+        }
+
+        ContentUpdateDto dto = new()
+        {
+            Title = content.Value.Title,
+            Description = content.Value.Description,
+            Author = content.Value.Author,
+            Rating = content.Value.Rating + 1,
+            Section = content.Value.Section,
+            VideoLink = content.Value.VideoLink
+        };
+
+        await UpdateContent(id, dto);
     }
 
-    public void UpdateContent(string id, Content content)
+    public async Task<IReadOnlyCollection<SectionDto>> GetSections()
     {
-        throw new NotImplementedException();
+        var section = await _repository.GetSections();
+
+        return section;
+    }
+
+    public async Task<SectionDto> GetSection(int id)
+    {
+        var section = await _repository.GetSection(id);
+
+        if (section.IsNone)
+        {
+            throw new SectionNotFoundException(id);
+        }
+
+        return section.Value;
+    }
+
+    public async Task UpdateContent(int id, ContentUpdateDto content)
+    {
+        if (await _repository.UpdateContent(id, content) == OperationResult.NotFound)
+        {
+            throw new ContentNotFoundException(id);
+        }
+    }
+
+    public async Task UpdateSection(int id, SectionUpdateDto section)
+    {
+        if (await _repository.UpdateSection(id, section) == OperationResult.NotFound)
+        {
+            throw new SectionNotFoundException(id);
+        }
     }
 }

@@ -8,10 +8,10 @@ using SELearning.Infrastructure;
 
 #nullable disable
 
-namespace SELearning.Infrastructure.Migrations.Comment
+namespace SELearning.Infrastructure.Migrations
 {
-    [DbContext(typeof(CommentContext))]
-    partial class CommentContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SELearningContext))]
+    partial class SELearningContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -57,11 +57,11 @@ namespace SELearning.Infrastructure.Migrations.Comment
 
             modelBuilder.Entity("SELearning.Core.Content.Content", b =>
                 {
-                    b.Property<int?>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Author")
                         .HasColumnType("nvarchar(max)");
@@ -72,8 +72,8 @@ namespace SELearning.Infrastructure.Migrations.Comment
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<string>("SectionId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("SectionId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -93,8 +93,11 @@ namespace SELearning.Infrastructure.Migrations.Comment
 
             modelBuilder.Entity("SELearning.Core.Content.Section", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");

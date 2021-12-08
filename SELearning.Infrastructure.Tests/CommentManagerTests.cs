@@ -1,22 +1,18 @@
-using SELearning.Core.Comment;
-using SELearning.Core;
-using Xunit;
-using System;
-using System.Collections.Generic;
-
 namespace SELearning.Infrastructure.Tests
 {
     public class CommentManagerTests
     {
-        ICommentService _service;
-        private static readonly Section section = new Section
+        readonly ICommentService _service;
+
+        private static readonly Section section = new()
         {
-            Id = "1",
+            Id = 1,
             Title = "C#",
             Description = "C# tools",
             Content = new List<Content>()
         };
-        private static readonly Content content = new Content
+
+        private static readonly Content content = new()
         {
             Author = "Sarah",
             Section = section,
@@ -25,27 +21,29 @@ namespace SELearning.Infrastructure.Tests
             Description = "Nice",
             VideoLink = "www.hej.dk"
         };
-        private IEnumerable<Comment> _comments = new List<Comment>()
+
+        private readonly IEnumerable<Comment> _comments = new List<Comment>()
         {
             new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content, Rating = -10 },
-                new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
-                new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
-                new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content, Rating = 28 }
+            new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
+            new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
+            new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content, Rating = 28 }
         };
+
         public CommentManagerTests()
         {
             //setting up the comment connection
             var connection = new SqliteConnection("Filename=:memory:");
             connection.Open();
-            var builder = new DbContextOptionsBuilder<CommentContext>();
+            var builder = new DbContextOptionsBuilder<SELearningContext>();
             builder.UseSqlite(connection);
-            CommentContext _context = new CommentContext(builder.Options);
+            SELearningContext _context = new(builder.Options);
             _context.Database.EnsureCreated();
 
             ICommentRepository _repo = new CommentRepository(_context);
             _service = new CommentManager(_repo);
 
-            section.Content.Add(content);
+            section.Content!.Add(content);
 
             _context.Comments.AddRange(
                 _comments
