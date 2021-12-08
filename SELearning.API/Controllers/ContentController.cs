@@ -87,8 +87,7 @@ public class ContentController : ControllerBase
     /// <c>CreateContent</c> creates a content.
     /// </summary>
     /// <param name="content">The record of the content.</param>
-    /// <returns>A response type 201: Created if the serice can create it, otherwise response type 404: Not Found.</returns>
-    [AuthorizePermission(Permission.CreateContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
+    /// <returns>A response type 201: Created if the service can create it, otherwise response type 404: Not Found.</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
@@ -111,7 +110,6 @@ public class ContentController : ControllerBase
     /// <param name="ID">The ID of the content.</param>
     /// <param name="content">The record of the updated content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [AuthorizePermission(Permission.EditAnyContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -133,7 +131,6 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [AuthorizePermission(Permission.DeleteAnyContent)] // TODO: Create the possibility to have an 'or' evaluation of rules in the permission attribute and policy provider.
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
