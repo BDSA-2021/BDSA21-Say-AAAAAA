@@ -64,7 +64,7 @@ namespace SELearning.Infrastructure
         {
             var (comments, result) = await _repo.GetCommentsByContentId(contentId);
 
-            if (result == OperationResult.NotFound)
+            if (result == OperationResult.NotFound || comments == null)
             {
                 throw new ContentNotFoundException(contentId);
             }
