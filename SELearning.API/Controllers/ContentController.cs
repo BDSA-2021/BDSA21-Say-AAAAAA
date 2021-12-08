@@ -28,6 +28,7 @@ public class ContentController : ControllerBase
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(ContentDto), 200)]
     [ProducesResponseType(404)]
+    [ActionName(nameof(GetContent))]
     public async Task<ActionResult<ContentDto>> GetContent(int ID)
     {
         try
@@ -62,8 +63,8 @@ public class ContentController : ControllerBase
     [ProducesResponseType(201)]
     public async Task<IActionResult> CreateContent(ContentCreateDto content)
     {
-        await _service.AddContent(content);
-        return CreatedAtAction(nameof(GetContent), content);
+        var createdContent = await _service.AddContent(content);
+        return CreatedAtAction(nameof(GetContent), new { ID = createdContent.Id }, createdContent);
     }
 
     /// <summary>
