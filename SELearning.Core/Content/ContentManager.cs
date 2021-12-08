@@ -11,18 +11,12 @@ public class ContentManager : IContentService
 
     public async Task AddContent(ContentCreateDto content)
     {
-        if ((await _repository.AddContent(content)).Item1 != OperationResult.Created)
-        {
-            throw new Exception("The content was not created");
-        }
+        await _repository.AddContent(content);
     }
 
     public async Task AddSection(SectionCreateDto section)
     {
-        if ((await _repository.AddSection(section)).Item1 != OperationResult.Created)
-        {
-            throw new Exception("The section was not created");
-        }
+        await _repository.AddSection(section);
     }
 
     public async Task DecreaseContentRating(int id)
@@ -31,7 +25,7 @@ public class ContentManager : IContentService
 
         if (content.IsNone)
         {
-            throw new Exception("The comment could not be found");
+            throw new ContentNotFoundException(id);
         }
 
         ContentUpdateDto dto = new()
@@ -44,14 +38,14 @@ public class ContentManager : IContentService
             VideoLink = content.Value.VideoLink
         };
 
-        await UpdateContentAsync(id, dto);
+        await UpdateContent(id, dto);
     }
 
     public async Task DeleteContent(int id)
     {
         if (await _repository.DeleteContent(id) == OperationResult.NotFound)
         {
-            throw new Exception("The section could not be found");
+            throw new ContentNotFoundException(id);
         }
     }
 
@@ -59,18 +53,13 @@ public class ContentManager : IContentService
     {
         if (await _repository.DeleteSection(id) == OperationResult.NotFound)
         {
-            throw new Exception("The section could not be found");
+            throw new SectionNotFoundException(id);
         }
     }
 
     public async Task<IReadOnlyCollection<ContentDto>> GetContent()
     {
         var content = await _repository.GetContent();
-
-        if (content == null)
-        {
-            throw new Exception("Could not get all sections");
-        }
 
         return content;
     }
@@ -81,7 +70,7 @@ public class ContentManager : IContentService
 
         if (content.IsNone)
         {
-            throw new Exception("The comment could not be found");
+            throw new ContentNotFoundException(id);
         }
 
         return content.Value;
@@ -93,20 +82,20 @@ public class ContentManager : IContentService
 
         if (content == null)
         {
-            throw new Exception("Could not get content in section");
+            throw new SectionNotFoundException(id);
         }
 
         return content;
     }
 
-    public async Task IncreaseContentRatingAsync(int id)
+    public async Task IncreaseContentRating(int id)
     {
 
         var content = await _repository.GetContent(id);
 
         if (content.IsNone)
         {
-            throw new Exception("The comment could not be found");
+            throw new ContentNotFoundException(id);
         }
 
         ContentUpdateDto dto = new()
@@ -119,17 +108,12 @@ public class ContentManager : IContentService
             VideoLink = content.Value.VideoLink
         };
 
-        await UpdateContentAsync(id, dto);
+        await UpdateContent(id, dto);
     }
 
     public async Task<IReadOnlyCollection<SectionDto>> GetSections()
     {
         var section = await _repository.GetSections();
-
-        if (section == null)
-        {
-            throw new Exception("Could not get all sections");
-        }
 
         return section;
     }
@@ -140,25 +124,25 @@ public class ContentManager : IContentService
 
         if (section.IsNone)
         {
-            throw new Exception("The comment could not be found");
+            throw new SectionNotFoundException(id);
         }
 
         return section.Value;
     }
 
-    public async Task UpdateContentAsync(int id, ContentUpdateDto content)
+    public async Task UpdateContent(int id, ContentUpdateDto content)
     {
         if (await _repository.UpdateContent(id, content) == OperationResult.NotFound)
         {
-            throw new Exception("The content could not be found");
+            throw new ContentNotFoundException(id);
         }
     }
 
-    public async Task UpdateSectionAsync(int id, SectionUpdateDto section)
+    public async Task UpdateSection(int id, SectionUpdateDto section)
     {
         if (await _repository.UpdateSection(id, section) == OperationResult.NotFound)
         {
-            throw new Exception("The section could not be found");
+            throw new SectionNotFoundException(id);
         }
     }
 }

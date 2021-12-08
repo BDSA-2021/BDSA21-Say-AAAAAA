@@ -49,7 +49,7 @@ public class ContentManagerTests : IDisposable
     [Fact]
     public async Task IncreaseContentRating_increase_existing_Content_rating_returns_updated()
     {
-        await _manager.IncreaseContentRatingAsync(1);
+        await _manager.IncreaseContentRating(1);
 
         var entity = await _context.Content.FirstAsync(c => c.Id == 1);
 
@@ -200,7 +200,7 @@ public class ContentManagerTests : IDisposable
             Content = contentList
         };
 
-        await _manager.UpdateSectionAsync(1, updateSection);
+        await _manager.UpdateSection(1, updateSection);
 
         var option = await _repository.GetSection(1);
 

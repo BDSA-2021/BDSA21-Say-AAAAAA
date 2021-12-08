@@ -119,7 +119,7 @@ public class ContentController : ControllerBase
     {
         try
         {
-            await _service.UpdateContentAsync(ID, content);
+            await _service.UpdateContent(ID, content);
             return NoContent();
         }
         catch (Exception)
@@ -163,7 +163,7 @@ public class ContentController : ControllerBase
     {
         try
         {
-            await _service.IncreaseContentRatingAsync(ID);
+            await _service.IncreaseContentRating(ID);
             return NoContent();
         }
         catch (Exception)
@@ -263,7 +263,7 @@ public class ContentController : ControllerBase
     {
         try
         {
-            await _service.UpdateSectionAsync(ID, section);
+            await _service.UpdateSection(ID, section);
             return NoContent();
         }
         catch (Exception)
