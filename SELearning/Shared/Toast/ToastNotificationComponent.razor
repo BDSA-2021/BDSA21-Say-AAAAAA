@@ -1,0 +1,29 @@
+@inject IJSRuntime JsRuntime
+
+<div id="@id" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autoHide="false">
+    <div class="toast-header">
+        <img src="..." class="rounded mr-2" alt="...">
+        <strong class="mr-auto"></strong>
+        <small class="text-muted">@Notification.Title</small>
+        <button type="button" class="ml-2 mb-1 close" aria-label="Close"
+            @onclick="Notification.Dismiss">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        @Notification.Body
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ToastNotification Notification { get; set; }
+
+    private string id = $"i{Guid.NewGuid().ToString()}";
+
+    protected override async void OnInitialized()
+    {
+        await JsRuntime.InvokeVoidAsync("interopFunctions.initToast", $".toast");
+        await JsRuntime.InvokeVoidAsync("interopFunctions.showToast", $".toast");
+    }
+}
