@@ -2,9 +2,9 @@ namespace SELearning.Infrastructure;
 
 public class ContentRepository : IContentRepository
 {
-    private readonly IContentContext _context;
+    private readonly ISELearningContext _context;
 
-    public ContentRepository(IContentContext context)
+    public ContentRepository(ISELearningContext context)
     {
         _context = context;
     }

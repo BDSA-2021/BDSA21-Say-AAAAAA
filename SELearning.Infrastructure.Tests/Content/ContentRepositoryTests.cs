@@ -7,7 +7,7 @@ namespace SELearning.Infrastructure.Tests;
 
 public class ContentRepositoryTests : IDisposable
 {
-    private readonly ContentContext _context;
+    private readonly SELearningContext _context;
     private readonly ContentRepository _repository;
     private readonly Section _section;
     private bool disposedValue;
@@ -16,9 +16,9 @@ public class ContentRepositoryTests : IDisposable
     {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
-        var builder = new DbContextOptionsBuilder<ContentContext>();
+        var builder = new DbContextOptionsBuilder<SELearningContext>();
         builder.UseSqlite(connection);
-        var context = new ContentContext(builder.Options);
+        var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };

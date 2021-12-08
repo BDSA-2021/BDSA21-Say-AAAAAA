@@ -1,6 +1,3 @@
-using SELearning.Core.Comment;
-using SELearning.Core.Content;
-
 namespace SELearning.Infrastructure.Tests
 {
     public class CommentManagerTests
@@ -38,9 +35,9 @@ namespace SELearning.Infrastructure.Tests
             //setting up the comment connection
             var connection = new SqliteConnection("Filename=:memory:");
             connection.Open();
-            var builder = new DbContextOptionsBuilder<CommentContext>();
+            var builder = new DbContextOptionsBuilder<SELearningContext>();
             builder.UseSqlite(connection);
-            CommentContext _context = new(builder.Options);
+            SELearningContext _context = new (builder.Options);
             _context.Database.EnsureCreated();
 
             ICommentRepository _repo = new CommentRepository(_context);

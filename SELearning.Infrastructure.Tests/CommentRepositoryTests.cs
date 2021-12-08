@@ -1,13 +1,11 @@
-using SELearning.Core.Comment;
 using System.Threading.Tasks;
-using SELearning.Core.Content;
 
 namespace SELearning.Infrastructure.Tests
 {
     public class CommentRepositoryTests
     {
         private readonly CommentRepository _repository;
-        private readonly CommentContext _context;
+        private readonly SELearningContext _context;
 
         private static readonly Section section = new()
         {
@@ -40,9 +38,9 @@ namespace SELearning.Infrastructure.Tests
             //setting up the comment connection
             var connection = new SqliteConnection("Filename=:memory:");
             connection.Open();
-            var builder = new DbContextOptionsBuilder<CommentContext>();
+            var builder = new DbContextOptionsBuilder<SELearningContext>();
             builder.UseSqlite(connection);
-            _context = new CommentContext(builder.Options);
+            _context = new SELearningContext(builder.Options);
             _context.Database.EnsureCreated();
 
             _repository = new CommentRepository(_context);
