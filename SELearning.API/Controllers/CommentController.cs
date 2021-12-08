@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -28,11 +27,12 @@ public class CommentController : ControllerBase
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(Comment), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<Comment>> GetComment(int id)
+    [ActionName(nameof(GetComment))]
+    public async Task<ActionResult<Comment>> GetComment(int ID)
     {
         try
         {
-            return Ok(await _service.GetCommentFromCommentId(id));
+            return Ok(await _service.GetCommentFromCommentId(ID));
         }
         catch (CommentNotFoundException)
         {
@@ -73,8 +73,8 @@ public class CommentController : ControllerBase
     {
         try
         {
-            await _service.PostComment(comment);
-            return CreatedAtRoute(nameof(GetComment), comment.ContentId);
+            var createdComment = await _service.PostComment(comment);
+            return CreatedAtAction(nameof(GetComment), new { ID = createdComment.Id }, createdComment);
         }
         catch (ContentNotFoundException)
         {

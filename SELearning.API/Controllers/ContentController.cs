@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using SELearning.Core.Content;
-using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -13,12 +11,12 @@ namespace SELearning.API.Controllers;
 public class ContentController : ControllerBase
 {
     private readonly ILogger<ContentController> _logger;
-    private readonly IContentRepository _repository;
+    private readonly IContentService _service;
 
-    public ContentController(ILogger<ContentController> logger, IContentRepository repository)
+    public ContentController(ILogger<ContentController> logger, IContentService service)
     {
         _logger = logger;
-        _repository = repository;
+        _service = service;
     }
 
     /// <summary>
@@ -26,23 +24,47 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A content with the given ID if it exists, otherwise response type 404: Not Found.</returns>
+    [Authorize]
     [HttpGet("{ID}")]
-    [ProducesResponseType(typeof(ContentDTO), 200)]
+    [ProducesResponseType(typeof(ContentDto), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<ContentDTO>> GetContent(string ID)
-        => (await _repository.GetContent(ID)).ToActionResult();
+    [ActionName(nameof(GetContent))]
+    public async Task<ActionResult<ContentDto>> GetContent(int ID)
+    {
+        try
+        {
+            return Ok(await _service.GetContent(ID));
+        }
+        catch (ContentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
+    /// <c>GetAllContent</c> returns all contents.
+    /// </summary>
+    /// <returns>all contents if they can be found, otherwise response type 404: Not Found.</returns>
+    [Authorize]
+    [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyCollection<ContentDto>), 200)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<IReadOnlyCollection<ContentDto>>> GetAllContent()
+    {
+        return Ok(await _service.GetContent());
+    }
 
     /// <summary>
     /// <c>CreateContent</c> creates a content.
     /// </summary>
     /// <param name="content">The record of the content.</param>
-    /// <returns>A response type 201: Created.</returns>
+    /// <returns>A response type 201: Created</returns>
     [HttpPost]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> CreateContent(ContentDTO content)
+    public async Task<IActionResult> CreateContent(ContentCreateDto content)
     {
-        var (result, created) = await _repository.AddContent(content);
-        return CreatedAtRoute(nameof(GetContent), new { created.ID }, created);
+        var createdContent = await _service.AddContent(content);
+        return CreatedAtAction(nameof(GetContent), new { ID = createdContent.Id }, createdContent);
     }
 
     /// <summary>
@@ -50,12 +72,22 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <param name="content">The record of the updated content.</param>
-    /// <returns></returns>
+    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> UpdateContent(string ID, ContentDTO content)
-        => (await _repository.UpdateContent(ID, content)).ToActionResult();
+    public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDto content)
+    {
+        try
+        {
+            await _service.UpdateContent(ID, content);
+            return NoContent();
+        }
+        catch (ContentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 
     /// <summary>
     /// <c>GetContent</c> deletes the content with the given ID, and its associated comments.
@@ -65,6 +97,60 @@ public class ContentController : ControllerBase
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> DeleteContent(string ID)
-        => (await _repository.DeleteContent(ID)).ToActionResult();
+    public async Task<IActionResult> DeleteContent(int ID)
+    {
+        try
+        {
+            await _service.DeleteContent(ID);
+            return NoContent();
+        }
+        catch (ContentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
+    /// <c>UpvoteContent</c> increases the rating of the content with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the content.</param>
+    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
+    [Authorize]
+    [HttpPut("{ID}/Upvote")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> UpvoteContent(int ID)
+    {
+        try
+        {
+            await _service.IncreaseContentRating(ID);
+            return NoContent();
+        }
+        catch (ContentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
+    /// <c>DownvoteContent</c> decreases the rating of the content with the given ID.
+    /// </summary>
+    /// <param name="ID">The ID of the content.</param>
+    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
+    [Authorize]
+    [HttpPut("{ID}/Downvote")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> DownvoteContent(int ID)
+    {
+        try
+        {
+            await _service.DecreaseContentRating(ID);
+            return NoContent();
+        }
+        catch (ContentNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 }

@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SELearning.Infrastructure.Migrations.Comment
+namespace SELearning.Infrastructure.Migrations
 {
-    public partial class AddCommentContext : Migration
+    public partial class AddSELearningContext : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,8 @@ namespace SELearning.Infrastructure.Migrations.Comment
                 name: "Section",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -28,7 +29,7 @@ namespace SELearning.Infrastructure.Migrations.Comment
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SectionId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SectionId = table.Column<int>(type: "int", nullable: true),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),

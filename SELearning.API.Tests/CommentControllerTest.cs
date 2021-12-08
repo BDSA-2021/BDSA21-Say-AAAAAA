@@ -4,7 +4,9 @@ using Moq;
 using SELearning.API.Controllers;
 using SELearning.Core;
 using SELearning.Core.Comment;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -90,14 +92,17 @@ public class CommentControllerTest
         var service = new Mock<ICommentService>();
         var controller = new CommentController(logger.Object, service.Object);
 
-        var comment = new CommentCreateDTO("Author", "Text", 1);
+        var toCreate = new CommentCreateDTO("Author", "Text", 1);
+        var expected = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 0, default!);
+        service.Setup(m => m.PostComment(toCreate)).ReturnsAsync(expected);
 
         // Act
-        var result = (await controller.CreateComment(comment) as CreatedAtRouteResult)!;
+        var actual = (await controller.CreateComment(toCreate) as CreatedAtActionResult)!;
 
         // Assert
-        Assert.Equal("GetComment", result.RouteName);
-        Assert.Equal(comment.ContentId, result.Value);
+        Assert.Equal(expected, actual.Value);
+        Assert.Equal("GetComment", actual.ActionName);
+        Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
     }
 
     [Fact]

@@ -9,12 +9,16 @@ public class CommentManager : ICommentService
         _repo = repo;
     }
 
-    public async Task PostComment(CommentCreateDTO dto)
+    public async Task<CommentDetailsDTO> PostComment(CommentCreateDTO dto)
     {
-        if ((await _repo.AddComment(dto)).Item1 == OperationResult.NotFound)
+        var (result, comment) = await _repo.AddComment(dto);
+
+        if (result == OperationResult.NotFound)
         {
             throw new ContentNotFoundException(dto.ContentId);
         }
+
+        return comment;
     }
 
     public async Task UpdateComment(int id, CommentUpdateDTO dto)

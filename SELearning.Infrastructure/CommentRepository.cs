@@ -2,9 +2,9 @@ using SELearning.Core.Comment;
 namespace SELearning.Infrastructure;
 public class CommentRepository : ICommentRepository
 {
-    private readonly CommentContext _context;
+    private readonly ISELearningContext _context;
 
-    public CommentRepository(CommentContext context)
+    public CommentRepository(ISELearningContext context)
     {
         _context = context;
     }
@@ -57,7 +57,7 @@ public class CommentRepository : ICommentRepository
             return (OperationResult.NotFound);
         }
 
-        _context.Remove(comment);
+        _context.Comments.Remove(comment);
 
         await _context.SaveChangesAsync();
 
