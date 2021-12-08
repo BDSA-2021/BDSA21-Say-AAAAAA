@@ -21,7 +21,7 @@
       <label for="videoLink">Video link:</label>
       <InputText id="videoLink" @bind-Value="Content.VideoLink" class="form-control"/>
     </div>
-    <select class="form-control">
+    <select class="form-control" @bind="Content.Section">
       @foreach (var sec in sections)
       {
         <option>@sec.Title</option>        
@@ -52,7 +52,9 @@
     public string Title{get; set;}
     public string Description{get; set;}
     public string VideoLink{get; set;}
+    public Section Section{get; set;}
   }
+  
   private static Section section = new Section{Title = "Wow", Description = "hej"}; //TODO: remove these two sections and fetch from database
   private static Section se = new Section{Title = "Wowqww", Description = "hej"};
   private Section[] sections = {section,se};
