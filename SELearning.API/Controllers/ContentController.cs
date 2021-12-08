@@ -138,7 +138,7 @@ public class ContentController : ControllerBase
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
-    [HttpPut("{ID}")]
+    [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> UpvoteContent(int ID)
@@ -160,7 +160,7 @@ public class ContentController : ControllerBase
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
     [Authorize]
-    [HttpPut("{ID}")]
+    [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> DownvoteContent(int ID)
