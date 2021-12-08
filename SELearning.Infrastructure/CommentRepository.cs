@@ -66,7 +66,7 @@ public class CommentRepository : ICommentRepository
 
     public async Task<Option<CommentDetailsDTO>> GetCommentByCommentId(int commentId)
     {
-        Comment comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
+        var comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
         return comment != null ? ConvertToDetailsDTO(comment) : null;
     }
 
