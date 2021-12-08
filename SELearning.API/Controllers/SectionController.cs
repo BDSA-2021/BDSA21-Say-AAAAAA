@@ -5,6 +5,7 @@ using Microsoft.Identity.Web.Resource;
 namespace SELearning.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class SectionController : ControllerBase
@@ -65,6 +66,7 @@ public class SectionController : ControllerBase
     /// <c>GetSections</c> returns all sections.
     /// </summary>
     /// <returns>all sections if they can be found, otherwise response type 404: Not Found.</returns>
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<SectionDto>), 200)]
     [ProducesResponseType(404)]
@@ -78,6 +80,7 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="section">The record of the section.</param>
     /// <returns>A response type 201: Created</returns>
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(201)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
