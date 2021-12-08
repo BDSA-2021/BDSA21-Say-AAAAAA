@@ -154,4 +154,25 @@ public class CommentRepositoryTests
 
         Assert.Equal(OperationResult.NotFound, read.Item2);
     }
+
+    [Fact]
+    public async Task GetCommentsByAuthor_GivenComments_ReturnsByAuthor()
+    {
+        await _context.Comments.AddRangeAsync(new[]
+        {
+            new Comment { Author = "Sankt Nikolaus", Id = 98, Content = content },
+            new Comment { Author = "Julemanden", Id = 97, Content = content },
+            new Comment { Author = "Santa Claus", Id = 96, Content = content },
+            new Comment { Author = "Julemanden", Id = 95, Content = content },
+        });
+        await _context.SaveChangesAsync();
+
+        var (comments, opResult) = await _repository.GetCommentsByAuthor("Julemanden");
+
+        Assert.Equal(OperationResult.Succes, opResult);
+
+        var expectedIds = new[] { 95, 97 };
+        var actualIds = comments.OrderBy(c => c.Id).Select(c => (int)c.Id!).ToList();
+        Assert.Equal(expectedIds, actualIds);
+    }
 }
