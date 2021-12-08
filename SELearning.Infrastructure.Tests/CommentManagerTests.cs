@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace SELearning.Infrastructure.Tests;
 
 public class CommentManagerTests
