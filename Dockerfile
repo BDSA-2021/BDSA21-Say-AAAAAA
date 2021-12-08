@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 as base
 # Multi-stage enviroment variables
-ENV ASPNETCORE_ENVIROMENT="Production"
+ENV ASPNETCORE_ENVIRONMENT="Production"
 ENV ConnectionStrings:SELearning=""
 ENV ConnectionStrings:ProductionConnectionString=""
 ENV PATH="/root/.dotnet/tools:${PATH}"
