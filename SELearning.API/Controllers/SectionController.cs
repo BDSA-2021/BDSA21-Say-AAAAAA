@@ -125,7 +125,7 @@ public class SectionController : ControllerBase
         try
         {
             await _service.DeleteSection(ID);
-            return NoContent();   
+            return NoContent();
         }
         catch (SectionNotFoundException)
         {
