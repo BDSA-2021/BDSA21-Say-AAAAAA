@@ -8,6 +8,7 @@ public enum Permission
     Rate,
     CreateComment,
     DeleteAnyComment,
+    DeleteOwnComment,
     EditAnyComment,
     EditOwnComment,
     CreateContent,
