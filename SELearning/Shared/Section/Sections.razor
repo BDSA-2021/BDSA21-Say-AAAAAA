@@ -24,7 +24,7 @@
         await RetrieveSections();
     }
 
-    private async void OnSectionDeleted(Section sec)
+    private void OnSectionDeleted(Section sec)
     {
         System.Console.WriteLine($"Comment from {sec.Id} is deleted!");
         @* _sections.Remove(sec); *@

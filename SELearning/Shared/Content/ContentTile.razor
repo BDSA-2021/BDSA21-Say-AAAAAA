@@ -46,10 +46,6 @@
         {
             exception.Redirect();
         }
-        // TODO: Delete comment with api
-
-
-        // TODO: Check if return code is not an error
 
           if(OnContentDeleted.HasDelegate)
             await OnContentDeleted.InvokeAsync(content);

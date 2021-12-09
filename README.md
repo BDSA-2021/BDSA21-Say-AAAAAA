@@ -28,7 +28,7 @@ export connectionString=$(echo "server=localhost;database=${database};user id=sa
 #### Enable User Secrets
 ```powershell
 dotnet user-secrets init --project SELearning.API
-dotnet user-secrets set "ConnectionStrings:SELearning" "$connectionstring" --project SELearning.API
+dotnet user-secrets set "ConnectionStrings:SELearning" "$connectionString" --project SELearning.API
 ```
 
 #### Migrate database
