@@ -10,9 +10,9 @@ namespace SELearning.Infrastructure.Authorization;
 /// </summary>
 public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityPermissionRequirement>
 {
-    private readonly ICredibilityService _credService;
+    private readonly IProvider<ICredibilityService> _credService;
     private readonly ILogger<CredibilityAuthorizationHandler>? _logger;
-    public CredibilityAuthorizationHandler(ICredibilityService credService, ILogger<CredibilityAuthorizationHandler>? logger = null)
+    public CredibilityAuthorizationHandler(IProvider<ICredibilityService> credService, ILogger<CredibilityAuthorizationHandler>? logger = null)
     {
         _credService = credService;
         _logger = logger;
@@ -20,6 +20,7 @@ public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityP
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, CredibilityPermissionRequirement requirement)
     {
+        var credService = _credService.Get();
         if (IsModerator(context.User))
         {
             _logger?.LogDebug($"User {context.User.GetUserId()} is a moderator");
@@ -28,7 +29,7 @@ public class CredibilityAuthorizationHandler : AuthorizationHandler<CredibilityP
         }
 
         var user = context.User;
-        var userCredibilityScore = await _credService.GetCredibilityScore(user);
+        var userCredibilityScore = await credService.GetCredibilityScore(user);
         var isPermitted = requirement.RequiredCredibilityScores.Any(requiredScore => requiredScore.Credibility <= userCredibilityScore);
 
         _logger?.LogDebug($"User {context.User.GetUserId()} is permitted access: {isPermitted}");

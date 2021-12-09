@@ -50,13 +50,12 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     }
 
     /// <summary>
-    /// Parses the policy name to an enum of type Permission.
+    /// Parses the policy name (containing a single permission) to an enum of type Permission.
     /// </summary>
     /// <param name="policyName">Name of the policy</param>
     /// <param name="parsedPermission">The result of the parsed enum. If it is not able to parse, then it returns the default of the type</param>
     /// <returns>True if it is parsed and false if not</returns>
-    private bool TryParsePolicyPermission(string policyName, out Permission parsedPermission)
-    // TODO: return IEnumerable<Permission>
+    public static bool TryParsePolicyPermission(string policyName, out Permission parsedPermission)
     {
         // Permission name
         if (!policyName.StartsWith(AuthorizationConstants.POLICY_PREFIX))
@@ -68,4 +67,32 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         string permissionName = policyName.Substring(AuthorizationConstants.POLICY_PREFIX.Length);
         return Enum.TryParse<Permission>(permissionName, false, out parsedPermission);
     }
+
+    /// <summary>
+    /// Parses the policy name (containing multiple permissions) to a list of Permission enum instances.
+    /// </summary>
+    public static bool TryParsePolicyPermissions(string policyName, out IEnumerable<Permission> parsedPermissions)
+    {
+        var policyParts = policyName.Split(AuthorizationConstants.POLICY_SEPERATOR);
+        var permissions = new List<Permission>();
+        parsedPermissions = permissions;
+
+        if (policyName.Length == 0)
+            return true;
+
+        foreach (var policyPart in policyParts)
+        {
+            if (TryParsePolicyPermission(policyPart, out var permission))
+                permissions.Add(permission);
+            else
+                return false;
+        }
+        return true;
+    }
+
+    public static string PermissionsToPolicyName(params Permission[] permissions)
+        => string.Join(
+            AuthorizationConstants.POLICY_SEPERATOR,
+            permissions.Select(p => $"{AuthorizationConstants.POLICY_PREFIX}{Enum.GetName(typeof(Permission), p)}")
+        );
 }

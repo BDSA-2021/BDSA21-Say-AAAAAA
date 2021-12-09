@@ -1,6 +1,7 @@
 using SELearning.Core.Content;
 using System;
 using System.Threading.Tasks;
+using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
 
@@ -10,6 +11,8 @@ public class ContentManagerTests : IDisposable
     private readonly ContentRepository _repository;
     private readonly ContentManager _manager;
     private readonly Section _section;
+
+    private readonly User _user;
     private bool disposedValue;
 
     public ContentManagerTests()
@@ -23,10 +26,16 @@ public class ContentManagerTests : IDisposable
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        var content1 = new Content { Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content2 = new Content { Id = 2, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content3 = new Content { Id = 3, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content4 = new Content { Id = 4, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        _user = new User { Id = "toucan", Name = "Næbdyr" };
+
+        var content1 = new Content("title", "description", "link", 3, _user, _section);
+        var content2 = new Content("title", "description", "link", 3, _user, _section);
+        var content3 = new Content("title", "description", "link", 3, _user, _section);
+        var content4 = new Content("title", "description", "link", 3, _user, _section);
+        content1.Id = 1;
+        content1.Id = 2;
+        content1.Id = 3;
+        content1.Id = 4;
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };
         _section.Content = new List<Content>
@@ -77,16 +86,30 @@ public class ContentManagerTests : IDisposable
     }
 
     [Fact]
+    public async Task CreateSectionAsync_creates_new_content_with_generated_id()
+    {
+        var contentList = new List<Content>();
+        var section = new SectionCreateDto { Title = "title", Description = "description" };
+
+        await _manager.AddSection(section);
+
+        var option = await _repository.GetSection(2);
+
+        Assert.NotNull(option.Value.Id);
+        Assert.Equal("title", option.Value.Title);
+        Assert.Equal("description", option.Value.Description);
+    }
+
+    [Fact]
     public async Task CreateContentAsync_creates_new_content_with_generated_id()
     {
         var content = new ContentCreateDto
         {
             Section = _section,
-            Author = "author",
+            Author = _user,
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Rating = 3,
         };
 
         await _manager.AddContent(content);
@@ -95,11 +118,11 @@ public class ContentManagerTests : IDisposable
 
         Assert.NotNull(contentWithID.Id);
         Assert.Equal(_section, contentWithID.Section);
-        Assert.Equal("author", contentWithID.Author);
+        Assert.Equal(_user, contentWithID.Author);
         Assert.Equal("title", contentWithID.Title);
         Assert.Equal("description", contentWithID.Description);
         Assert.Equal("video link", contentWithID.VideoLink);
-        Assert.Equal(3, contentWithID.Rating);
+        Assert.Equal(0, contentWithID.Rating);
     }
 
     [Fact]
@@ -109,11 +132,31 @@ public class ContentManagerTests : IDisposable
 
         Assert.Equal(1, content.Id);
         Assert.Equal(_section, content.Section);
-        Assert.Equal("author", content.Author);
+        Assert.Equal(_user, content.Author);
         Assert.Equal("title", content.Title);
         Assert.Equal("description", content.Description);
-        Assert.Equal("VideoLink", content.VideoLink);
+        Assert.Equal("link", content.VideoLink);
         Assert.Equal(3, content.Rating);
+    }
+
+    [Fact]
+    public async Task ReadSectionAsync_returns_all_Sections()
+    {
+        var allSections = await _manager.GetSections();
+
+        Assert.Collection(allSections,
+            section => Assert.Equal(section.Id, _section.Id)
+        );
+    }
+
+    [Fact]
+    public async Task GetSection_by_id_returns_section()
+    {
+        var section = await _manager.GetSection(1);
+
+        Assert.Equal(1, section.Id);
+        Assert.Equal("python", section.Title);
+        Assert.Equal("description", section.Description);
     }
 
     [Fact]

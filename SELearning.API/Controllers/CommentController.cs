@@ -1,22 +1,34 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.User;
+using SELearning.Core.Permission;
+using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
 namespace SELearning.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("/Api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;
     private readonly ICommentService _service;
+    private readonly IUserRepository _userRepository;
+    private readonly IAuthorizationService _authService;
 
-    public CommentController(ILogger<CommentController> logger, ICommentService service)
+    public CommentController(
+        ILogger<CommentController> logger,
+        ICommentService service,
+        IUserRepository userRepository,
+        IAuthorizationService authService
+    )
     {
         _logger = logger;
         _service = service;
+        _userRepository = userRepository;
+        _authService = authService;
     }
 
     /// <summary>
@@ -45,7 +57,7 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="contentID">The ID of the content.</param>
     /// <returns>A collection of comments in the content if it exists, otherwise response type 404: Not Found.</returns>
-    [HttpGet("{contentID}")]
+    [HttpGet("content/{contentID}")]
     [ProducesResponseType(typeof(List<Comment>), 200)] // OK
     [ProducesResponseType(404)] // Not Found
     public async Task<ActionResult<List<Comment>>> GetCommentsByContentID(int contentID)
@@ -69,11 +81,21 @@ public class CommentController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> CreateComment(CommentCreateDTO comment)
+    [AuthorizePermission(Permission.CreateComment)]
+    public async Task<IActionResult> CreateComment(CommentUserDTO comment)
     {
+        var user = await _userRepository.GetOrAddUser(new UserDTO(
+            User.GetUserId(),
+            User.FindFirstValue(ClaimTypes.GivenName)
+        ));
+
         try
         {
-            var createdComment = await _service.PostComment(comment);
+            var createdComment = await _service.PostComment(new CommentCreateDTO(
+                user,
+                comment.Text,
+                comment.ContentId
+            ));
             return CreatedAtAction(nameof(GetComment), new { ID = createdComment.Id }, createdComment);
         }
         catch (ContentNotFoundException)
@@ -91,10 +113,19 @@ public class CommentController : ControllerBase
     [HttpPut("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
+    [AuthorizePermission(Permission.EditAnyComment, Permission.EditOwnComment)]
     public async Task<IActionResult> UpdateComment(int ID, CommentUpdateDTO comment)
     {
         try
         {
+            var commentToUpdate = await _service.GetCommentFromCommentId(ID);
+            var authResult = await _authService.AuthorizeAsync(
+                User,
+                commentToUpdate,
+                PermissionsToPolicyName(Permission.EditAnyComment, Permission.EditOwnComment));
+            if (!authResult.Succeeded)
+                return Forbid($"User is not allowed to update comment with {ID}");
+
             await _service.UpdateComment(ID, comment);
             return NoContent();
         }
@@ -112,10 +143,19 @@ public class CommentController : ControllerBase
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.DeleteAnyComment, Permission.DeleteOwnComment)]
     public async Task<IActionResult> DeleteComment(int ID)
     {
         try
         {
+            var commentToUpdate = await _service.GetCommentFromCommentId(ID);
+            AuthorizationResult authResult = await _authService.AuthorizeAsync(
+                User,
+                commentToUpdate,
+                PermissionsToPolicyName(Permission.DeleteAnyComment, Permission.DeleteOwnComment));
+            if (!authResult.Succeeded)
+                return Forbid($"User is not allowed to delete comment with {ID}");
+
             await _service.RemoveComment(ID);
             return NoContent();
         }
@@ -130,10 +170,10 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> UpvoteComment(int ID)
     {
         try
@@ -152,10 +192,10 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the comment.</param>
     /// <returns>A response type 204: No Content if the comment exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> DownvoteComment(int ID)
     {
         try

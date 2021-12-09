@@ -1,22 +1,34 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.Permission;
+using SELearning.Core.User;
+using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
 namespace SELearning.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("/Api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class ContentController : ControllerBase
 {
     private readonly ILogger<ContentController> _logger;
     private readonly IContentService _service;
+    private readonly IAuthorizationService _authService;
+    private readonly IUserRepository _userRepository;
 
-    public ContentController(ILogger<ContentController> logger, IContentService service)
+    public ContentController(
+        ILogger<ContentController> logger,
+        IContentService service,
+        IUserRepository userRepository,
+        IAuthorizationService authService
+    )
     {
         _logger = logger;
         _service = service;
+        _userRepository = userRepository;
+        _authService = authService;
     }
 
     /// <summary>
@@ -24,7 +36,6 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A content with the given ID if it exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(ContentDto), 200)]
     [ProducesResponseType(404)]
@@ -45,7 +56,6 @@ public class ContentController : ControllerBase
     /// <c>GetAllContent</c> returns all contents.
     /// </summary>
     /// <returns>all contents if they can be found, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<ContentDto>), 200)]
     [ProducesResponseType(404)]
@@ -61,9 +71,24 @@ public class ContentController : ControllerBase
     /// <returns>A response type 201: Created</returns>
     [HttpPost]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> CreateContent(ContentCreateDto content)
+    [AuthorizePermission(Permission.CreateContent)]
+    public async Task<IActionResult> CreateContent(ContentUserDTO content)
     {
-        var createdContent = await _service.AddContent(content);
+        var user = await _userRepository.GetOrAddUser(new UserDTO(
+            User.GetUserId(),
+            User.FindFirstValue(ClaimTypes.GivenName)
+        ));
+
+        var entity = new ContentCreateDto
+        {
+            Title = content.Title,
+            Description = content.Description,
+            VideoLink = content.VideoLink,
+            Section = null, // Im sorry
+            Author = user,
+        };
+
+        var createdContent = await _service.AddContent(entity);
         return CreatedAtAction(nameof(GetContent), new { ID = createdContent.Id }, createdContent);
     }
 
@@ -76,12 +101,25 @@ public class ContentController : ControllerBase
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.EditAnyContent, Permission.EditOwnContent)]
     public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDto content)
     {
         try
         {
-            await _service.UpdateContent(ID, content);
-            return NoContent();
+            ContentDto contentToBeUpdated = await _service.GetContent(ID);
+
+            var authResult = await _authService.AuthorizeAsync(
+                User,
+                contentToBeUpdated,
+                PermissionsToPolicyName(Permission.EditAnyContent, Permission.EditOwnContent));
+
+            if (authResult.Succeeded)
+            {
+                await _service.UpdateContent(ID, content);
+                return NoContent();
+            }
+            else
+                return Forbid($"User is not allowed to update content with id {ID}");
         }
         catch (ContentNotFoundException)
         {
@@ -97,12 +135,25 @@ public class ContentController : ControllerBase
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.DeleteAnyContent, Permission.DeleteOwnContent)]
     public async Task<IActionResult> DeleteContent(int ID)
     {
         try
         {
-            await _service.DeleteContent(ID);
-            return NoContent();
+            ContentDto contentToBeDeleted = await _service.GetContent(ID);
+
+            var authResult = await _authService.AuthorizeAsync(
+                User,
+                contentToBeDeleted,
+                PermissionsToPolicyName(Permission.DeleteAnyContent, Permission.DeleteOwnContent));
+
+            if (authResult.Succeeded)
+            {
+                await _service.DeleteContent(ID);
+                return NoContent();
+            }
+            else
+                return Forbid($"User is not allowed to delete content with id {ID}");
         }
         catch (ContentNotFoundException)
         {
@@ -115,10 +166,10 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> UpvoteContent(int ID)
     {
         try
@@ -137,10 +188,10 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> DownvoteContent(int ID)
     {
         try

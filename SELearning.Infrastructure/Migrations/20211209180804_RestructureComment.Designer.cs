@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SELearning.Infrastructure;
 
@@ -11,9 +12,10 @@ using SELearning.Infrastructure;
 namespace SELearning.Infrastructure.Migrations
 {
     [DbContext(typeof(SELearningContext))]
-    partial class SELearningContextModelSnapshot : ModelSnapshot
+    [Migration("20211209180804_RestructureComment")]
+    partial class RestructureComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,6 +42,7 @@ namespace SELearning.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
@@ -65,8 +68,8 @@ namespace SELearning.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Author")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -84,8 +87,6 @@ namespace SELearning.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -120,6 +121,7 @@ namespace SELearning.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -147,15 +149,9 @@ namespace SELearning.Infrastructure.Migrations
 
             modelBuilder.Entity("SELearning.Core.Content.Content", b =>
                 {
-                    b.HasOne("SELearning.Core.User.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
                     b.HasOne("SELearning.Core.Content.Section", "Section")
                         .WithMany("Content")
                         .HasForeignKey("SectionId");
-
-                    b.Navigation("Author");
 
                     b.Navigation("Section");
                 });

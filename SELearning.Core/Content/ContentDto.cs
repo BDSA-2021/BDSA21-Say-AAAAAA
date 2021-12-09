@@ -1,37 +1,61 @@
+#nullable disable
+using SELearning.Core.Permission;
+
 namespace SELearning.Core.Content;
 
-public record ContentDto
+public record ContentUserDTO
 {
-    public int? Id { get; set; }
-    public Section.Section? Section { get; set; }
-    public string? Author { get; set; }
-    public string? Title { get; set; }
-    public string? Description { get; set; }
-    public string? VideoLink { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string VideoLink { get; set; }
+    public string SectionId { get; set; }
+}
+
+public record ContentDto : IAuthored
+{
+    public int Id { get; set; }
+
+    public string Title { get; set; }
+
+    public string Description { get; set; }
+
+    public string VideoLink { get; set; }
+
     public int Rating { get; set; }
+
+    public User.User Author { get; set; }
+
+    public Section.Section Section { get; set; }
 }
 
 public record ContentCreateDto
 {
     [StringLength(50)]
-    public Section.Section? Section { get; init; }
+    public string Title { get; init; }
 
     [StringLength(50)]
-    public string? Author { get; init; }
+    public string Description { get; init; }
 
     [StringLength(50)]
-    public string? Title { get; init; }
+    public string VideoLink { get; init; }
 
     [StringLength(50)]
-    public string? Description { get; init; }
+    public Section.Section Section { get; init; }
 
     [StringLength(50)]
-    public string? VideoLink { get; init; }
+    public User.User Author { get; init; }
 
-    public int Rating { get; init; }
 }
 
-public record ContentUpdateDto : ContentCreateDto
+public record ContentUpdateDto
 {
-    public int Id { get; init; }
+    [StringLength(50)]
+    public string Title { get; init; }
+
+    [StringLength(50)]
+    public string Description { get; init; }
+
+    [StringLength(50)]
+    public string VideoLink { get; init; }
+    public int Rating { get; init; }
 }

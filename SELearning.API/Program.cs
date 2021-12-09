@@ -3,6 +3,8 @@ using SELearning.Core.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
+using SELearning.Core.User;
+using SELearning.Infrastructure.Credibility;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration
@@ -29,12 +31,11 @@ else
     connectionString = builder.Configuration.GetConnectionString("ProductionConnectionString");
 }
 
-builder.Services.AddDbContext<WeatherContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IWeatherContext, WeatherContext>();
-builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
 
 builder.Services.AddDbContext<SELearningContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<ISELearningContext, SELearningContext>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<IContentService, ContentManager>();
@@ -42,8 +43,12 @@ builder.Services.AddScoped<IContentService, ContentManager>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentManager>();
 
+builder.Services.AddScoped<ICredibilityRepository, CredibilityRepository>();
+builder.Services.AddScoped<ICredibilityService, CredibilityCalculator>();
+
+builder.Services.AddPermissionAuthorization().Build();
+
 builder.Services.AddHealthChecks()
-    .AddDbContextCheck<WeatherContext>()
     .AddDbContextCheck<SELearningContext>();
 #endregion
 
