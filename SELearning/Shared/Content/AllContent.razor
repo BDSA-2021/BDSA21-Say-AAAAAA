@@ -14,13 +14,8 @@
 </section>
 
 @code{
-    [Parameter]
-    public string SectionId { get; set; }
-
-    private ContentDto _content = new();
-    
     private List<ContentDto> _allContent = new();
-    
+
     protected async override void OnInitialized()
     {
         await RetrieveContent();
@@ -29,7 +24,8 @@
     private void OnContentDeleted(ContentDto content)
     {
         System.Console.WriteLine($"Comment from {content.Author} is deleted!");
-        @* forecasts.Remove(content); *@
+        _allContent.Remove(content);
+        StateHasChanged();
     }
 
     protected async Task RetrieveContent()
@@ -37,7 +33,7 @@
         try
         {
             var content = await Http.GetFromJsonAsync<IEnumerable<ContentDto>>("Content");
-            _allContent.AddRange(content);
+            _allContent = content.ToList();
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)
