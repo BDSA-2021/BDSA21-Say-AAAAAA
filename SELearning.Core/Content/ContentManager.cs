@@ -33,7 +33,6 @@ public class ContentManager : IContentService
             Title = content.Value.Title,
             Description = content.Value.Description,
             Rating = content.Value.Rating - 1,
-            SectionId = content.Value.Section!.Id,
             VideoLink = content.Value.VideoLink
         };
 
@@ -102,7 +101,6 @@ public class ContentManager : IContentService
             Title = content.Value.Title,
             Description = content.Value.Description,
             Rating = content.Value.Rating + 1,
-            SectionId = content.Value.Section!.Id,
             VideoLink = content.Value.VideoLink
         };
 
