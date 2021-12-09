@@ -5,15 +5,15 @@ namespace SELearning.Core.Comment
     public class Comment
     {
         public int Id { get; init; }
-        
+
         public string Text { get; set; }
-        
+
         public DateTime Timestamp { get; init; }
 
         public int Rating { get; set; }
 
         public Content.Content Content { get; init; }
-        
+
         public User.User Author { get; init; }
 
         public Comment(string text, DateTime timestamp, int rating)

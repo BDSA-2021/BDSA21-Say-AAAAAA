@@ -14,17 +14,17 @@ public record ContentUserDTO
 public record ContentDto : IAuthored
 {
     public int Id { get; set; }
- 
+
     public string Title { get; set; }
- 
+
     public string Description { get; set; }
- 
+
     public string VideoLink { get; set; }
- 
+
     public int Rating { get; set; }
- 
+
     public User.User Author { get; set; }
- 
+
     public Section Section { get; set; }
 }
 

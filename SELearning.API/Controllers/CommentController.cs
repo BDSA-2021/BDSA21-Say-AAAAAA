@@ -22,7 +22,8 @@ public class CommentController : ControllerBase
         ICommentService service,
         IUserRepository userRepository,
         IAuthorizationService authService
-    ) {
+    )
+    {
         _logger = logger;
         _service = service;
         _userRepository = userRepository;

@@ -30,12 +30,14 @@ public static class Migrator
         }
     }
 
-    private static void Seed(IHost host) {
+    private static void Seed(IHost host)
+    {
         using (var scope = host.Services.CreateScope())
         {
             using var ctx = scope.ServiceProvider.GetRequiredService<SELearningContext>();
 
-            if (!ctx.Section.Any() || !ctx.Comments.Any() || !ctx.Content.Any()) {
+            if (!ctx.Section.Any() || !ctx.Comments.Any() || !ctx.Content.Any())
+            {
                 var sections = AddSections(ctx);
                 var content = AddContent(ctx, sections);
                 AddComments(ctx, content);
@@ -45,7 +47,8 @@ public static class Migrator
         }
     }
 
-    private static IEnumerable<Section> AddSections(SELearningContext context) {
+    private static IEnumerable<Section> AddSections(SELearningContext context)
+    {
         var sections = new List<Section> {
             new Section {
                 Title = "Punk in London",
@@ -72,19 +75,23 @@ public static class Migrator
         return sections;
     }
 
-    private static IEnumerable<Content> AddContent(SELearningContext context, IEnumerable<Section> sections) {
+    private static IEnumerable<Content> AddContent(SELearningContext context, IEnumerable<Section> sections)
+    {
         var rng = new Random();
 
         var content = new List<Content>();
-        
-        foreach (Section section in sections) {
-            for (int i = 0; i < 5; i++) {
+
+        foreach (Section section in sections)
+        {
+            for (int i = 0; i < 5; i++)
+            {
                 content.Add(new Content(
                     ContentTitles[rng.Next(0, 4)],
                     "Some description",
-                    ContentVideos[rng.Next(0,4)],
+                    ContentVideos[rng.Next(0, 4)],
                     rng.Next(0, 5000),
-                    new Core.User.User {
+                    new Core.User.User
+                    {
                         Id = Guid.NewGuid().ToString(),
                         Name = ContentTitles[rng.Next(0, 4)]
                     },
@@ -97,19 +104,23 @@ public static class Migrator
         return content;
     }
 
-    private static void AddComments(SELearningContext context, IEnumerable<Content> content) {
+    private static void AddComments(SELearningContext context, IEnumerable<Content> content)
+    {
         var rng = new Random();
 
         var comments = new List<Comment>();
-        
-        foreach (Content c in content) {
-            for (int i = 0; i < 5; i++) {
+
+        foreach (Content c in content)
+        {
+            for (int i = 0; i < 5; i++)
+            {
                 comments.Add(new Comment(
                     ContentTitles[rng.Next(0, 4)],
                     null,
-                    rng.Next(0, 5000), 
+                    rng.Next(0, 5000),
                     c,
-                    new Core.User.User {
+                    new Core.User.User
+                    {
                         Id = Guid.NewGuid().ToString(),
                         Name = ContentTitles[rng.Next(0, 4)]
                     }

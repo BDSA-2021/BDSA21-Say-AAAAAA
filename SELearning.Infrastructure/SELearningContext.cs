@@ -5,7 +5,7 @@ namespace SELearning.Infrastructure;
 public class SELearningContext : DbContext, ISELearningContext
 {
     public DbSet<User> Users => Set<User>();
-    
+
     public DbSet<Content> Content => Set<Content>();
 
     public DbSet<Section> Section => Set<Section>();

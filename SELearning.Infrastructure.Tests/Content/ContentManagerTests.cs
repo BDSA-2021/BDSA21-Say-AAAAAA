@@ -121,7 +121,7 @@ public class ContentManagerTests : IDisposable
 
         Assert.NotNull(contentWithID.Id);
         Assert.Equal(_section, contentWithID.Section);
-        Assert.Equal("author", contentWithID.Author);
+        Assert.Equal("author", (IEnumerable<char>)contentWithID.Author);
         Assert.Equal("title", contentWithID.Title);
         Assert.Equal("description", contentWithID.Description);
         Assert.Equal("video link", contentWithID.VideoLink);
@@ -135,7 +135,7 @@ public class ContentManagerTests : IDisposable
 
         Assert.Equal(1, content.Id);
         Assert.Equal(_section, content.Section);
-        Assert.Equal("author", content.Author);
+        Assert.Equal("author", (IEnumerable<char>)content.Author);
         Assert.Equal("title", content.Title);
         Assert.Equal("description", content.Description);
         Assert.Equal("VideoLink", content.VideoLink);

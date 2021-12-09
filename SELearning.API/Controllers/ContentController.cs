@@ -18,11 +18,12 @@ public class ContentController : ControllerBase
     private readonly IUserRepository _userRepository;
 
     public ContentController(
-        ILogger<ContentController> logger, 
+        ILogger<ContentController> logger,
         IContentService service,
         IUserRepository userRepository,
         IAuthorizationService authService
-    ) {
+    )
+    {
         _logger = logger;
         _service = service;
         _userRepository = userRepository;
@@ -77,7 +78,8 @@ public class ContentController : ControllerBase
             User.FindFirstValue(ClaimTypes.GivenName)
         ));
 
-        var entity = new ContentCreateDto {
+        var entity = new ContentCreateDto
+        {
             Title = content.Title,
             Description = content.Description,
             VideoLink = content.VideoLink,

@@ -2,10 +2,14 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using SELearning.Infrastructure.Authorization;
 using System.Linq;
+using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
 
-record AuthoredResource(string Author) : IAuthored;
+record AuthoredResource(string Author) : IAuthored
+{
+    User IAuthored.Author => throw new System.NotImplementedException();
+}
 
 public class AuthoredCredibilityAuthorizationHandlerTests
 {

@@ -233,7 +233,7 @@ public class ContentRepositoryTests : IDisposable
 
         Assert.NotNull(created.Id);
         Assert.Equal(_section, created.Section);
-        Assert.Equal("author", created.Author);
+        Assert.Equal("author", (IEnumerable<char>)created.Author);
         Assert.Equal("title", created.Title);
         Assert.Equal("description", created.Description);
         Assert.Equal("video link", created.VideoLink);

@@ -64,15 +64,15 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Author)
             .Where(x => x.Id == contentId)
             .Select(c => new ContentDto
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    VideoLink = c.VideoLink,
-                    Rating = c.Rating,
-                    Author = c.Author,
-                    Section = c.Section
-                }
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Description = c.Description,
+                VideoLink = c.VideoLink,
+                Rating = c.Rating,
+                Author = c.Author,
+                Section = c.Section
+            }
             );
 
         return await content.FirstOrDefaultAsync();
@@ -199,15 +199,15 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Author)
             .Where(x => x.Section == section)
             .Select(c => new ContentDto
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    VideoLink = c.VideoLink,
-                    Rating = c.Rating,
-                    Author = c.Author,
-                    Section = c.Section
-                }
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Description = c.Description,
+                VideoLink = c.VideoLink,
+                Rating = c.Rating,
+                Author = c.Author,
+                Section = c.Section
+            }
             );
 
         return (await content.ToListAsync()).AsReadOnly();
@@ -220,15 +220,15 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Author)
             .Where(x => x.Author.Id == userId)
             .Select(c => new ContentDto
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    VideoLink = c.VideoLink,
-                    Rating = c.Rating,
-                    Author = c.Author,
-                    Section = c.Section
-                }
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Description = c.Description,
+                VideoLink = c.VideoLink,
+                Rating = c.Rating,
+                Author = c.Author,
+                Section = c.Section
+            }
             );
 
         return (await content.ToListAsync()).AsReadOnly();

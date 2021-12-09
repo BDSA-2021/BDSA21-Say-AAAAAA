@@ -62,7 +62,7 @@ public class CommentRepositoryTests
         var created = await _repository.AddComment(comment);
 
         Assert.Equal(5, created.Item2.Id);
-        Assert.Equal("Harleen", created.Item2.Author);
+        Assert.Equal("Harleen", (IEnumerable<char>)created.Item2.Author);
         Assert.Equal("Nice content", created.Item2.Text);
         Assert.Equal(OperationResult.Created, created.Item1);
     }
@@ -95,7 +95,7 @@ public class CommentRepositoryTests
         var (result, updated) = await _repository.UpdateComment(1, dto);
 
         Assert.Equal(1, updated!.Id);
-        Assert.Equal("Amalie", updated.Author);
+        Assert.Equal("Amalie", (IEnumerable<char>)updated.Author);
         Assert.Equal("Nice but also confusing", updated.Text);
         Assert.Equal(1, updated.Rating);
 
@@ -126,7 +126,7 @@ public class CommentRepositoryTests
     {
         var read = (await _repository.GetCommentByCommentId(3)).Value;
 
-        Assert.Equal("Paolo", read.Author);
+        Assert.Equal("Paolo", (IEnumerable<char>)read.Author);
         Assert.Equal("This is a great video", read.Text);
     }
 

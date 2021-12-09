@@ -59,7 +59,7 @@ public class CommentManagerTests
     {
         var dto = new CommentCreateDTO("Christine", "Nice explanation", 1);
         await _service.PostComment(dto);
-        Assert.Equal("Christine", (await _service.GetCommentFromCommentId(5)).Author);
+        Assert.Equal("Christine", (IEnumerable<char>)(await _service.GetCommentFromCommentId(5)).Author);
         Assert.Equal("Nice explanation", (await _service.GetCommentFromCommentId(5)).Text);
         Assert.Equal(1, (await _service.GetCommentFromCommentId(5)).ContentId);
         Assert.Equal(0, (await _service.GetCommentFromCommentId(5)).Rating);
@@ -192,7 +192,7 @@ public class CommentManagerTests
         var comment = await _service.GetCommentFromCommentId(2);
 
         Assert.Equal("Cool but boring", comment.Text);
-        Assert.Equal("Albert", comment.Author);
+        Assert.Equal("Albert", (IEnumerable<char>)comment.Author);
         Assert.Equal(1, comment.ContentId);
         Assert.Equal(2, comment.Id);
         Assert.Equal(0, comment.Rating);
