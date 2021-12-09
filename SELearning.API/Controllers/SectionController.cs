@@ -11,9 +11,9 @@ namespace SELearning.API.Controllers;
 public class SectionController : ControllerBase
 {
     private readonly ILogger<SectionController> _logger;
-    private readonly IContentService _service;
+    private readonly ISectionService _service;
 
-    public SectionController(ILogger<SectionController> logger, IContentService service)
+    public SectionController(ILogger<SectionController> logger, ISectionService service)
     {
         _logger = logger;
         _service = service;

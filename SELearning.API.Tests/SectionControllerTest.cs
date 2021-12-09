@@ -19,7 +19,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         var expected = Array.Empty<ContentDto>();
@@ -37,7 +37,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         var expected = new SectionDto { Id = 1 };
@@ -55,7 +55,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         service.Setup(m => m.GetSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
@@ -72,7 +72,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         var expected = Array.Empty<SectionDto>();
@@ -90,7 +90,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         var toCreate = new SectionCreateDto { Title = "Title" };
@@ -111,7 +111,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         // Act
@@ -126,7 +126,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         var section = new SectionUpdateDto { Title = "Title" };
@@ -144,7 +144,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         // Act
@@ -159,7 +159,7 @@ public class SectionControllerTest
     {
         // Arrange
         var logger = new Mock<ILogger<SectionController>>();
-        var service = new Mock<IContentService>();
+        var service = new Mock<ISectionService>();
         var controller = new SectionController(logger.Object, service.Object);
 
         service.Setup(m => m.DeleteSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
