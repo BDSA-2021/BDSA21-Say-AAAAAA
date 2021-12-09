@@ -16,14 +16,14 @@ public class CommentManagerTests
         Content = new List<Content>()
     };
 
-    private static User _user = new User{Id = "ABC", Name = "Asger"};
+    private static User _user = new User { Id = "ABC", Name = "Asger" };
 
     private static readonly Content content = new("Video on Entity Core", "Nice", "www.hej.dk", 1);
 
     private readonly IEnumerable<Comment> _comments = new List<Comment>()
     {
         new Comment("Nice", DateTime.Now, -10, content, _user),
-        new Comment("Cool but boring", DateTime.Now, 0, content, _user), 
+        new Comment("Cool but boring", DateTime.Now, 0, content, _user),
         new Comment("This is a great video", DateTime.Now, 0, content, _user),
         new Comment("Very inappropriate", DateTime.Now, 28, content, _user)
     };
