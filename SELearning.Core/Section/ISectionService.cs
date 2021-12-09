@@ -1,8 +1,9 @@
-namespace SELearning.Core.Content;
+using SELearning.Core.Content;
+
+namespace SELearning.Core.Section;
 
 public interface ISectionService
 {
-    // Section
     public Task<SectionDto> AddSection(SectionCreateDto section);
     public Task DeleteSection(int id);
     public Task UpdateSection(int id, SectionUpdateDto section);

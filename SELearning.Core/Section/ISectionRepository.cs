@@ -1,8 +1,9 @@
-namespace SELearning.Core.Content;
+using SELearning.Core.Content;
+
+namespace SELearning.Core.Section;
 
 public interface ISectionRepository
 {
-    // Section
     public Task<(OperationResult, SectionDto)> AddSection(SectionCreateDto section);
     public Task<OperationResult> UpdateSection(int id, SectionUpdateDto section);
     public Task<OperationResult> DeleteSection(int id);

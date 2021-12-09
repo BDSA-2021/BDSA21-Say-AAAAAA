@@ -1,4 +1,6 @@
-namespace SELearning.Core.Content;
+using SELearning.Core.Content;
+
+namespace SELearning.Core.Section;
 
 public class SectionManager : ISectionService
 {
@@ -60,5 +62,4 @@ public class SectionManager : ISectionService
             throw new SectionNotFoundException(id);
         }
     }
-
 }
