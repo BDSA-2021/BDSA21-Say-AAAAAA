@@ -2,24 +2,32 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.Permission;
+using SELearning.Core.User;
 using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
 namespace SELearning.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("/Api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class ContentController : ControllerBase
 {
     private readonly ILogger<ContentController> _logger;
     private readonly IContentService _service;
     private readonly IAuthorizationService _authService;
+    private readonly IUserRepository _userRepository;
 
-    public ContentController(ILogger<ContentController> logger, IContentService service, IAuthorizationService authService)
+    public ContentController(
+        ILogger<ContentController> logger,
+        IContentService service,
+        IUserRepository userRepository,
+        IAuthorizationService authService
+    )
     {
         _logger = logger;
         _service = service;
+        _userRepository = userRepository;
         _authService = authService;
     }
 
@@ -64,9 +72,23 @@ public class ContentController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [AuthorizePermission(Permission.CreateContent)]
-    public async Task<IActionResult> CreateContent(ContentCreateDto content)
+    public async Task<IActionResult> CreateContent(ContentUserDTO content)
     {
-        var createdContent = await _service.AddContent(content);
+        var user = await _userRepository.GetOrAddUser(new UserDTO(
+            User.GetUserId(),
+            User.FindFirstValue(ClaimTypes.GivenName)
+        ));
+
+        var entity = new ContentCreateDto
+        {
+            Title = content.Title,
+            Description = content.Description,
+            VideoLink = content.VideoLink,
+            Section = null, // Im sorry
+            Author = user,
+        };
+
+        var createdContent = await _service.AddContent(entity);
         return CreatedAtAction(nameof(GetContent), new { ID = createdContent.Id }, createdContent);
     }
 

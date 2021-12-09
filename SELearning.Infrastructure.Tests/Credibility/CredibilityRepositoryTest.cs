@@ -32,7 +32,7 @@ public class CredibilityRepositoryTest
     [InlineData(12345679, new int[] { 20, 9876543, 2109876, 359240 })]
     public async Task GetCommentCredibilityScore_WithComment_ReturnsSum(int expectedSum, int[] ratings)
     {
-        var comments = ratings.Select(r => new CommentDetailsDTO(null, null, -1, DateTime.Now, r, -1));
+        var comments = ratings.Select(r => new CommentDetailsDTO(new Core.User.User { Id = "Homer", Name = "Homer" }, "", -1, DateTime.Now, r, -1));
         var commentService = new Mock<ICommentService>();
         commentService.Setup(m => m.GetCommentsByAuthor(_userId)).ReturnsAsync(comments);
         var contentService = new Mock<IContentService>();

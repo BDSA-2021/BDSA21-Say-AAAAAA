@@ -3,6 +3,7 @@ using SELearning.Core.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
+using SELearning.Core.User;
 using SELearning.Infrastructure.Credibility;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,8 @@ else
 
 builder.Services.AddDbContext<SELearningContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<ISELearningContext, SELearningContext>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<IContentService, ContentManager>();

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
+using SELearning.Core.User;
 
 namespace SELearning.API.Tests;
 
@@ -22,18 +23,25 @@ public class ContentControllerTest
 
     private readonly ContentController _controller;
 
+    private readonly User _user;
+
     public ContentControllerTest()
     {
         var logger = new Mock<ILogger<ContentController>>();
         var authService = new Mock<IAuthorizationService>();
+        _user = new User { Id = "ABC", Name = "Joachim" };
         authService.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<IContentService>();
         _service.Setup(x => x.GetContent(It.Is<int>(x => x != 0)))
                 .ReturnsAsync(new ContentDto());
+        _service.Setup(m => m.AddContent(It.IsNotNull<ContentCreateDto>())).ReturnsAsync(new ContentDto { Title = "Title", Id = 1 });
 
-        _controller = new ContentController(logger.Object, _service.Object, authService.Object);
+        var userRepo = new Mock<IUserRepository>();
+        userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(_user);
+
+        _controller = new ContentController(logger.Object, _service.Object, userRepo.Object, authService.Object);
         _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
     }
 
@@ -82,15 +90,13 @@ public class ContentControllerTest
     public async Task CreateContent_Returns_CreatedAtRoute()
     {
         // Arrange
-        var toCreate = new ContentCreateDto { Title = "Title" };
-        var expected = new ContentDto { Title = "Title", Id = 1 };
-        _service.Setup(m => m.AddContent(toCreate)).ReturnsAsync(expected);
+        var toCreate = new ContentUserDTO { };
 
         // Act
         var actual = (await _controller.CreateContent(toCreate) as CreatedAtActionResult)!;
 
         // Assert
-        Assert.Equal(expected, actual.Value);
+        Assert.Equal(new ContentDto { Title = "Title", Id = 1 }, actual.Value);
         Assert.Equal("GetContent", actual.ActionName);
         Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
     }

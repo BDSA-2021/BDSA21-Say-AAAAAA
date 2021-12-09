@@ -13,6 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
+using SELearning.Core.User;
 
 namespace SELearning.API.Tests;
 
@@ -20,18 +21,27 @@ public class CommentControllerTest
 {
     private readonly CommentController _controller;
     private readonly Mock<ICommentService> _service;
+    private readonly User _user;
 
     public CommentControllerTest()
     {
         var logger = new Mock<ILogger<CommentController>>();
         var auth = new Mock<IAuthorizationService>();
+        _user = new User { Id = "ABC", Name = "Joachim" };
         auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<ICommentService>();
         _service.Setup(x => x.GetCommentFromCommentId(It.Is<int>(x => x != 0)))
-                .ReturnsAsync(new CommentDetailsDTO("Andreas", "Hej", 1, DateTime.Now, 100, 1));
-        _controller = new CommentController(logger.Object, _service.Object, auth.Object);
+                .ReturnsAsync(new CommentDetailsDTO(_user, "Hej", 1, DateTime.Now, 100, 1));
+        var expected = new CommentDetailsDTO(_user, "Text", 1, DateTime.Now, 0, default!);
+        _service.Setup(m => m.PostComment(It.IsNotNull<CommentCreateDTO>())).ReturnsAsync(new CommentDetailsDTO(_user, "Text", 1, DateTime.Now, 0, default!));
+        _service.Setup(m => m.PostComment(It.Is<CommentCreateDTO>(x => x.ContentId <= 0))).ThrowsAsync(new ContentNotFoundException(-1));
+
+        var userRepo = new Mock<IUserRepository>();
+        userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(_user);
+
+        _controller = new CommentController(logger.Object, _service.Object, userRepo.Object, auth.Object);
         _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
     }
 
@@ -39,7 +49,7 @@ public class CommentControllerTest
     public async Task GetComment_Given_Valid_ID_Returns_Comment()
     {
         // Arrange
-        var expected = new CommentDetailsDTO("Adrian", "Hallooooo", 1, System.DateTime.Now, 1000, 0);
+        var expected = new CommentDetailsDTO(_user, "Hallooooo", 1, System.DateTime.Now, 1000, 0);
         _service.Setup(m => m.GetCommentFromCommentId(1)).ReturnsAsync(expected);
 
         // Act
@@ -93,9 +103,9 @@ public class CommentControllerTest
     public async Task CreateComment_Given_CommentCreateDTO_With_Valid_ContentID_Returns_CreatedAtRoute()
     {
         // Arrange
-        var toCreate = new CommentCreateDTO("Author", "Text", 1);
-        var expected = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 0, default!);
-        _service.Setup(m => m.PostComment(toCreate)).ReturnsAsync(expected);
+        var toCreate = new CommentUserDTO(1, "Text");
+        var expected = new CommentDetailsDTO(_user, "Text", 1, DateTime.Now, 0, default!);
+        _service.Setup(m => m.PostComment(It.IsNotNull<CommentCreateDTO>())).ReturnsAsync(expected);
 
         // Act
         var actual = (await _controller.CreateComment(toCreate) as CreatedAtActionResult)!;
@@ -109,12 +119,8 @@ public class CommentControllerTest
     [Fact]
     public async Task CreateComment_Given_CommentCreateDTO_With_Invalid_ContentID_Returns_NotFound()
     {
-        // Arrange
-        var comment = new CommentCreateDTO("Author", "Text", -1);
-        _service.Setup(m => m.PostComment(comment)).ThrowsAsync(new ContentNotFoundException(-1));
-
         // Act
-        var response = await _controller.CreateComment(comment);
+        var response = await _controller.CreateComment(new CommentUserDTO(-1, "Text"));
 
         // Assert
         Assert.IsType<NotFoundResult>(response);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.User;
 using SELearning.Core.Permission;
 using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
@@ -8,18 +9,25 @@ namespace SELearning.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("/Api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;
     private readonly ICommentService _service;
+    private readonly IUserRepository _userRepository;
     private readonly IAuthorizationService _authService;
 
-    public CommentController(ILogger<CommentController> logger, ICommentService service, IAuthorizationService authService)
+    public CommentController(
+        ILogger<CommentController> logger,
+        ICommentService service,
+        IUserRepository userRepository,
+        IAuthorizationService authService
+    )
     {
         _logger = logger;
         _service = service;
+        _userRepository = userRepository;
         _authService = authService;
     }
 
@@ -49,7 +57,7 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="contentID">The ID of the content.</param>
     /// <returns>A collection of comments in the content if it exists, otherwise response type 404: Not Found.</returns>
-    [HttpGet("{contentID}")]
+    [HttpGet("content/{contentID}")]
     [ProducesResponseType(typeof(List<Comment>), 200)] // OK
     [ProducesResponseType(404)] // Not Found
     public async Task<ActionResult<List<Comment>>> GetCommentsByContentID(int contentID)
@@ -74,11 +82,20 @@ public class CommentController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.CreateComment)]
-    public async Task<IActionResult> CreateComment(CommentCreateDTO comment)
+    public async Task<IActionResult> CreateComment(CommentUserDTO comment)
     {
+        var user = await _userRepository.GetOrAddUser(new UserDTO(
+            User.GetUserId(),
+            User.FindFirstValue(ClaimTypes.GivenName)
+        ));
+
         try
         {
-            var createdComment = await _service.PostComment(comment);
+            var createdComment = await _service.PostComment(new CommentCreateDTO(
+                user,
+                comment.Text,
+                comment.ContentId
+            ));
             return CreatedAtAction(nameof(GetComment), new { ID = createdComment.Id }, createdComment);
         }
         catch (ContentNotFoundException)

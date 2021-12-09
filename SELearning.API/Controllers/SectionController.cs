@@ -7,7 +7,7 @@ namespace SELearning.API.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("[controller]")]
+[Route("/Api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class SectionController : ControllerBase
 {

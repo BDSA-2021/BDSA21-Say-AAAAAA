@@ -44,7 +44,7 @@ public class AuthoredCredibilityAuthorizationHandler : AuthorizationHandler<Cred
 
         var isPermitted = requiredCredScore <= userCredibilityScore;
         if (permission.ActsOnAuthorOnly())
-            isPermitted &= resource.Author == user.GetUserId();
+            isPermitted &= resource.Author.Id == user.GetUserId();
 
         _logger?.LogDebug($"User {user.GetUserId()} has access: {isPermitted}");
 
