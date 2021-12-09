@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
@@ -14,19 +15,26 @@ namespace SELearning.API.Tests;
 
 public class CommentControllerTest
 {
+    private readonly CommentController _controller;
+    private readonly Mock<ICommentService> _service;
+
+    public CommentControllerTest()
+    {
+        var logger = new Mock<ILogger<CommentController>>();
+        var auth = new Mock<IAuthorizationService>();
+        _service = new Mock<ICommentService>();
+        _controller = new CommentController(logger.Object, _service.Object, auth.Object);
+    }
+
     [Fact]
     public async Task GetComment_Given_Valid_ID_Returns_Comment()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         var expected = new CommentDetailsDTO("Adrian", "Hallooooo", 1, System.DateTime.Now, 1000, 0);
-        service.Setup(m => m.GetCommentFromCommentId(1)).ReturnsAsync(expected);
+        _service.Setup(m => m.GetCommentFromCommentId(1)).ReturnsAsync(expected);
 
         // Act
-        var actual = ((await controller.GetComment(1)).Result as OkObjectResult)!.Value;
+        var actual = ((await _controller.GetComment(1)).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -36,14 +44,10 @@ public class CommentControllerTest
     public async Task GetComment_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
-        service.Setup(m => m.GetCommentFromCommentId(-1)).ThrowsAsync(new CommentNotFoundException(-1));
+        _service.Setup(m => m.GetCommentFromCommentId(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
-        var response = (await controller.GetComment(-1)).Result;
+        var response = (await _controller.GetComment(-1)).Result;
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -53,15 +57,11 @@ public class CommentControllerTest
     public async Task GetCommentsByContentID_Given_Valid_ID_Returns_Comments()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         var expected = new List<CommentDetailsDTO>();
-        service.Setup(m => m.GetCommentsFromContentId(1)).ReturnsAsync(expected);
+        _service.Setup(m => m.GetCommentsFromContentId(1)).ReturnsAsync(expected);
 
         // Act
-        var actual = ((await controller.GetCommentsByContentID(1)).Result as OkObjectResult)!.Value;
+        var actual = ((await _controller.GetCommentsByContentID(1)).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -71,14 +71,10 @@ public class CommentControllerTest
     public async Task GetCommentsByContentID_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
-        service.Setup(m => m.GetCommentsFromContentId(-1)).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.GetCommentsFromContentId(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = (await controller.GetCommentsByContentID(-1)).Result;
+        var response = (await _controller.GetCommentsByContentID(-1)).Result;
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -88,16 +84,12 @@ public class CommentControllerTest
     public async Task CreateComment_Given_CommentCreateDTO_With_Valid_ContentID_Returns_CreatedAtRoute()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         var toCreate = new CommentCreateDTO("Author", "Text", 1);
         var expected = new CommentDetailsDTO("Author", "Text", 1, DateTime.Now, 0, default!);
-        service.Setup(m => m.PostComment(toCreate)).ReturnsAsync(expected);
+        _service.Setup(m => m.PostComment(toCreate)).ReturnsAsync(expected);
 
         // Act
-        var actual = (await controller.CreateComment(toCreate) as CreatedAtActionResult)!;
+        var actual = (await _controller.CreateComment(toCreate) as CreatedAtActionResult)!;
 
         // Assert
         Assert.Equal(expected, actual.Value);
@@ -109,15 +101,11 @@ public class CommentControllerTest
     public async Task CreateComment_Given_CommentCreateDTO_With_Invalid_ContentID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         var comment = new CommentCreateDTO("Author", "Text", -1);
-        service.Setup(m => m.PostComment(comment)).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.PostComment(comment)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = await controller.CreateComment(comment);
+        var response = await _controller.CreateComment(comment);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -126,13 +114,8 @@ public class CommentControllerTest
     [Fact]
     public async Task UpdateComment_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.UpdateComment(1, new CommentUpdateDTO("Text", 42));
+        var response = await _controller.UpdateComment(1, new CommentUpdateDTO("Text", 42));
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -142,16 +125,11 @@ public class CommentControllerTest
     public async Task UpdateComment_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-
         var comment = new CommentUpdateDTO("Text", -1);
-        service.Setup(m => m.UpdateComment(-1, comment)).ThrowsAsync(new CommentNotFoundException(-1));
-
-        var controller = new CommentController(logger.Object, service.Object);
+        _service.Setup(m => m.UpdateComment(-1, comment)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
-        var response = await controller.UpdateComment(-1, comment);
+        var response = await _controller.UpdateComment(-1, comment);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -160,13 +138,8 @@ public class CommentControllerTest
     [Fact]
     public async Task DeleteComment_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.DeleteComment(1);
+        var response = await _controller.DeleteComment(1);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -176,14 +149,10 @@ public class CommentControllerTest
     public async Task DeleteComment_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
-        service.Setup(m => m.RemoveComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
+        _service.Setup(m => m.RemoveComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
-        var response = await controller.DeleteComment(-1);
+        var response = await _controller.DeleteComment(-1);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -192,13 +161,8 @@ public class CommentControllerTest
     [Fact]
     public async Task UpvoteComment_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.UpvoteComment(1);
+        var response = await _controller.UpvoteComment(1);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -208,14 +172,10 @@ public class CommentControllerTest
     public async Task UpvoteComment_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
-        service.Setup(m => m.UpvoteComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
+        _service.Setup(m => m.UpvoteComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
-        var response = await controller.UpvoteComment(-1);
+        var response = await _controller.UpvoteComment(-1);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -224,13 +184,8 @@ public class CommentControllerTest
     [Fact]
     public async Task DownvoteComment_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.DownvoteComment(1);
+        var response = await _controller.DownvoteComment(1);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -240,14 +195,10 @@ public class CommentControllerTest
     public async Task DownvoteComment_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<CommentController>>();
-        var service = new Mock<ICommentService>();
-        var controller = new CommentController(logger.Object, service.Object);
-
-        service.Setup(m => m.DownvoteComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
+        _service.Setup(m => m.DownvoteComment(-1)).ThrowsAsync(new CommentNotFoundException(-1));
 
         // Act
-        var response = await controller.DownvoteComment(-1);
+        var response = await _controller.DownvoteComment(-1);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
