@@ -5,12 +5,17 @@ using System.Linq;
 
 namespace SELearning.Infrastructure.Tests;
 
-public class ContentRepositoryTests : IDisposable
+public class ContentRepositoryTests
 {
     private readonly SELearningContext _context;
     private readonly ContentRepository _repository;
     private readonly Section _section;
     private bool disposedValue;
+    private static readonly User _authorUser = new User
+    {
+        Id = "author",
+        Name = "author"
+    };
 
     public ContentRepositoryTests()
     {
@@ -23,10 +28,10 @@ public class ContentRepositoryTests : IDisposable
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };
 
-        var content1 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
-        var content2 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
-        var content3 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
-        var content4 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
+        var content1 = new Content("title", "description", "VideoLink", 3, _authorUser, _section);
+        var content2 = new Content("title", "description", "VideoLink", 3, _authorUser, _section);
+        var content3 = new Content("title", "description", "VideoLink", 3, _authorUser, _section);
+        var content4 = new Content("title", "description", "VideoLink", 3, _authorUser, _section);
 
         var contentList = new List<Content>
         {
@@ -38,23 +43,13 @@ public class ContentRepositoryTests : IDisposable
 
         _section.Content = contentList;
 
-        context.Content.AddRange(
-            content1,
-            content2,
-            content3,
-            content4
-        );
-
-        context.Section.AddRange(
-            _section
-        );
+        context.Content.AddRange(contentList);
+        context.Section.Add(_section);
 
         context.SaveChanges();
 
         _context = context;
         _repository = new ContentRepository(_context);
-
-
     }
 
     /*
@@ -224,18 +219,14 @@ public class ContentRepositoryTests : IDisposable
             Description = "description",
             VideoLink = "video link",
             Section = _section,
-            Author = new User
-            {
-                Id = "Author",
-                Name = "Author",
-            }
+            Author = _authorUser
         };
 
         var created = (await _repository.AddContent(content)).Item2;
 
         Assert.NotNull(created.Id);
         Assert.Equal(_section, created.Section);
-        Assert.Equal("author", (IEnumerable<char>)created.Author.Id);
+        Assert.Equal("author", created.Author.Id);
         Assert.Equal("title", created.Title);
         Assert.Equal("description", created.Description);
         Assert.Equal("video link", created.VideoLink);
@@ -318,10 +309,10 @@ public class ContentRepositoryTests : IDisposable
     public async Task ReadContentAsync_returns_all_content()
     {
         var allContent = await _repository.GetContent();
-        var contentDto1 = new ContentDto { Id = 1, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
-        var contentDto2 = new ContentDto { Id = 2, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
-        var contentDto3 = new ContentDto { Id = 3, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
-        var contentDto4 = new ContentDto { Id = 4, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
+        var contentDto1 = new ContentDto { Id = 1, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
+        var contentDto2 = new ContentDto { Id = 2, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
+        var contentDto3 = new ContentDto { Id = 3, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
+        var contentDto4 = new ContentDto { Id = 4, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
 
         Assert.Collection(allContent,
             content => Assert.Equal(contentDto1, content),
@@ -389,36 +380,16 @@ public class ContentRepositoryTests : IDisposable
     {
         await _context.Content.AddRangeAsync(new[]
         {
-            new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section),
+            new Content("title", "description", "VideoLink", 3, _authorUser, _section),
             new Content("title", "description", "VideoLink", 3, new User { Id = "homer", Name = "homer" }, _section),
-            new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section),
+            new Content("title", "description", "VideoLink", 3, _authorUser, _section),
         });
         await _context.SaveChangesAsync();
 
-        var contents = await _repository.GetContentByAuthor("author");
+        var contents = await _repository.GetContentByAuthor("homer");
 
-        var expectedIds = new[] { 1, 3 };
+        var expectedIds = new[] { 7 };
         var actualIds = contents.OrderBy(c => c.Id).Select(c => (int)c.Id!).ToList();
         Assert.Equal(expectedIds, actualIds);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                // TODO: dispose managed state (managed objects)
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }
