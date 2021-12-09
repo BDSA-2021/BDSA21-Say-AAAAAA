@@ -1,4 +1,6 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
+@inject HttpClient Http
 
 <div class="card content" style="width: 18rem;">
   <div class="card-body">
@@ -26,31 +28,30 @@
     [Parameter]
     public EventCallback<ContentDto> OnContentDeleted { get; set; }
 
+    protected override void OnInitialized()
+    {
+        System.Console.WriteLine(content.Id);
+    }
+
+
     private async Task Delete()
     {
+      try
+        {
+          var uri = "content/" + content.Id;
+          var responseMessage = await Http.DeleteAsync(uri);
+          StateHasChanged();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
         // TODO: Delete comment with api
+
 
         // TODO: Check if return code is not an error
 
-        if(OnContentDeleted.HasDelegate)
+          if(OnContentDeleted.HasDelegate)
             await OnContentDeleted.InvokeAsync(content);
-    }
-
-    private Task UpVote()
-    {
-        // Call up vote api
-
-        content.Rating++;
-
-        return Task.CompletedTask;
-    }
-
-    private Task DownVote() 
-    {
-        // Call down vote api
-
-        content.Rating--;
-
-        return Task.CompletedTask;
     }
 }

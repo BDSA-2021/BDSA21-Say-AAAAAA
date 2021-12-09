@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
 
 @inject HttpClient Http
@@ -5,9 +6,9 @@
 <section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
     <div class="row">
         <!-- List of comments -->
-        @foreach(Section sec in _sections)
+        @foreach(SectionDto sec in _sections)
         {
-            <SectionTile Section="@sec"/>
+            <SectionTile Sec="@sec"/>
         }
     </div>
 </section>
@@ -16,20 +17,31 @@
 
     private Section _section = new();
 
-    private IList<Section> _sections;
+    private List<SectionDto> _sections = new();
     
-    protected override void OnInitialized()
+    protected async override void OnInitialized()
     {
-        _sections = new List<Section>()
-        {
-            
-        };
+        await RetrieveSections();
     }
 
-    private void OnSectionDeleted(Section sec)
+    private async void OnSectionDeleted(Section sec)
     {
         System.Console.WriteLine($"Comment from {sec.Id} is deleted!");
-        _sections.Remove(sec);
+        @* _sections.Remove(sec); *@
+    }
+
+    protected async Task RetrieveSections()
+    {
+        try
+        {
+            var sectionDtos = await Http.GetFromJsonAsync<IEnumerable<SectionDto>>("Section");
+            _sections.AddRange(sectionDtos);
+            StateHasChanged();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
     }
 
 }

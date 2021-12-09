@@ -3,10 +3,23 @@
 
 @inject HttpClient Http
 
+<div class="container">
+    <div class="get-quote">
+        <div class="row">
+            <div class="col-sm-10 col-12">
+                <h1 class="left-block float-left">C# Section</h1>
+            </div>
+            <div class="col-sm-2 col-12">
+                <a class="btn btn-primary right-block float-right" href="createcontent" role="button">Add Content</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
     <div class="row">
         <!-- List of comments -->
-        @foreach(var content in _allContent)
+        @foreach(var content in _contents)
         {
             <ContentTile content="@content" OnContentDeleted="@OnContentDeleted"/>
         }
@@ -17,13 +30,15 @@
     [Parameter]
     public string SectionId { get; set; }
 
+    private SectionDto _section = new();
+
     private ContentDto _content = new();
     
-    private List<ContentDto> _allContent = new();
+    private List<ContentDto> _contents = new();
     
     protected async override void OnInitialized()
     {
-        await RetrieveContent();
+        await RetrieveContentInSection();
     }
 
     private void OnContentDeleted(ContentDto content)
@@ -32,12 +47,12 @@
         @* forecasts.Remove(content); *@
     }
 
-    protected async Task RetrieveContent()
+    protected async Task RetrieveContentInSection()
     {
         try
         {
-            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDto>>("Content");
-            _allContent.AddRange(content);
+            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDto>>($"Section/{SectionId}/Content");
+            _contents.AddRange(content);
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)

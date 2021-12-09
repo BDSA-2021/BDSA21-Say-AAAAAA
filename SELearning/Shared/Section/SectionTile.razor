@@ -2,12 +2,12 @@
 
 <div class="card section" style="width: 18rem;">
   <div class="card-body">
-    <h5 class="card-title">@Section.Id</h5>
-    <p class="card-text">@Section.Description</p>
+    <h5 class="card-title">@Sec.Id</h5>
+    <p class="card-text">@Sec.Description</p>
   </div>
   <div class="card-body">
     <div class="btn-group">
-        <a href='@string.Format("/section/{0}", Section.Id)' class="btn btn-primary">View Section</a>
+        <a href='@string.Format("/section/{0}", Sec.Id)' class="btn btn-primary">View Section</a>
         <button class="btn btn-default text-danger">Delete</button>
     </div>
   </div>
@@ -16,6 +16,6 @@
 @code {
 
     [Parameter]
-    public Section Section { get; set; }
+    public SectionDto Sec { get; set; }
 
 }
