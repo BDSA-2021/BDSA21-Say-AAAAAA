@@ -1,91 +1,96 @@
 using SELearning.Core.Comment;
 
-namespace SELearning.Infrastructure
+namespace SELearning.Infrastructure;
+public class CommentManager : ICommentService
 {
-    public class CommentManager : ICommentService
+    ICommentRepository _repo;
+    public CommentManager(ICommentRepository repo)
     {
-        readonly ICommentRepository _repo;
-        public CommentManager(ICommentRepository repo)
+        _repo = repo;
+    }
+
+    public async Task<CommentDetailsDTO> PostComment(CommentCreateDTO dto)
+    {
+        var (result, comment) = await _repo.AddComment(dto);
+
+        if (result == OperationResult.NotFound)
         {
-            _repo = repo;
+            throw new ContentNotFoundException(dto.ContentId);
         }
 
-        public async Task<CommentDetailsDTO> PostComment(CommentCreateDTO dto)
+        return comment;
+    }
+
+    public async Task UpdateComment(int id, CommentUpdateDTO dto)
+    {
+        if ((await _repo.UpdateComment(id, dto)).Item1 == OperationResult.NotFound)
         {
-            var (result, comment) = await _repo.AddComment(dto);
+            throw new CommentNotFoundException(id);
+        }
+    }
 
-            if (result == OperationResult.NotFound)
-            {
-                throw new ContentNotFoundException(dto.ContentId);
-            }
+    public async Task RemoveComment(int id)
+    {
+        if (await _repo.RemoveComment(id) == OperationResult.NotFound)
+        {
+            throw new CommentNotFoundException(id);
+        }
+    }
 
-            return comment;
+    public async Task UpvoteComment(int id)
+    {
+        var comment = await _repo.GetCommentByCommentId(id);
+
+        if (comment.IsNone)
+        {
+            throw new CommentNotFoundException(id);
         }
 
-        public async Task UpdateComment(int id, CommentUpdateDTO dto)
+        CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating + 1);
+        await UpdateComment(id, dto);
+    }
+
+    public async Task DownvoteComment(int id)
+    {
+        var comment = await _repo.GetCommentByCommentId(id);
+
+        if (comment.IsNone)
         {
-            if ((await _repo.UpdateComment(id, dto)).Item1 == OperationResult.NotFound)
-            {
-                throw new CommentNotFoundException(id);
-            }
+            throw new CommentNotFoundException(id);
         }
 
-        public async Task RemoveComment(int id)
+        CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating - 1);
+        await UpdateComment(id, dto);
+    }
+
+    public async Task<IEnumerable<CommentDetailsDTO>> GetCommentsFromContentId(int contentId)
+    {
+        var (comments, result) = await _repo.GetCommentsByContentId(contentId);
+
+        if (result == OperationResult.NotFound || comments == null)
         {
-            if (await _repo.RemoveComment(id) == OperationResult.NotFound)
-            {
-                throw new CommentNotFoundException(id);
-            }
+            throw new ContentNotFoundException(contentId);
         }
 
-        public async Task UpvoteComment(int id)
+        return comments;
+    }
+
+    public async Task<CommentDetailsDTO> GetCommentFromCommentId(int id)
+    {
+        var comment = await _repo.GetCommentByCommentId(id);
+
+        if (comment.IsNone)
         {
-            var comment = await _repo.GetCommentByCommentId(id);
-
-            if (comment.IsNone)
-            {
-                throw new CommentNotFoundException(id);
-            }
-
-            CommentUpdateDTO dto = new(comment.Value.Text, comment.Value.Rating + 1);
-            await UpdateComment(id, dto);
+            throw new CommentNotFoundException(id);
         }
 
-        public async Task DownvoteComment(int id)
-        {
-            var comment = await _repo.GetCommentByCommentId(id);
+        return comment.Value;
+    }
 
-            if (comment.IsNone)
-            {
-                throw new CommentNotFoundException(id);
-            }
+    public async Task<IEnumerable<CommentDetailsDTO>> GetCommentsByAuthor(string userId)
+    {
+        var result = await _repo.GetCommentsByAuthor(userId);
 
-            CommentUpdateDTO dto = new(comment.Value.Text, comment.Value.Rating - 1);
-            await UpdateComment(id, dto);
-        }
-
-        public async Task<List<Comment>> GetCommentsFromContentId(int contentId)
-        {
-            var (comments, result) = await _repo.GetCommentsByContentId(contentId);
-
-            if (result == OperationResult.NotFound || comments == null)
-            {
-                throw new ContentNotFoundException(contentId);
-            }
-
-            return comments;
-        }
-
-        public async Task<Comment> GetCommentFromCommentId(int id)
-        {
-            var comment = await _repo.GetCommentByCommentId(id);
-
-            if (comment.IsNone)
-            {
-                throw new CommentNotFoundException(id);
-            }
-
-            return comment.Value;
-        }
+        return result.Item1;
     }
 }
