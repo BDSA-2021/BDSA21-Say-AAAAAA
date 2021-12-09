@@ -58,4 +58,11 @@ public partial class ToastNotification : IDisposable
     {
         _dismissTimer.Dispose();
     }
+
+    public static ToastNotification CreateNoAccessToastNotification() =>
+        new("Access not available!", "Unfortunately, our authorization handler was not able " +
+            "to find your access token. Please contact the admin", ToastType.Error, 10_000);
+
+    public static ToastNotification CreateGenericErrorToastNotification(string message) =>
+        new("Fatal error!", $"An error occurred: {message}", ToastType.Error, 10_000);
 }

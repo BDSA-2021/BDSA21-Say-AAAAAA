@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.User;
 using SELearning.Core.Permission;
+using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
 namespace SELearning.API.Controllers;
 
@@ -118,7 +119,10 @@ public class CommentController : ControllerBase
         try
         {
             var commentToUpdate = await _service.GetCommentFromCommentId(ID);
-            var authResult = await _authService.AuthorizeAsync(User, commentToUpdate, "PermissionEditAnyComment OR PermissionEditOwnComment");
+            var authResult = await _authService.AuthorizeAsync(
+                User,
+                commentToUpdate,
+                PermissionsToPolicyName(Permission.EditAnyComment, Permission.EditOwnComment));
             if (!authResult.Succeeded)
                 return Forbid($"User is not allowed to update comment with {ID}");
 
@@ -145,7 +149,10 @@ public class CommentController : ControllerBase
         try
         {
             var commentToUpdate = await _service.GetCommentFromCommentId(ID);
-            AuthorizationResult authResult = await _authService.AuthorizeAsync(User, commentToUpdate, "PermissionDeleteAnyComment OR PermissionDeleteOwnComment");
+            AuthorizationResult authResult = await _authService.AuthorizeAsync(
+                User,
+                commentToUpdate,
+                PermissionsToPolicyName(Permission.DeleteAnyComment, Permission.DeleteOwnComment));
             if (!authResult.Succeeded)
                 return Forbid($"User is not allowed to delete comment with {ID}");
 
