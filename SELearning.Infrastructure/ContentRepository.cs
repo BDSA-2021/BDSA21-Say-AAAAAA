@@ -192,7 +192,7 @@ public class ContentRepository : IContentRepository
 
     public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
     {
-        var section = _context.Section.Single(s => s.Id == id);
+        var section = _context.Section.FirstOrDefault(s => s.Id == id);
 
         var content = from c in _context.Content
                       where c.Section == section
