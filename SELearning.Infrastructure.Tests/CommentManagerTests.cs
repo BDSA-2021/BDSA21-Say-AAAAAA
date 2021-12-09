@@ -16,14 +16,16 @@ public class CommentManagerTests
         Content = new List<Content>()
     };
 
-    private static readonly Content content = new("Video on Entity Core", "Nice", "www.hej.dk", 0);
+    private static User _user = new User{Id = "ABC", Name = "Asger"};
+
+    private static readonly Content content = new("Video on Entity Core", "Nice", "www.hej.dk", 1);
 
     private readonly IEnumerable<Comment> _comments = new List<Comment>()
     {
-        new Comment("Nice", DateTime.Now, -10), // new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content, Rating = -10 },
-        new Comment("Cool but boring", DateTime.Now, 0), // new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
-        new Comment("This is a great video", DateTime.Now, 0), // new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
-        new Comment("Very inappropriate", DateTime.Now, 28) // new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content, Rating = 28 }
+        new Comment("Nice", DateTime.Now, -10, content, _user),
+        new Comment("Cool but boring", DateTime.Now, 0, content, _user), 
+        new Comment("This is a great video", DateTime.Now, 0, content, _user),
+        new Comment("Very inappropriate", DateTime.Now, 28, content, _user)
     };
 
     public CommentManagerTests()
@@ -38,6 +40,7 @@ public class CommentManagerTests
 
         ICommentRepository _repo = new CommentRepository(_context);
         _service = new CommentManager(_repo);
+        _context.Content.Add(content);
 
         section.Content!.Add(content);
 
@@ -51,10 +54,10 @@ public class CommentManagerTests
     [Fact]
     public async void Post_given_acceptable_input_does_post()
     {
-        var dto = new CommentCreateDTO(new User { Name = "Christine" }, "Nice explanation", 1);
+        var dto = new CommentCreateDTO(_user, "Nice explanation", 1);
         await _service.PostComment(dto);
 
-        Assert.Equal("Christine", (IEnumerable<char>)(await _service.GetCommentFromCommentId(5)).Author);
+        Assert.Equal(_user, (await _service.GetCommentFromCommentId(5)).Author);
         Assert.Equal("Nice explanation", (await _service.GetCommentFromCommentId(5)).Text);
         Assert.Equal(1, (await _service.GetCommentFromCommentId(5)).ContentId);
         Assert.Equal(0, (await _service.GetCommentFromCommentId(5)).Rating);
@@ -187,7 +190,7 @@ public class CommentManagerTests
         var comment = await _service.GetCommentFromCommentId(2);
 
         Assert.Equal("Cool but boring", comment.Text);
-        Assert.Equal("Albert", (IEnumerable<char>)comment.Author);
+        Assert.Equal(_user, comment.Author);
         Assert.Equal(1, comment.ContentId);
         Assert.Equal(2, comment.Id);
         Assert.Equal(0, comment.Rating);
