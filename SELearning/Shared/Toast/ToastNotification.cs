@@ -4,7 +4,8 @@ namespace SELearning.Shared.Toast;
 
 public delegate void OnDismissHandler();
 
-public partial class ToastNotification : IDisposable {
+public partial class ToastNotification : IDisposable
+{
     public DateTime Created { get; init; } = DateTime.Now;
     public string Title { get; init; }
     public string Body { get; init; }
@@ -15,7 +16,8 @@ public partial class ToastNotification : IDisposable {
 
     private IList<OnDismissHandler> _onDismissHandlers = new List<OnDismissHandler>();
 
-    public ToastNotification(string title, string body, ToastType type) {
+    public ToastNotification(string title, string body, ToastType type)
+    {
         Title = title;
         Body = body;
         Type = type;
@@ -31,24 +33,29 @@ public partial class ToastNotification : IDisposable {
         _duration = Duration;
         _dismissTimer = new Timer();
         _dismissTimer.Interval = Duration;
-        _dismissTimer.Elapsed += (object sender, ElapsedEventArgs e) => {
+        _dismissTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
+        {
             Dismiss();
         };
         _dismissTimer.Start();
     }
 
 
-    public void AddDismissHandler(OnDismissHandler handler) {
+    public void AddDismissHandler(OnDismissHandler handler)
+    {
         _onDismissHandlers.Add(handler);
     }
 
-    public void Dismiss() {
-        foreach (var handler in _onDismissHandlers) {
+    public void Dismiss()
+    {
+        foreach (var handler in _onDismissHandlers)
+        {
             handler.Invoke();
         }
     }
 
-    public void Dispose() {
+    public void Dispose()
+    {
         _dismissTimer.Dispose();
     }
 }
