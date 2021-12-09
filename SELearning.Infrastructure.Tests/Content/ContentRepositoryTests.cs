@@ -59,7 +59,6 @@ public class ContentRepositoryTests
     [Fact]
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
-        var contentList = new List<Content>();
         var section = new SectionCreateDto { Title = "title", Description = "description" };
 
         var created = (await _repository.AddSection(section)).Item2;
@@ -72,7 +71,6 @@ public class ContentRepositoryTests
     [Fact]
     public async Task CreateSectionAsync_given_Section_returns_Section_with_Section()
     {
-        var contentList = new List<Content>();
         var section = new SectionCreateDto { Title = "title", Description = "description" };
 
         var (status, created) = await _repository.AddSection(section);
@@ -96,7 +94,6 @@ public class ContentRepositoryTests
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_id_returns_NotFound()
     {
-        var contentList = new List<Content>();
         var section = new SectionUpdateDto
         {
             Title = "title",
@@ -121,7 +118,6 @@ public class ContentRepositoryTests
     [Fact]
     public async Task UpdateSectionAsync_updates_existing_section()
     {
-        var contentList = new List<Content>();
         var section = new SectionUpdateDto
         {
             Title = "title",
@@ -136,7 +132,6 @@ public class ContentRepositoryTests
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_Content_returns_NotFound()
     {
-        var contentList = new List<Content>();
         var section = new SectionUpdateDto
         {
             Title = "title",
@@ -212,13 +207,12 @@ public class ContentRepositoryTests
     [Fact]
     public async Task CreateContentAsync_creates_new_content_with_generated_id()
     {
-
         var content = new ContentCreateDto
         {
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Section = _section,
+            SectionId = _section.Id,
             Author = _authorUser
         };
 
@@ -241,7 +235,7 @@ public class ContentRepositoryTests
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Section = _section,
+            SectionId = _section.Id,
             Author = new User
             {
                 Id = "Author",

@@ -124,7 +124,7 @@ public class CommentController : ControllerBase
                 commentToUpdate,
                 PermissionsToPolicyName(Permission.EditAnyComment, Permission.EditOwnComment));
             if (!authResult.Succeeded)
-                return Forbid($"User is not allowed to update comment with {ID}");
+                return Forbid();
 
             await _service.UpdateComment(ID, comment);
             return NoContent();
@@ -154,7 +154,7 @@ public class CommentController : ControllerBase
                 commentToUpdate,
                 PermissionsToPolicyName(Permission.DeleteAnyComment, Permission.DeleteOwnComment));
             if (!authResult.Succeeded)
-                return Forbid($"User is not allowed to delete comment with {ID}");
+                return Forbid();
 
             await _service.RemoveComment(ID);
             return NoContent();

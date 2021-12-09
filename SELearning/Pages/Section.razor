@@ -1,0 +1,9 @@
+@page "/section/{sectionId}"
+
+<SELearning.Shared.Content.ContentInSection SectionId=@sectionId/>
+
+@code {
+    [Parameter]
+    public string sectionId { get; set; }
+
+}

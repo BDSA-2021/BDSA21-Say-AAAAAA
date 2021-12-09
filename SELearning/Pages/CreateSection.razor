@@ -1,0 +1,98 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SELearning.Core.Content
+@using System.ComponentModel.DataAnnotations
+
+@page "/CreateSection"
+
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
+
+<h1>Create Section</h1>
+
+ <EditForm class="col-lg-12" Model="@sectionDto" OnValidSubmit="@CreateSectionAsync">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <InputText id="title" @bind-Value="sectionDto.Title" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label for="desc">Description:</label>
+      <InputTextArea id="desc" @bind-Value="sectionDto.Description" rows="3" class="form-control"/>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-primary" type="submit">Create Section</button>
+    </div>
+</EditForm> 
+
+@if (isPosted)
+{
+  <div class="alert alert-success" role="alert">
+    The Section was succesfully posted!
+  </div>
+}
+
+@if (isNotPosted)
+{
+  <div class="alert alert-danger" role="alert">
+  The Section could not be posted
+  </div>
+}
+
+@code{
+  protected override async Task OnInitializedAsync()
+  {
+    await this.RetrieveSections();
+  }
+  record SectionDto
+  {
+    public string Title{get; set;}
+    public string Description{get; set;}
+  }
+    private SectionDto[] sections = {}; 
+
+    private SectionCreateDto sectionDto { get; set; } = new();
+
+  private bool isPosted = false;
+  private bool isNotPosted = false;
+
+  private async Task CreateSectionAsync()
+  {
+    try
+    {
+      var response = await Http.PostAsJsonAsync<SectionCreateDto>("Section", sectionDto);
+        
+      if(response.IsSuccessStatusCode)
+      {
+        isPosted = true;
+      }
+      else
+      {
+        isNotPosted = true;
+      }
+    } 
+    catch(AccessTokenNotAvailableException exception)
+    {
+      exception.Redirect();
+    } 
+    catch(Exception exception)
+    {
+      await this.Alert(exception);
+    }
+  }
+
+  private async Task Alert(Exception exception) {
+    await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
+    System.Console.WriteLine(exception);
+  }
+  protected async Task RetrieveSections()
+  {
+    try
+    {
+      sections = await Http.GetFromJsonAsync<SectionDto[]>("Section");
+    }
+    catch (AccessTokenNotAvailableException exception)
+    {
+      exception.Redirect();
+    }
+  }
+}
