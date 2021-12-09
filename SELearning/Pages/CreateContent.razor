@@ -6,6 +6,7 @@
 
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
+@inject ToastService service;
 
 <h1>Create Content</h1>
 <EditForm class="col-lg-12" Model="@Content" OnValidSubmit="@CreateContentAsync">
@@ -68,8 +69,8 @@
         [Required(AllowEmptyStrings = false)]
         public string SectionId { get; set; }
     }
-  
-    private SectionDto[] sections = {}; 
+
+    private SectionDto[] sections = { new SectionDto { Id = 1, Title = "Fancy section title" } }; 
     private ContentUserDTO Content { get; set; } = new();
     private bool? isPosted = null;
 
@@ -82,10 +83,12 @@
         } 
         catch(AccessTokenNotAvailableException exception)
         {
+            service.AddToast(ToastNotification.CreateNoAccessToastNotification());
             exception.Redirect();
         } 
         catch(Exception exception)
         {
+            service.AddToast(ToastNotification.CreateGenericErrorToastNotification(exception.Message));
             await this.Alert(exception);
         }
     }
@@ -104,6 +107,7 @@
         }
         catch (AccessTokenNotAvailableException exception)
         {
+            service.AddToast(ToastNotification.CreateNoAccessToastNotification());
             exception.Redirect();
         }
     }

@@ -1,7 +1,7 @@
 @inject ToastService Service
 
 <div style="position: relative;">
-    <div style="position: absolute; top: 0; right: 0;width: 22rem;">
+    <div style="position: absolute; top: 0; right: 0; width: 22rem; z-index: 1">
         @foreach (var notification in _notifications)
         {
             <ToastNotificationComponent Notification="@notification" />
