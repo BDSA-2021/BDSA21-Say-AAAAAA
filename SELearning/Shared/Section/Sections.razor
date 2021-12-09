@@ -8,26 +8,17 @@
         <!-- List of comments -->
         @foreach(SectionDto sec in _sections)
         {
-            <SectionTile Sec="@sec"/>
+            <SectionTile Sec="@sec" OnDeleted="@OnSectionDeleted" />
         }
     </div>
 </section>
 
 @code{
-
-    private Section _section = new();
-
     private List<SectionDto> _sections = new();
-    
+
     protected async override void OnInitialized()
     {
         await RetrieveSections();
-    }
-
-    private void OnSectionDeleted(Section sec)
-    {
-        System.Console.WriteLine($"Comment from {sec.Id} is deleted!");
-        @* _sections.Remove(sec); *@
     }
 
     protected async Task RetrieveSections()
@@ -44,4 +35,9 @@
         }
     }
 
+    void OnSectionDeleted(SectionDto deletedSection)
+    {
+        _sections.Remove(deletedSection);
+        StateHasChanged();
+    }
 }

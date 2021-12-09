@@ -1,21 +1,39 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
+@inject HttpClient Http
 
 <div class="card section" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">@Sec.Title</h5>
-    <p class="card-text">@Sec.Description</p>
-  </div>
-  <div class="card-body">
-    <div class="btn-group">
-        <a href='@string.Format("/section/{0}", Sec.Id)' class="btn btn-primary">View Section</a>
-        <button class="btn btn-default text-danger">Delete</button>
+    <div class="card-body">
+        <h5 class="card-title">@Sec.Title</h5>
+        <p class="card-text">@Sec.Description</p>
     </div>
-  </div>
+    <div class="card-body">
+        <div class="btn-group">
+            <a href='@string.Format("/section/{0}", Sec.Id)' class="btn btn-primary">View Section</a>
+            <button @onclick="Delete" class="btn btn-default text-danger">Delete</button>
+        </div>
+    </div>
 </div>
 
 @code {
+    [Parameter]
+    public SectionDto Sec { get; init; }
 
     [Parameter]
-    public SectionDto Sec { get; set; }
+    public Action<SectionDto> OnDeleted { get; set; }
 
+    private async Task Delete()
+    {
+        try
+        {
+            var responseMessage = await Http.DeleteAsync($"section/{Sec.Id}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+        if (OnDeleted != null)
+            OnDeleted(Sec);
+    }
 }
