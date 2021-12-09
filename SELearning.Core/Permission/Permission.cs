@@ -13,7 +13,12 @@ public enum Permission
     CreateContent,
     DeleteAnyContent,
     EditAnyContent,
-    EditOwnContent
+    EditOwnContent,
+    DeleteOwnSection,
+    DeleteAnySection,
+    EditAnySection,
+    EditOwnSection,
+    CreateSection
 }
 
 public static class PermissionExtensions
