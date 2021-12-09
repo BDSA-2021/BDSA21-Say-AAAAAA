@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.Permission;
+using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
 namespace SELearning.API.Controllers;
 
@@ -78,13 +79,17 @@ public class ContentController : ControllerBase
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.EditAnyContent, Permission.EditOwnContent)]
     public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDto content)
     {
         try
         {
             ContentDto contentToBeUpdated = await _service.GetContent(ID);
 
-            var authResult = await _authService.AuthorizeAsync(User, contentToBeUpdated, "PermissionDeleteOwnContent OR PermissionDeleteAnyContent");
+            var authResult = await _authService.AuthorizeAsync(
+                User,
+                contentToBeUpdated,
+                PermissionsToPolicyName(Permission.EditAnyContent, Permission.EditOwnContent));
 
             if (authResult.Succeeded)
             {
@@ -108,13 +113,17 @@ public class ContentController : ControllerBase
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.DeleteAnyContent, Permission.DeleteOwnContent)]
     public async Task<IActionResult> DeleteContent(int ID)
     {
         try
         {
             ContentDto contentToBeDeleted = await _service.GetContent(ID);
 
-            var authResult = await _authService.AuthorizeAsync(User, contentToBeDeleted, "PermissionDeleteOwnContent OR PermissionDeleteAnyContent");
+            var authResult = await _authService.AuthorizeAsync(
+                User,
+                contentToBeDeleted,
+                PermissionsToPolicyName(Permission.DeleteAnyContent, Permission.DeleteOwnContent));
 
             if (authResult.Succeeded)
             {

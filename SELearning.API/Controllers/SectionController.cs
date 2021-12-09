@@ -80,7 +80,7 @@ public class SectionController : ControllerBase
     /// <returns>A response type 201: Created</returns>
     [HttpPost]
     [ProducesResponseType(201)]
-    [AuthorizePermission(Permission.CreateContent)]
+    [AuthorizePermission(Permission.CreateSection)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
     {
         var createdSection = await _service.AddSection(section);
