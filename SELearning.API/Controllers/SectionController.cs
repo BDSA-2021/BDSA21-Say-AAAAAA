@@ -80,9 +80,9 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="section">The record of the section.</param>
     /// <returns>A response type 201: Created</returns>
-    [AuthorizePermission(Permission.CreateContent)]
     [HttpPost]
     [ProducesResponseType(201)]
+    [AuthorizePermission(Permission.CreateContent)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
     {
         var createdSection = await _service.AddSection(section);
@@ -98,21 +98,13 @@ public class SectionController : ControllerBase
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.EditSection)]
     public async Task<IActionResult> UpdateSection(int ID, SectionUpdateDto section)
     {
         try
         {
-            SectionDto sectionToBeUpdated = await _service.GetSection(ID);
-
-            var authResult = await _authService.AuthorizeAsync(User, sectionToBeUpdated, "PermissionEditOwnContent OR PermissionEditAnyContent");
-
-            if (authResult.Succeeded)
-            {
-                await _service.UpdateSection(ID, section);
-                return NoContent();
-            }
-            else
-                return Forbid($"User is not allowed to update section with {ID}");
+            await _service.UpdateSection(ID, section);
+            return NoContent();
         }
         catch (SectionNotFoundException)
         {
@@ -129,21 +121,13 @@ public class SectionController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [ProducesResponseType(403)]
+    [AuthorizePermission(Permission.DeleteSection)]
     public async Task<IActionResult> DeleteSection(int ID)
     {
         try
         {
-            var result = await _service.GetSection(ID);
-
-            var authResult = await _authService.AuthorizeAsync(User, result, "PermissionDeleteOwnContent OR PermissionDeleteAnyContent");
-
-            if (authResult.Succeeded)
-            {
-                await _service.DeleteSection(ID);
-                return NoContent();
-            }
-            else
-                return Forbid($"User is not allowed to delete section with {ID}");
+            await _service.DeleteSection(ID);
+            return NoContent();   
         }
         catch (SectionNotFoundException)
         {
