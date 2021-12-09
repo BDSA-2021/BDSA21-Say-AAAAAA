@@ -210,6 +210,14 @@ public class ContentRepositoryTests : IDisposable
         Assert.Equal(content, contentInSection);
     }
 
+    [Fact]
+    public async Task GetContentInSection_with_worng_id_returns_empty_collection_of_contet()
+    {
+        var contentInSection = await _repository.GetContentInSection(42);
+        
+        Assert.Empty(contentInSection);
+    }
+
 
     /*
         Contnet Tests Below
