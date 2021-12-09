@@ -1,4 +1,8 @@
-@using SELearning.Core.Comment
+@using SELearning.Core.Comment;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
 
 <div class="row col-lg-12 comment">
     <div class="col-lg-2 row comment-rating">
@@ -24,7 +28,7 @@
         <div class="row">
             <!-- Content header section -->
             <p class="col-lg-11">
-                <b>@Comment.Author</b>
+                <b>@Comment.Author.Name</b>
             </p>
             <div class="col-lg-1">
                 <button type="button" class="btn btn-default btn-lg text-danger" aria-label="Left Align" @onclick="Delete">
@@ -41,36 +45,63 @@
 @code {
 
     [Parameter]
-    public Comment Comment { get; set; }
+    public CommentDetailsDTO Comment { get; set; }
 
     [Parameter]
-    public EventCallback<Comment> OnCommentDeleted { get; set; }
+    public EventCallback<CommentDetailsDTO> OnCommentDeleted { get; set; }
 
     private async Task Delete()
     {
-        // TODO: Delete comment with api
-
-        // TODO: Check if return code is not an error
-
-        if(OnCommentDeleted.HasDelegate)
-            await OnCommentDeleted.InvokeAsync(Comment);
+        try
+        {
+            await Http.DeleteAsync($"Comment/{Comment.Id}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception exception)
+        {
+            await this.Alert(exception);
+        }
     }
 
-    private Task UpVote()
+    private async Task UpVote()
     {
-        // Call up vote api
-
-        Comment.Rating++;
-
-        return Task.CompletedTask;
+        try
+        {
+            await Http.PutAsync($"Comment/{Comment.Id}/Upvote", null);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception exception)
+        {
+            await this.Alert(exception);
+        }
     }
 
-    private Task DownVote() 
+    private async Task DownVote() 
     {
-        // Call down vote api
+        try
+        {
+            await Http.PutAsync($"Comment/{Comment.Id}/Downvote", null);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception exception)
+        {
+            await this.Alert(exception);
+        }
+    }
 
-        Comment.Rating--;
-
-        return Task.CompletedTask;
+    // TODO: Place this somewhere else
+    // TODO: If there is time, replace with a toast notification?
+    private async Task Alert(Exception exception) {
+        await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
+        System.Console.WriteLine(exception);
     }
 }

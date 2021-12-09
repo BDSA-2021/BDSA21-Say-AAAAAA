@@ -17,12 +17,13 @@ public class CommentRepository : ICommentRepository
             return (OperationResult.NotFound, null!);
         }
 
-        Comment comment = new Comment
-        {
-            Author = cmt.Author,
-            Text = cmt.Text,
-            Content = content
-        };
+        Comment comment = new Comment(
+            cmt.Text,
+            null,
+            null,
+            content,
+            cmt.Author
+        );
 
         _context.Comments.Add(comment);
 
@@ -33,7 +34,11 @@ public class CommentRepository : ICommentRepository
 
     public async Task<(OperationResult, CommentDetailsDTO?)> UpdateComment(int Id, CommentUpdateDTO cmt)
     {
-        Comment? c = await _context.Comments.FirstOrDefaultAsync(c => c.Id == Id);
+        Comment? c = await _context
+            .Comments
+            .Include(x => x.Author)
+            .Include(x => x.Content)
+            .FirstOrDefaultAsync(c => c.Id == Id);
 
         if (c == null)
         {
@@ -66,7 +71,11 @@ public class CommentRepository : ICommentRepository
 
     public async Task<Option<CommentDetailsDTO>> GetCommentByCommentId(int commentId)
     {
-        var comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
+        var comment = await _context
+            .Comments
+            .Include(c => c.Author)
+            .Include(x => x.Content)
+            .FirstOrDefaultAsync(x => x.Id == commentId);
         return comment != null ? ConvertToDetailsDTO(comment) : null;
     }
 
@@ -78,14 +87,24 @@ public class CommentRepository : ICommentRepository
             return (null, OperationResult.NotFound);
         }
 
-        IList<CommentDetailsDTO> comments = await _context.Comments.Where(x => x.Content.Id == contentId).Select(x => ConvertToDetailsDTO(x)).ToListAsync();
+        IList<CommentDetailsDTO> comments = await _context
+            .Comments
+            .Include(x => x.Author)
+            .Include(x => x.Content)
+            .Where(x => x.Content.Id == contentId).Select(x => ConvertToDetailsDTO(x)).ToListAsync();
 
         return (comments, OperationResult.Succes);
     }
 
     public async Task<(IEnumerable<CommentDetailsDTO>, OperationResult)> GetCommentsByAuthor(string userId)
     {
-        IList<CommentDetailsDTO> commentsByAuthor = await _context.Comments.Where(x => x.Author == userId).Select(x => ConvertToDetailsDTO(x)).ToListAsync();
+        IList<CommentDetailsDTO> commentsByAuthor = await _context
+            .Comments
+            .Include(x => x.Author)
+            .Include(x => x.Content)
+            .Where(x => x.Author.Id == userId)
+            .Select(x => ConvertToDetailsDTO(x))
+            .ToListAsync();
 
         return (commentsByAuthor, OperationResult.Succes);
     }

@@ -9,14 +9,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using SELearning.Shared.Toast;
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<SELearning.App>("#app");
 
-builder.Services.AddHttpClient("SELearning.API", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+builder.Services.AddHttpClient("SELearning.API", client => client.BaseAddress = new Uri(new Uri(builder.HostEnvironment.BaseAddress), "Api/"))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("SELearning.API"));
+
+builder.Services.AddScoped<ToastService, ToastService>();
 
 builder.Services.AddMsalAuthentication(options =>
 {

@@ -30,10 +30,10 @@ namespace SELearning.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Author")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ContentId")
+                    b.Property<int?>("ContentId")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -46,6 +46,8 @@ namespace SELearning.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("ContentId");
 
@@ -63,8 +65,8 @@ namespace SELearning.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Author")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -82,6 +84,8 @@ namespace SELearning.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -110,22 +114,48 @@ namespace SELearning.Infrastructure.Migrations
                     b.ToTable("Section");
                 });
 
+            modelBuilder.Entity("SELearning.Core.User.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("SELearning.Core.Comment.Comment", b =>
                 {
+                    b.HasOne("SELearning.Core.User.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
                     b.HasOne("SELearning.Core.Content.Content", "Content")
                         .WithMany()
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContentId");
+
+                    b.Navigation("Author");
 
                     b.Navigation("Content");
                 });
 
             modelBuilder.Entity("SELearning.Core.Content.Content", b =>
                 {
+                    b.HasOne("SELearning.Core.User.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
                     b.HasOne("SELearning.Core.Content.Section", "Section")
                         .WithMany("Content")
                         .HasForeignKey("SectionId");
+
+                    b.Navigation("Author");
 
                     b.Navigation("Section");
                 });

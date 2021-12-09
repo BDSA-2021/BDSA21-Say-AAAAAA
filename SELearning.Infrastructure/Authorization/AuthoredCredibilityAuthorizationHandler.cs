@@ -7,9 +7,9 @@ namespace SELearning.Infrastructure.Authorization;
 
 public class AuthoredCredibilityAuthorizationHandler : AuthorizationHandler<CredibilityPermissionRequirement, IAuthored>
 {
-    private readonly ICredibilityService _credService;
+    private readonly IProvider<ICredibilityService> _credService;
     private readonly ILogger<AuthoredCredibilityAuthorizationHandler>? _logger;
-    public AuthoredCredibilityAuthorizationHandler(ICredibilityService credService, ILogger<AuthoredCredibilityAuthorizationHandler>? logger = null)
+    public AuthoredCredibilityAuthorizationHandler(IProvider<ICredibilityService> credService, ILogger<AuthoredCredibilityAuthorizationHandler>? logger = null)
     {
         _credService = credService;
         _logger = logger;
@@ -17,6 +17,7 @@ public class AuthoredCredibilityAuthorizationHandler : AuthorizationHandler<Cred
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, CredibilityPermissionRequirement requirement, IAuthored resource)
     {
+        var credService = _credService.Get();
         if (IsModerator(context.User))
         {
             _logger?.LogDebug($"User {context.User.GetUserId()} is a moderator");
@@ -25,7 +26,7 @@ public class AuthoredCredibilityAuthorizationHandler : AuthorizationHandler<Cred
         }
 
         var user = context.User;
-        var userCredibilityScore = await _credService.GetCredibilityScore(user);
+        var userCredibilityScore = await credService.GetCredibilityScore(user);
         var isPermitted = requirement.RequiredCredibilityScores.Any(req => RequirementIsSatisfied(req, user, resource, userCredibilityScore));
 
         if (isPermitted)
@@ -43,7 +44,7 @@ public class AuthoredCredibilityAuthorizationHandler : AuthorizationHandler<Cred
 
         var isPermitted = requiredCredScore <= userCredibilityScore;
         if (permission.ActsOnAuthorOnly())
-            isPermitted &= resource.Author == user.GetUserId();
+            isPermitted &= resource.Author.Id == user.GetUserId();
 
         _logger?.LogDebug($"User {user.GetUserId()} has access: {isPermitted}");
 

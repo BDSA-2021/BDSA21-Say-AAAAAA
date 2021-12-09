@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("[controller]")]
+[Route("/Api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class SectionController : ControllerBase
 {
@@ -24,7 +25,6 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="sectionID">The ID of the section.</param>
     /// <returns>A collection of contents in the section if it exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet("{ID}/Content")]
     [ProducesResponseType(typeof(IReadOnlyCollection<ContentDto>), 200)]
     [ProducesResponseType(404)]
@@ -45,7 +45,6 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the section.</param>
     /// <returns>A section with the given ID if it exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet("{ID}")]
     [ProducesResponseType(typeof(SectionDto), 200)]
     [ProducesResponseType(404)]
@@ -66,7 +65,6 @@ public class SectionController : ControllerBase
     /// <c>GetSections</c> returns all sections.
     /// </summary>
     /// <returns>all sections if they can be found, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<SectionDto>), 200)]
     [ProducesResponseType(404)]
@@ -80,9 +78,9 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="section">The record of the section.</param>
     /// <returns>A response type 201: Created</returns>
-    [Authorize]
     [HttpPost]
     [ProducesResponseType(201)]
+    [AuthorizePermission(Permission.CreateSection)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
     {
         var createdSection = await _service.AddSection(section);
@@ -95,10 +93,10 @@ public class SectionController : ControllerBase
     /// <param name="ID">The ID of the section.</param>
     /// <param name="section">The record of the updated section.</param>
     /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.EditSection)]
     public async Task<IActionResult> UpdateSection(int ID, SectionUpdateDto section)
     {
         try
@@ -116,11 +114,12 @@ public class SectionController : ControllerBase
     /// <c>DeleteSection</c> deletes the section with the given ID.
     /// </summary>
     /// <param name="ID">The ID of the section.</param>
-    /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
-    [Authorize]
+    /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found. If the user is not allowed then a 403 forbidden will be returned</returns>
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [ProducesResponseType(403)]
+    [AuthorizePermission(Permission.DeleteSection)]
     public async Task<IActionResult> DeleteSection(int ID)
     {
         try
