@@ -1,6 +1,7 @@
 using SELearning.Core.Content;
 using System;
 using System.Threading.Tasks;
+using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
 
@@ -23,10 +24,14 @@ public class ContentManagerTests : IDisposable
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        var content1 = new Content { Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content2 = new Content { Id = 2, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content3 = new Content { Id = 3, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content4 = new Content { Id = 4, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var content1 = new Content("title", "description", "link", 3, new User { Id = "toucan", Name = "Næbdyr" }, _section);
+        var content2 = new Content("title", "description", "link", 3, new User { Id = "toucan", Name = "Næbdyr" }, _section);
+        var content3 = new Content("title", "description", "link", 3, new User { Id = "toucan", Name = "Næbdyr" }, _section);
+        var content4 = new Content("title", "description", "link", 3, new User { Id = "toucan", Name = "Næbdyr" }, _section);
+        content1.Id = 1;
+        content1.Id = 2;
+        content1.Id = 3;
+        content1.Id = 4;
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };
         _section.Content = new List<Content>
@@ -99,7 +104,6 @@ public class ContentManagerTests : IDisposable
         Assert.NotNull(option.Value.Id);
         Assert.Equal("title", option.Value.Title);
         Assert.Equal("description", option.Value.Description);
-        Assert.Equal(contentList, option.Value.Content);
     }
 
     [Fact]
@@ -108,11 +112,10 @@ public class ContentManagerTests : IDisposable
         var content = new ContentCreateDto
         {
             Section = _section,
-            Author = "author",
+            Author = new User { Name = "Næbdyr" },
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Rating = 3,
         };
 
         await _manager.AddContent(content);
@@ -125,7 +128,7 @@ public class ContentManagerTests : IDisposable
         Assert.Equal("title", contentWithID.Title);
         Assert.Equal("description", contentWithID.Description);
         Assert.Equal("video link", contentWithID.VideoLink);
-        Assert.Equal(3, contentWithID.Rating);
+        Assert.Equal(0, contentWithID.Rating);
     }
 
     [Fact]
@@ -160,7 +163,6 @@ public class ContentManagerTests : IDisposable
         Assert.Equal(1, section.Id);
         Assert.Equal("python", section.Title);
         Assert.Equal("description", section.Description);
-        Assert.Equal(_section.Content, section.Content);
     }
 
     [Fact]

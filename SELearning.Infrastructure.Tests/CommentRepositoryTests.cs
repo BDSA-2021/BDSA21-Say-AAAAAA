@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
 public class CommentRepositoryTests
@@ -15,22 +16,25 @@ public class CommentRepositoryTests
         Content = new List<Content>()
     };
 
-    private static readonly Content content = new()
-    {
-        Id = 1,
-        Author = "Sarah",
-        Section = section,
-        Title = "Video on Entity Core",
-        Description = "Nice",
-        VideoLink = "www.hej.dk"
-    };
+    private static readonly Content content = new(
+        "Video on Entity Core",
+        "Nice",
+        "www.hej.dk",
+        null,
+        new User {
+            Id = "Sarah",
+            Name = "Sarah"
+        },
+        section
+    );
 
     private readonly IEnumerable<Comment> _comments = new List<Comment>()
         {
-            new Comment { Author = "Amalie", Id = 1, Text = "Nice", Content = content },
-            new Comment { Author = "Albert", Id = 2, Text = "Cool but boring", Content = content },
-            new Comment { Author = "Paolo", Id = 3, Text = "This is a great video", Content = content },
-            new Comment { Author = "Rasmus", Id = 4, Text = "Very inappropriate", Content = content }
+            new Comment("Nice", null, null, content, new User { Id = "Amalie", Name = "Amalie" }),
+            new Comment("Cool but boring", null, null, content, new User { Id = "Albert", Name = "Albert" }),
+            new Comment("This is a great video", null, null, content, new User { Id = "Paolo", Name = "Paolo" }),
+            new Comment("Very inappropriate", null, null, content, new User { Id = "Rasmus", Name = "Rasmus" }),
+            new Comment("Nicer", null, null, content, new User { Id = "Amalie", Name = "Amalie" }),
         };
 
     public CommentRepositoryTests()
@@ -57,7 +61,7 @@ public class CommentRepositoryTests
     [Fact]
     public async Task AddComment_creates_new_comment_with_generated_id()
     {
-        CommentCreateDTO comment = new("Harleen", "Nice content", 1);
+        CommentCreateDTO comment = new(new User { Id = "Harleen", Name = "Harleen" }, "Nice content", 1);
 
         var created = await _repository.AddComment(comment);
 
@@ -70,7 +74,7 @@ public class CommentRepositoryTests
     [Fact]
     public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
     {
-        CommentCreateDTO comment = new("Harleen", "Nice content", 2);
+        CommentCreateDTO comment = new(new User { Id = "Harleen", Name = "Harleen" }, "Nice content", 2);
 
         var created = await _repository.AddComment(comment);
 
@@ -158,20 +162,11 @@ public class CommentRepositoryTests
     [Fact]
     public async Task GetCommentsByAuthor_GivenComments_ReturnsByAuthor()
     {
-        await _context.Comments.AddRangeAsync(new[]
-        {
-            new Comment { Author = "Sankt Nikolaus", Id = 98, Content = content },
-            new Comment { Author = "Julemanden", Id = 97, Content = content },
-            new Comment { Author = "Santa Claus", Id = 96, Content = content },
-            new Comment { Author = "Julemanden", Id = 95, Content = content },
-        });
-        await _context.SaveChangesAsync();
-
-        var (comments, opResult) = await _repository.GetCommentsByAuthor("Julemanden");
+        var (comments, opResult) = await _repository.GetCommentsByAuthor("Amalie");
 
         Assert.Equal(OperationResult.Succes, opResult);
 
-        var expectedIds = new[] { 95, 97 };
+        var expectedIds = new[] { 1, 5 };
         var actualIds = comments.OrderBy(c => c.Id).Select(c => (int)c.Id!).ToList();
         Assert.Equal(expectedIds, actualIds);
     }

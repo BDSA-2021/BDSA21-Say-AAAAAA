@@ -1,5 +1,5 @@
 using System;
-using SELearning.Core.Content;
+using SELearning.Core.User;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -23,10 +23,10 @@ public class ContentRepositoryTests : IDisposable
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };
 
-        var content1 = new Content { Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content2 = new Content { Id = 2, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content3 = new Content { Id = 3, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var content4 = new Content { Id = 4, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var content1 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
+        var content2 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
+        var content3 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
+        var content4 = new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section);
 
         var contentList = new List<Content>
         {
@@ -82,12 +82,11 @@ public class ContentRepositoryTests : IDisposable
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDto { Id = 2, Title = "title", Description = "description", Content = new List<Content>() };
+        var sectionDto = new SectionDto { Id = 2, Title = "title", Description = "description" };
 
         Assert.Equal(sectionDto.Id, created.Id);
         Assert.Equal(sectionDto.Title, created.Title);
         Assert.Equal(sectionDto.Description, created.Description);
-        Assert.Equal(sectionDto.Content.Count, created.Content?.Count);
         Assert.Equal(OperationResult.Created, status);
     }
 
@@ -221,23 +220,26 @@ public class ContentRepositoryTests : IDisposable
 
         var content = new ContentCreateDto
         {
-            Section = _section,
-            Author = "author",
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Rating = 3,
+            Section = _section,
+            Author = new User
+            {
+                Id = "Author",
+                Name = "Author",
+            }
         };
 
         var created = (await _repository.AddContent(content)).Item2;
 
         Assert.NotNull(created.Id);
         Assert.Equal(_section, created.Section);
-        Assert.Equal("author", (IEnumerable<char>)created.Author);
+        Assert.Equal("author", (IEnumerable<char>)created.Author.Id);
         Assert.Equal("title", created.Title);
         Assert.Equal("description", created.Description);
         Assert.Equal("video link", created.VideoLink);
-        Assert.Equal(3, created.Rating);
+        Assert.Equal(0, created.Rating);
     }
 
     [Fact]
@@ -245,12 +247,15 @@ public class ContentRepositoryTests : IDisposable
     {
         var content = new ContentCreateDto
         {
-            Section = _section,
-            Author = "author",
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Rating = 3,
+            Section = _section,
+            Author = new User
+            {
+                Id = "Author",
+                Name = "Author",
+            }
         };
 
         var (status, created) = await _repository.AddContent(content);
@@ -258,12 +263,16 @@ public class ContentRepositoryTests : IDisposable
         var contentDto = new ContentDto
         {
             Id = 5,
-            Section = _section,
-            Author = "author",
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Rating = 3,
+            Rating = 0,
+            Section = _section,
+            Author = new User
+            {
+                Id = "Author",
+                Name = "Author",
+            }
         };
 
         Assert.Equal(contentDto, created);
@@ -283,12 +292,10 @@ public class ContentRepositoryTests : IDisposable
     {
         var content = new ContentUpdateDto
         {
-            Section = _section,
-            Author = "author",
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Rating = 3,
+            Rating = 0
         };
 
         var reponse = await _repository.UpdateContent(42, content);
@@ -301,7 +308,7 @@ public class ContentRepositoryTests : IDisposable
     {
         var option = await _repository.GetContent(1);
 
-        var content = new ContentDto { Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var content = new ContentDto { Id = 1, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
         Assert.Equal(content, option.Value);
     }
@@ -311,10 +318,10 @@ public class ContentRepositoryTests : IDisposable
     public async Task ReadContentAsync_returns_all_content()
     {
         var allContent = await _repository.GetContent();
-        var contentDto1 = new ContentDto { Id = 1, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var contentDto2 = new ContentDto { Id = 2, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var contentDto3 = new ContentDto { Id = 3, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
-        var contentDto4 = new ContentDto { Id = 4, Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var contentDto1 = new ContentDto { Id = 1, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
+        var contentDto2 = new ContentDto { Id = 2, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
+        var contentDto3 = new ContentDto { Id = 3, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
+        var contentDto4 = new ContentDto { Id = 4, Section = _section, Author = new User { Id = "author", Name = "author" }, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
 
         Assert.Collection(allContent,
             content => Assert.Equal(contentDto1, content),
@@ -328,7 +335,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateContentAsync_updates_existing_content()
     {
-        var content = new ContentUpdateDto { Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
+        var content = new ContentUpdateDto { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var updated = await _repository.UpdateContent(1, content);
 
@@ -338,7 +345,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateContentAsync_given_non_existing_Content_returns_NotFound()
     {
-        var content = new ContentUpdateDto { Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
+        var content = new ContentUpdateDto { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var response = await _repository.UpdateContent(42, content);
 
@@ -349,7 +356,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateContentAsync_updates_and_returns_Updated()
     {
-        var contentDto = new ContentUpdateDto { Section = _section, Author = "author", Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var contentDto = new ContentUpdateDto { Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
         var response = await _repository.UpdateContent(1, contentDto);
 
@@ -382,15 +389,15 @@ public class ContentRepositoryTests : IDisposable
     {
         await _context.Content.AddRangeAsync(new[]
         {
-            new Content { Id = 1234, Author = "homer", Rating = 1 },
-            new Content { Id = 1235, Author = "bart", Rating = 2 },
-            new Content { Id = 1236, Author = "homer", Rating = 3 },
+            new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section),
+            new Content("title", "description", "VideoLink", 3, new User { Id = "homer", Name = "homer" }, _section),
+            new Content("title", "description", "VideoLink", 3, new User { Id = "author", Name = "author" }, _section),
         });
         await _context.SaveChangesAsync();
 
-        var contents = await _repository.GetContentByAuthor("homer");
+        var contents = await _repository.GetContentByAuthor("author");
 
-        var expectedIds = new[] { 1234, 1236 };
+        var expectedIds = new[] { 1, 3 };
         var actualIds = contents.OrderBy(c => c.Id).Select(c => (int)c.Id!).ToList();
         Assert.Equal(expectedIds, actualIds);
     }
