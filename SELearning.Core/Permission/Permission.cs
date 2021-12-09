@@ -13,6 +13,7 @@ public enum Permission
     EditOwnComment,
     CreateContent,
     DeleteAnyContent,
+    DeleteOwnContent,
     EditAnyContent,
     EditOwnContent,
     DeleteSection,
