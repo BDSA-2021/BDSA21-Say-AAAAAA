@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -12,11 +13,13 @@ public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;
     private readonly ICommentService _service;
+    private readonly IAuthorizationService _authService;
 
-    public CommentController(ILogger<CommentController> logger, ICommentService service)
+    public CommentController(ILogger<CommentController> logger, ICommentService service, IAuthorizationService authService)
     {
         _logger = logger;
         _service = service;
+        _authService = authService;
     }
 
     /// <summary>
@@ -69,6 +72,7 @@ public class CommentController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.CreateComment)]
     public async Task<IActionResult> CreateComment(CommentCreateDTO comment)
     {
         try
@@ -91,10 +95,16 @@ public class CommentController : ControllerBase
     [HttpPut("{ID}")]
     [ProducesResponseType(204)] // No Content
     [ProducesResponseType(404)] // Not Found
+    [AuthorizePermission(Permission.EditAnyComment, Permission.EditOwnComment)]
     public async Task<IActionResult> UpdateComment(int ID, CommentUpdateDTO comment)
     {
         try
         {
+            var commentToUpdate = await _service.GetCommentFromCommentId(ID);
+            var authResult = await _authService.AuthorizeAsync(User, commentToUpdate, "PermissionEditAnyComment OR PermissionEditOwnComment");
+            if (!authResult.Succeeded)
+                return Forbid($"User is not allowed to update comment with {ID}");
+
             await _service.UpdateComment(ID, comment);
             return NoContent();
         }
@@ -112,10 +122,16 @@ public class CommentController : ControllerBase
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.DeleteAnyComment, Permission.DeleteOwnComment)]
     public async Task<IActionResult> DeleteComment(int ID)
     {
         try
         {
+            var commentToUpdate = await _service.GetCommentFromCommentId(ID);
+            var authResult = await _authService.AuthorizeAsync(User, commentToUpdate, "PermissionDeleteAnyComment OR PermissionDeleteOwnComment");
+            if (!authResult.Succeeded)
+                return Forbid($"User is not allowed to delete comment with {ID}");
+
             await _service.RemoveComment(ID);
             return NoContent();
         }
@@ -133,6 +149,7 @@ public class CommentController : ControllerBase
     [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> UpvoteComment(int ID)
     {
         try
@@ -154,6 +171,7 @@ public class CommentController : ControllerBase
     [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> DownvoteComment(int ID)
     {
         try
