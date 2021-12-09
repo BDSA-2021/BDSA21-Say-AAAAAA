@@ -8,12 +8,16 @@ public enum Permission
     Rate,
     CreateComment,
     DeleteAnyComment,
+    DeleteOwnComment,
     EditAnyComment,
     EditOwnComment,
     CreateContent,
     DeleteAnyContent,
     EditAnyContent,
-    EditOwnContent
+    EditOwnContent,
+    DeleteSection,
+    EditSection,
+    CreateSection
 }
 
 public static class PermissionExtensions
