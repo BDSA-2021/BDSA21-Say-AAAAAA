@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SELearning.API.Controllers;
 using SELearning.Core;
 using SELearning.Core.Comment;
+using SELearning.Core.Permission;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,8 +25,14 @@ public class CommentControllerTest
     {
         var logger = new Mock<ILogger<CommentController>>();
         var auth = new Mock<IAuthorizationService>();
+        auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+            .ReturnsAsync(AuthorizationResult.Success);
+
         _service = new Mock<ICommentService>();
+        _service.Setup(x => x.GetCommentFromCommentId(It.Is<int>(x => x != 0)))
+                .ReturnsAsync(new CommentDetailsDTO("Andreas", "Hej", 1, DateTime.Now, 100, 1));
         _controller = new CommentController(logger.Object, _service.Object, auth.Object);
+        _controller.ControllerContext.HttpContext = new DefaultHttpContext{User = new ClaimsPrincipal()};
     }
 
     [Fact]

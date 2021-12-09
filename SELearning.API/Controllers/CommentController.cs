@@ -128,7 +128,7 @@ public class CommentController : ControllerBase
         try
         {
             var commentToUpdate = await _service.GetCommentFromCommentId(ID);
-            var authResult = await _authService.AuthorizeAsync(User, commentToUpdate, "PermissionDeleteAnyComment OR PermissionDeleteOwnComment");
+            AuthorizationResult authResult = await _authService.AuthorizeAsync(User, commentToUpdate, "PermissionDeleteAnyComment OR PermissionDeleteOwnComment");
             if (!authResult.Succeeded)
                 return Forbid($"User is not allowed to delete comment with {ID}");
 
