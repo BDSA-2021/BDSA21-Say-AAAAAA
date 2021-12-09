@@ -4,7 +4,6 @@ public static class Migrator
 {
     public static IHost Migrate(this IHost host)
     {
-        Migrator.MigrateContext<WeatherContext>(host);
         Migrator.MigrateContext<SELearningContext>(host);
 
         return host;
