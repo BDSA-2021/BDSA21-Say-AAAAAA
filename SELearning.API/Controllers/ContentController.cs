@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -12,11 +13,13 @@ public class ContentController : ControllerBase
 {
     private readonly ILogger<ContentController> _logger;
     private readonly IContentService _service;
+    private readonly IAuthorizationService _authService;
 
-    public ContentController(ILogger<ContentController> logger, IContentService service)
+    public ContentController(ILogger<ContentController> logger, IContentService service, IAuthorizationService authService)
     {
         _logger = logger;
         _service = service;
+        _authService = authService;
     }
 
     /// <summary>
@@ -59,6 +62,7 @@ public class ContentController : ControllerBase
     /// <returns>A response type 201: Created</returns>
     [HttpPost]
     [ProducesResponseType(201)]
+    [AuthorizePermission(Permission.CreateContent)]
     public async Task<IActionResult> CreateContent(ContentCreateDto content)
     {
         var createdContent = await _service.AddContent(content);
@@ -78,8 +82,17 @@ public class ContentController : ControllerBase
     {
         try
         {
-            await _service.UpdateContent(ID, content);
-            return NoContent();
+            ContentDto contentToBeUpdated = await _service.GetContent(ID);
+
+            var authResult = await _authService.AuthorizeAsync(User, contentToBeUpdated, "PermissionDeleteOwnContent OR PermissionDeleteAnyContent");
+
+            if (authResult.Succeeded)
+            {
+                await _service.UpdateContent(ID, content);
+                return NoContent();
+            }
+            else
+                return Forbid($"User is not allowed to update content with id {ID}");
         }
         catch (ContentNotFoundException)
         {
@@ -99,8 +112,17 @@ public class ContentController : ControllerBase
     {
         try
         {
-            await _service.DeleteContent(ID);
-            return NoContent();
+            ContentDto contentToBeDeleted = await _service.GetContent(ID);
+
+            var authResult = await _authService.AuthorizeAsync(User, contentToBeDeleted, "PermissionDeleteOwnContent OR PermissionDeleteAnyContent");
+
+            if (authResult.Succeeded)
+            {
+                await _service.DeleteContent(ID);
+                return NoContent();
+            }
+            else
+                return Forbid($"User is not allowed to delete content with id {ID}");
         }
         catch (ContentNotFoundException)
         {
@@ -116,6 +138,7 @@ public class ContentController : ControllerBase
     [HttpPut("{ID}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> UpvoteContent(int ID)
     {
         try
@@ -137,6 +160,7 @@ public class ContentController : ControllerBase
     [HttpPut("{ID}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [AuthorizePermission(Permission.Rate)]
     public async Task<IActionResult> DownvoteContent(int ID)
     {
         try
