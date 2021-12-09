@@ -15,10 +15,8 @@ public enum Permission
     DeleteAnyContent,
     EditAnyContent,
     EditOwnContent,
-    DeleteOwnSection,
-    DeleteAnySection,
-    EditAnySection,
-    EditOwnSection,
+    DeleteSection,
+    EditSection,
     CreateSection
 }
 

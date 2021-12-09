@@ -17,14 +17,10 @@ public class PermissionCredibilityService : IPermissionCredibilityService
             case Permission.DeleteAnyContent:
             case Permission.CreateContent:
                 return await Task.Run<int>(() => 1000);
-            case Permission.EditOwnSection:
-            case Permission.DeleteOwnSection:
-                return 1200;
             case Permission.CreateSection:
-                return 1500;
-            case Permission.EditAnySection:
-            case Permission.DeleteAnySection:
-                return 3000;
+            case Permission.EditSection:
+            case Permission.DeleteSection:
+                return await Task.Run<int>(() => int.MaxValue);
             default:
                 return await Task.Run<int>(() => int.MinValue);
         }
