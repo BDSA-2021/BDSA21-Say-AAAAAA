@@ -7,7 +7,7 @@
     <div class="get-quote">
         <div class="row">
             <div class="col-sm-10 col-12">
-                <h1 class="left-block float-left">C# Section</h1>
+                <h1 class="left-block float-left">@_section.Title</h1>
             </div>
             <div class="col-sm-2 col-12">
                 <a class="btn btn-primary right-block float-right" href="createcontent" role="button">Add Content</a>
@@ -53,6 +53,20 @@
         {
             var content = await Http.GetFromJsonAsync<IEnumerable<ContentDto>>($"Section/{SectionId}/Content");
             _contents.AddRange(content);
+            StateHasChanged();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    protected async Task RetrieveSection()
+    {
+        try
+        {
+            var section = await Http.GetFromJsonAsync<SectionDto>($"Section/{SectionId}");
+            _section = section;
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)

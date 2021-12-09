@@ -11,6 +11,15 @@ public record ContentDto
     public int Rating { get; set; }
 }
 
+public record ContentUserDto {
+    public string Title{get; set;}
+    public string Description{get; set;}
+    public string VideoLink{get; set;}
+
+    [Required(AllowEmptyStrings = false)]
+    public string SectionId {get; set;}
+}
+
 public record ContentCreateDto
 {
     [StringLength(50)]
