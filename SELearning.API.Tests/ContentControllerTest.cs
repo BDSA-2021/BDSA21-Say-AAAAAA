@@ -28,13 +28,13 @@ public class ContentControllerTest
         var authService = new Mock<IAuthorizationService>();
         authService.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
             .ReturnsAsync(AuthorizationResult.Success);
-        
+
         _service = new Mock<IContentService>();
         _service.Setup(x => x.GetContent(It.Is<int>(x => x != 0)))
                 .ReturnsAsync(new ContentDto());
 
         _controller = new ContentController(logger.Object, _service.Object, authService.Object);
-        _controller.ControllerContext.HttpContext = new DefaultHttpContext{User = new ClaimsPrincipal()};
+        _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
     }
 
     [Fact]

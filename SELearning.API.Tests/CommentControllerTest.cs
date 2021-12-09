@@ -32,7 +32,7 @@ public class CommentControllerTest
         _service.Setup(x => x.GetCommentFromCommentId(It.Is<int>(x => x != 0)))
                 .ReturnsAsync(new CommentDetailsDTO("Andreas", "Hej", 1, DateTime.Now, 100, 1));
         _controller = new CommentController(logger.Object, _service.Object, auth.Object);
-        _controller.ControllerContext.HttpContext = new DefaultHttpContext{User = new ClaimsPrincipal()};
+        _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
     }
 
     [Fact]
