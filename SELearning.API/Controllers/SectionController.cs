@@ -104,7 +104,7 @@ public class SectionController : ControllerBase
         {
             SectionDto sectionToBeUpdated = await _service.GetSection(ID);
 
-            var authResult = await _authService.AuthorizeAsync(User, sectionToBeUpdated, "PermissionEditOwnContent_OR_PermissionEditAnyContent");
+            var authResult = await _authService.AuthorizeAsync(User, sectionToBeUpdated, "PermissionEditOwnContent OR PermissionEditAnyContent");
 
             if(authResult.Succeeded)
             {
@@ -135,7 +135,7 @@ public class SectionController : ControllerBase
         {
             var result = await _service.GetSection(ID);
 
-            var authResult = await _authService.AuthorizeAsync(User, result, "PermissionDeleteOwnContent_OR_PermissionDeleteAnyContent");
+            var authResult = await _authService.AuthorizeAsync(User, result, "PermissionDeleteOwnContent OR PermissionDeleteAnyContent");
 
             if(authResult.Succeeded) 
             {
