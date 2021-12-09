@@ -1,5 +1,7 @@
+using SELearning.Core.Permission;
+
 namespace SELearning.Core.Content;
-public record ContentDto
+public record ContentDto : IAuthored
 {
 
     public int? Id { get; set; }

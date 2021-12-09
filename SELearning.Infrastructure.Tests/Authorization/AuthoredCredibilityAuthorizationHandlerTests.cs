@@ -24,7 +24,10 @@ public class AuthoredCredibilityAuthorizationHandlerTests
         var permissionService = new Mock<ICredibilityService>();
         permissionService.Setup(m => m.GetCredibilityScore(user)).ReturnsAsync(score);
 
-        var authHandler = new AuthoredCredibilityAuthorizationHandler(permissionService.Object);
+        var provider = new Mock<IProvider<ICredibilityService>>();
+        provider.Setup(x => x.Get()).Returns(permissionService.Object);
+
+        var authHandler = new AuthoredCredibilityAuthorizationHandler(provider.Object);
         authHandler.HandleAsync(authContext).Wait();
 
         return authContext;
