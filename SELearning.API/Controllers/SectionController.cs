@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.Permission;
 
 namespace SELearning.API.Controllers;
 
@@ -12,11 +13,13 @@ public class SectionController : ControllerBase
 {
     private readonly ILogger<SectionController> _logger;
     private readonly IContentService _service;
+    private readonly IAuthorizationService _authService;
 
-    public SectionController(ILogger<SectionController> logger, IContentService service)
+    public SectionController(ILogger<SectionController> logger, IContentService service, IAuthorizationService authService)
     {
         _logger = logger;
         _service = service;
+        _authService = authService;
     }
 
     /// <summary>
@@ -77,6 +80,7 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <param name="section">The record of the section.</param>
     /// <returns>A response type 201: Created</returns>
+    [AuthorizePermission(Permission.CreateContent)]
     [HttpPost]
     [ProducesResponseType(201)]
     public async Task<IActionResult> CreateSection(SectionCreateDto section)
@@ -119,8 +123,19 @@ public class SectionController : ControllerBase
     {
         try
         {
-            await _service.DeleteSection(ID);
-            return NoContent();
+            var result = await _service.GetSection(ID);
+
+            var authResult = await _authService.AuthorizeAsync(User, result, "PermissionDeleteOwnContent_OR_PermissionDeleteAnyContent");
+
+            if(authResult.Succeeded) 
+            {
+                await _service.DeleteSection(ID);
+                return NoContent();
+            }
+            else
+            {
+                return Unauthorized("User is not allowed to delete comment");
+            }
         }
         catch (SectionNotFoundException)
         {
