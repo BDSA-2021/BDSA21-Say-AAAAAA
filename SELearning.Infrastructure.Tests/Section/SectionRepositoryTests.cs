@@ -2,6 +2,7 @@ using System;
 using SELearning.Core.Content;
 using System.Threading.Tasks;
 using System.Linq;
+using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
 
@@ -9,7 +10,9 @@ public class SectionRepositoryTests : IDisposable
 {
     private readonly SELearningContext _context;
     private readonly SectionRepository _repository;
-    private readonly Section _section;
+    private static Section _section = new Section { Id = 1, Title = "python", Description = "description" };
+
+    private static User _user = new User{ Id = "ABC", Name = "Adrian"};
     private bool disposedValue;
 
     public SectionRepositoryTests()
@@ -21,7 +24,27 @@ public class SectionRepositoryTests : IDisposable
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        _section = new Section { Id = 1, Title = "python", Description = "description" };
+        var content1 = new Content("title", "description", "VideoLink", 3, _user, _section);
+        var content2 = new Content("title", "description", "VideoLink", 3, _user, _section);
+        var content3 = new Content("title", "description", "VideoLink", 3, _user, _section);
+        var content4 = new Content("title", "description", "VideoLink", 3, _user, _section);
+
+        var contentList = new List<Content>
+        {
+            content1,
+            content2,
+            content3,
+            content4
+        };
+
+        _section.Content = contentList;
+
+        context.Content.AddRange(
+            content1,
+            content2,
+            content3,
+            content4
+        );
 
         context.Section.AddRange(
             _section

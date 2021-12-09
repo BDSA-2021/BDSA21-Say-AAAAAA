@@ -1,4 +1,5 @@
 using SELearning.Core.Content;
+using SELearning.Core.User;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ public class SectionManagerTests : IDisposable
     private readonly SectionRepository _repository;
     private readonly SectionManager _manager;
     private readonly Section _section;
+
+    private readonly User _user;
     private bool disposedValue;
 
     public SectionManagerTests()
@@ -25,8 +28,34 @@ public class SectionManagerTests : IDisposable
         context.Database.EnsureCreated();
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };
+        _user = new User{ Id = "ABC", Name = "Adrian"};
 
-        context.Section.Add(_section);
+        var content1 = new Content("title", "description", "VideoLink", 3, _user, _section);
+        var content2 = new Content("title", "description", "VideoLink", 3, _user, _section);
+        var content3 = new Content("title", "description", "VideoLink", 3, _user, _section);
+        var content4 = new Content("title", "description", "VideoLink", 3, _user, _section);
+
+        var contentList = new List<Content>
+        {
+            content1,
+            content2,
+            content3,
+            content4
+        };
+
+        _section.Content = contentList;
+
+        context.Content.AddRange(
+            content1,
+            content2,
+            content3,
+            content4
+        );
+
+        context.Section.AddRange(
+            _section
+        );
+
         context.SaveChanges();
 
         _context = context;
