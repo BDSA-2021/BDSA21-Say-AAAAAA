@@ -21,21 +21,15 @@ public class CommentRepositoryTests
         "Nice",
         "www.hej.dk",
         null,
-        new User {
+        new User
+        {
             Id = "Sarah",
             Name = "Sarah"
         },
         section
     );
 
-    private readonly IEnumerable<Comment> _comments = new List<Comment>()
-        {
-            new Comment("Nice", null, null, content, new User { Id = "Amalie", Name = "Amalie" }),
-            new Comment("Cool but boring", null, null, content, new User { Id = "Albert", Name = "Albert" }),
-            new Comment("This is a great video", null, null, content, new User { Id = "Paolo", Name = "Paolo" }),
-            new Comment("Very inappropriate", null, null, content, new User { Id = "Rasmus", Name = "Rasmus" }),
-            new Comment("Nicer", null, null, content, new User { Id = "Amalie", Name = "Amalie" }),
-        };
+    private readonly IEnumerable<Comment> _comments;
 
     public CommentRepositoryTests()
     {
@@ -46,6 +40,18 @@ public class CommentRepositoryTests
         builder.UseSqlite(connection);
         _context = new SELearningContext(builder.Options);
         _context.Database.EnsureCreated();
+
+
+        var _userAmalie = new User { Id = "Amalie", Name = "Amalie" };
+        _comments = new List<Comment>()
+        {
+            new Comment("Nice", null, null, content, _userAmalie),
+            new Comment("Cool but boring", null, null, content, new User { Id = "Albert", Name = "Albert" }),
+            new Comment("This is a great video", null, null, content, new User { Id = "Paolo", Name = "Paolo" }),
+            new Comment("Very inappropriate", null, null, content, new User { Id = "Rasmus", Name = "Rasmus" }),
+            new Comment("Nicer", null, null, content, _userAmalie),
+        };
+
 
         _repository = new CommentRepository(_context);
 
@@ -65,8 +71,8 @@ public class CommentRepositoryTests
 
         var created = await _repository.AddComment(comment);
 
-        Assert.Equal(5, created.Item2.Id);
-        Assert.Equal("Harleen", (IEnumerable<char>)created.Item2.Author);
+        Assert.Equal(6, created.Item2.Id);
+        Assert.Equal("Harleen", created.Item2.Author.Name);
         Assert.Equal("Nice content", created.Item2.Text);
         Assert.Equal(OperationResult.Created, created.Item1);
     }
@@ -99,7 +105,7 @@ public class CommentRepositoryTests
         var (result, updated) = await _repository.UpdateComment(1, dto);
 
         Assert.Equal(1, updated!.Id);
-        Assert.Equal("Amalie", (IEnumerable<char>)updated.Author);
+        Assert.Equal("Amalie", updated.Author.Name);
         Assert.Equal("Nice but also confusing", updated.Text);
         Assert.Equal(1, updated.Rating);
 
@@ -130,7 +136,7 @@ public class CommentRepositoryTests
     {
         var read = (await _repository.GetCommentByCommentId(3)).Value;
 
-        Assert.Equal("Paolo", (IEnumerable<char>)read.Author);
+        Assert.Equal("Paolo", read.Author.Name);
         Assert.Equal("This is a great video", read.Text);
     }
 
