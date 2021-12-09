@@ -79,14 +79,17 @@ public static class Migrator
         
         foreach (Section section in sections) {
             for (int i = 0; i < 5; i++) {
-                content.Add(new Content {
-                    Section = section,
-                    Author = ContentTitles[rng.Next(0, 4)],
-                    Title = ContentTitles[rng.Next(0, 4)],
-                    Description = "Some description",
-                    VideoLink = ContentVideos[rng.Next(0,4)],
-                    Rating = rng.Next(0, 5000)
-                });
+                content.Add(new Content(
+                    ContentTitles[rng.Next(0, 4)],
+                    "Some description",
+                    ContentVideos[rng.Next(0,4)],
+                    rng.Next(0, 5000),
+                    new Core.User.User {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = ContentTitles[rng.Next(0, 4)]
+                    },
+                    section
+                ));
             }
         }
 

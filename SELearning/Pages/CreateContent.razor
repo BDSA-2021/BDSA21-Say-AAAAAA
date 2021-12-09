@@ -58,17 +58,7 @@
     {
         await this.RetrieveSections();
     }
-
-    record ContentUserDTO
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string VideoLink { get; set; }
-
-        [Required(AllowEmptyStrings = false)]
-        public string SectionId { get; set; }
-    }
-  
+ 
     private SectionDto[] sections = {}; 
     private ContentUserDTO Content { get; set; } = new();
     private bool? isPosted = null;

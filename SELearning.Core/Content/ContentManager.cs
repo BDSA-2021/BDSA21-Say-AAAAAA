@@ -32,9 +32,7 @@ public class ContentManager : IContentService
         {
             Title = content.Value.Title,
             Description = content.Value.Description,
-            Author = content.Value.Author,
             Rating = content.Value.Rating - 1,
-            Section = content.Value.Section,
             VideoLink = content.Value.VideoLink
         };
 
@@ -102,9 +100,7 @@ public class ContentManager : IContentService
         {
             Title = content.Value.Title,
             Description = content.Value.Description,
-            Author = content.Value.Author,
             Rating = content.Value.Rating + 1,
-            Section = content.Value.Section,
             VideoLink = content.Value.VideoLink
         };
 

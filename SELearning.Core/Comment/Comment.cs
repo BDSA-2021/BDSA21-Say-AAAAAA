@@ -1,9 +1,9 @@
+#nullable disable
 
 namespace SELearning.Core.Comment
 {
     public class Comment
     {
-        #nullable disable
         public int Id { get; init; }
         
         public string Text { get; set; }
@@ -12,10 +12,8 @@ namespace SELearning.Core.Comment
 
         public int Rating { get; set; }
 
-        #nullable disable
         public Content.Content Content { get; init; }
         
-        #nullable disable
         public User.User Author { get; init; }
 
         public Comment(string text, DateTime timestamp, int rating)
