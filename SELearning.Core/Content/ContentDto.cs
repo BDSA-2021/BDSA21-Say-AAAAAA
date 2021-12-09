@@ -30,19 +30,19 @@ public record ContentDto : IAuthored
 
 public record ContentUserDto
 {
-    public string? Title { get; set; }
-    public string? Description { get; set; }
-    public string? VideoLink { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string VideoLink { get; set; }
 
     [Required(AllowEmptyStrings = false)]
-    public string? SectionId { get; set; }
+    public string SectionId { get; set; }
 }
 
 public record ContentCreateDto
 {
     [Required]
     public int SectionId { get; init; }
-    
+
     [StringLength(50)]
     public string Title { get; init; }
 
