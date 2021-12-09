@@ -102,8 +102,17 @@ public class SectionController : ControllerBase
     {
         try
         {
-            await _service.UpdateSection(ID, section);
-            return NoContent();
+            SectionDto sectionToBeUpdated = await _service.GetSection(ID);
+
+            var authResult = await _authService.AuthorizeAsync(User, sectionToBeUpdated, "PermissionEditOwnContent_OR_PermissionEditAnyContent");
+
+            if(authResult.Succeeded)
+            {
+                await _service.UpdateSection(ID, section);
+                return NoContent();
+            }
+            else
+                return Forbid($"User is not allowed to update comment with {ID}");
         }
         catch (SectionNotFoundException)
         {
@@ -115,10 +124,11 @@ public class SectionController : ControllerBase
     /// <c>DeleteSection</c> deletes the section with the given ID.
     /// </summary>
     /// <param name="ID">The ID of the section.</param>
-    /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
+    /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found. If the user is not allowed then a 403 forbidden will be returned</returns>
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [ProducesResponseType(403)]
     public async Task<IActionResult> DeleteSection(int ID)
     {
         try
@@ -133,9 +143,7 @@ public class SectionController : ControllerBase
                 return NoContent();
             }
             else
-            {
-                return Unauthorized("User is not allowed to delete comment");
-            }
+                return Forbid($"User is not allowed to delete comment with {ID}");
         }
         catch (SectionNotFoundException)
         {
