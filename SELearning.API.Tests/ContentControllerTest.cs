@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,19 +15,27 @@ namespace SELearning.API.Tests;
 
 public class ContentControllerTest
 {
+    private readonly Mock<IContentService> _service;
+
+    private readonly ContentController _controller;
+
+    public ContentControllerTest()
+    {
+        var logger = new Mock<ILogger<ContentController>>();
+        var authService = new Mock<IAuthorizationService>();
+        _service = new Mock<IContentService>();
+        _controller = new ContentController(logger.Object, _service.Object, authService.Object);
+    }
+
     [Fact]
     public async Task GetContent_Given_Valid_ID_Returns_ContentDTO()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         var expected = new ContentDto { Id = 1 };
-        service.Setup(m => m.GetContent(1)).ReturnsAsync(expected);
+        _service.Setup(m => m.GetContent(1)).ReturnsAsync(expected);
 
         // Act
-        var actual = ((await controller.GetContent(1)).Result as OkObjectResult)!.Value;
+        var actual = ((await _controller.GetContent(1)).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -36,14 +45,10 @@ public class ContentControllerTest
     public async Task GetContent_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        service.Setup(m => m.GetContent(-1)).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.GetContent(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = (await controller.GetContent(-1)).Result;
+        var response = (await _controller.GetContent(-1)).Result;
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -53,15 +58,11 @@ public class ContentControllerTest
     public async Task GetAllContent_Returns_Collection_Of_Contents()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         var expected = Array.Empty<ContentDto>();
-        service.Setup(m => m.GetContent()).ReturnsAsync(expected);
+        _service.Setup(m => m.GetContent()).ReturnsAsync(expected);
 
         // Act
-        var actual = ((await controller.GetAllContent()).Result as OkObjectResult)!.Value;
+        var actual = ((await _controller.GetAllContent()).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -71,16 +72,12 @@ public class ContentControllerTest
     public async Task CreateContent_Returns_CreatedAtRoute()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         var toCreate = new ContentCreateDto { Title = "Title" };
         var expected = new ContentDto { Title = "Title", Id = 1 };
-        service.Setup(m => m.AddContent(toCreate)).ReturnsAsync(expected);
+        _service.Setup(m => m.AddContent(toCreate)).ReturnsAsync(expected);
 
         // Act
-        var actual = (await controller.CreateContent(toCreate) as CreatedAtActionResult)!;
+        var actual = (await _controller.CreateContent(toCreate) as CreatedAtActionResult)!;
 
         // Assert
         Assert.Equal(expected, actual.Value);
@@ -91,13 +88,8 @@ public class ContentControllerTest
     [Fact]
     public async Task UpdateContent_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.UpdateContent(1, new ContentUpdateDto { Title = "Title" });
+        var response = await _controller.UpdateContent(1, new ContentUpdateDto { Title = "Title" });
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -107,15 +99,11 @@ public class ContentControllerTest
     public async Task UpdateContent_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         var content = new ContentUpdateDto { Title = "Title" };
-        service.Setup(m => m.UpdateContent(-1, content)).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.UpdateContent(-1, content)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = await controller.UpdateContent(-1, content);
+        var response = await _controller.UpdateContent(-1, content);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -124,13 +112,8 @@ public class ContentControllerTest
     [Fact]
     public async Task DeleteContent_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.DeleteContent(1);
+        var response = await _controller.DeleteContent(1);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -140,14 +123,10 @@ public class ContentControllerTest
     public async Task DeleteContent_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        service.Setup(m => m.DeleteContent(-1)).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.DeleteContent(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = await controller.DeleteContent(-1);
+        var response = await _controller.DeleteContent(-1);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -156,13 +135,8 @@ public class ContentControllerTest
     [Fact]
     public async Task UpvoteContent_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.UpvoteContent(1);
+        var response = await _controller.UpvoteContent(1);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -172,14 +146,10 @@ public class ContentControllerTest
     public async Task UpvoteContent_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        service.Setup(m => m.IncreaseContentRating(-1)).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.IncreaseContentRating(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = await controller.UpvoteContent(-1);
+        var response = await _controller.UpvoteContent(-1);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
@@ -188,13 +158,8 @@ public class ContentControllerTest
     [Fact]
     public async Task DownvoteContent_Given_Valid_ID_Returns_NoContent()
     {
-        // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
         // Act
-        var response = await controller.DownvoteContent(1);
+        var response = await _controller.DownvoteContent(1);
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -204,14 +169,10 @@ public class ContentControllerTest
     public async Task DownvoteContent_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var logger = new Mock<ILogger<ContentController>>();
-        var service = new Mock<IContentService>();
-        var controller = new ContentController(logger.Object, service.Object);
-
-        service.Setup(m => m.DecreaseContentRating(-1)).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.DecreaseContentRating(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = await controller.DownvoteContent(-1);
+        var response = await _controller.DownvoteContent(-1);
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
