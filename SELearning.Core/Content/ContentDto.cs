@@ -1,7 +1,6 @@
 namespace SELearning.Core.Content;
 public record ContentDto
 {
-
     public int? Id { get; set; }
     public Section? Section { get; set; }
     public string? Author { get; set; }
@@ -23,8 +22,8 @@ public record ContentUserDto
 
 public record ContentCreateDto
 {
-    [StringLength(50)]
-    public Section? Section { get; init; }
+    [Required]
+    public int SectionId { get; init; }
 
     [StringLength(50)]
     public string? Author { get; init; }

@@ -64,7 +64,6 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
-        var contentList = new List<Content>();
         var section = new SectionCreateDto { Title = "title", Description = "description" };
 
         var created = (await _repository.AddSection(section)).Item2;
@@ -77,7 +76,6 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task CreateSectionAsync_given_Section_returns_Section_with_Section()
     {
-        var contentList = new List<Content>();
         var section = new SectionCreateDto { Title = "title", Description = "description" };
 
         var (status, created) = await _repository.AddSection(section);
@@ -102,7 +100,6 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_id_returns_NotFound()
     {
-        var contentList = new List<Content>();
         var section = new SectionUpdateDto
         {
             Title = "title",
@@ -127,7 +124,6 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_updates_existing_section()
     {
-        var contentList = new List<Content>();
         var section = new SectionUpdateDto
         {
             Title = "title",
@@ -142,7 +138,6 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_Content_returns_NotFound()
     {
-        var contentList = new List<Content>();
         var section = new SectionUpdateDto
         {
             Title = "title",
@@ -218,10 +213,9 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task CreateContentAsync_creates_new_content_with_generated_id()
     {
-
         var content = new ContentCreateDto
         {
-            Section = _section,
+            SectionId = _section.Id,
             Author = "author",
             Title = "title",
             Description = "description",
@@ -245,7 +239,7 @@ public class ContentRepositoryTests : IDisposable
     {
         var content = new ContentCreateDto
         {
-            Section = _section,
+            SectionId = _section.Id,
             Author = "author",
             Title = "title",
             Description = "description",
@@ -283,7 +277,7 @@ public class ContentRepositoryTests : IDisposable
     {
         var content = new ContentUpdateDto
         {
-            Section = _section,
+            SectionId = _section.Id,
             Author = "author",
             Title = "title",
             Description = "description",
@@ -328,7 +322,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateContentAsync_updates_existing_content()
     {
-        var content = new ContentUpdateDto { Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
+        var content = new ContentUpdateDto { SectionId = _section.Id, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var updated = await _repository.UpdateContent(1, content);
 
@@ -338,7 +332,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateContentAsync_given_non_existing_Content_returns_NotFound()
     {
-        var content = new ContentUpdateDto { Section = _section, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
+        var content = new ContentUpdateDto { SectionId = _section.Id, Author = "author", Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var response = await _repository.UpdateContent(42, content);
 
@@ -349,7 +343,7 @@ public class ContentRepositoryTests : IDisposable
     [Fact]
     public async Task UpdateContentAsync_updates_and_returns_Updated()
     {
-        var contentDto = new ContentUpdateDto { Section = _section, Author = "author", Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var contentDto = new ContentUpdateDto { SectionId = _section.Id, Author = "author", Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
         var response = await _repository.UpdateContent(1, contentDto);
 

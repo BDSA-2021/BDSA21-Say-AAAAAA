@@ -11,9 +11,11 @@ public class ContentRepository : IContentRepository
 
     public async Task<(OperationResult, ContentDto)> AddContent(ContentCreateDto content)
     {
+        var section = (from s in _context.Section where s.Id == content.SectionId select s).FirstOrDefault();
+
         var entity = new Content
         {
-            Section = content.Section,
+            Section = section,
             Author = content.Author,
             Title = content.Title,
             Description = content.Description,
@@ -48,9 +50,11 @@ public class ContentRepository : IContentRepository
             return OperationResult.NotFound;
         }
 
+        var section = (from s in _context.Section where s.Id == content.SectionId select s).FirstOrDefault();
+
         entity.Title = content.Title;
         entity.Description = content.Description;
-        entity.Section = content.Section;
+        entity.Section = section;
         entity.Rating = content.Rating;
 
         await _context.SaveChangesAsync();

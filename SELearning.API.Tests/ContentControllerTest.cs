@@ -75,12 +75,12 @@ public class ContentControllerTest
         var service = new Mock<IContentService>();
         var controller = new ContentController(logger.Object, service.Object);
 
-        var toCreate = new ContentCreateDto { Title = "Title" };
+        var userDTO = new ContentUserDto { Title = "Title", SectionId = "1" };
         var expected = new ContentDto { Title = "Title", Id = 1 };
-        service.Setup(m => m.AddContent(toCreate)).ReturnsAsync(expected);
+        service.Setup(m => m.AddContent(It.IsNotNull<ContentCreateDto>())).ReturnsAsync(expected);
 
         // Act
-        var actual = (await controller.CreateContent(toCreate) as CreatedAtActionResult)!;
+        var actual = (await controller.CreateContent(userDTO) as CreatedAtActionResult)!;
 
         // Assert
         Assert.Equal(expected, actual.Value);

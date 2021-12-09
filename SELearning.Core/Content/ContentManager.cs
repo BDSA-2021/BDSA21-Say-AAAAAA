@@ -34,7 +34,7 @@ public class ContentManager : IContentService
             Description = content.Value.Description,
             Author = content.Value.Author,
             Rating = content.Value.Rating - 1,
-            Section = content.Value.Section,
+            SectionId = content.Value.Section!.Id,
             VideoLink = content.Value.VideoLink
         };
 
@@ -104,7 +104,7 @@ public class ContentManager : IContentService
             Description = content.Value.Description,
             Author = content.Value.Author,
             Rating = content.Value.Rating + 1,
-            Section = content.Value.Section,
+            SectionId = content.Value.Section!.Id,
             VideoLink = content.Value.VideoLink
         };
 

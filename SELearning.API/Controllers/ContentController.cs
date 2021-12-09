@@ -61,9 +61,19 @@ public class ContentController : ControllerBase
     /// <returns>A response type 201: Created</returns>
     [HttpPost]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> CreateContent(ContentCreateDto content)
+    public async Task<IActionResult> CreateContent(ContentUserDto content)
     {
-        var createdContent = await _service.AddContent(content);
+        var contentCreateDTO = new ContentCreateDto
+        {
+            Author = null, // TODO: Change HTTP client
+            Title = content.Title,
+            Description = content.Description,
+            VideoLink = content.VideoLink,
+            SectionId = int.Parse(content.SectionId!),
+            Rating = 0
+        };
+
+        var createdContent = await _service.AddContent(contentCreateDTO);
         return CreatedAtAction(nameof(GetContent), new { ID = createdContent.Id }, createdContent);
     }
 

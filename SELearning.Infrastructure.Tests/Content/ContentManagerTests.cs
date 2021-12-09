@@ -107,7 +107,7 @@ public class ContentManagerTests : IDisposable
     {
         var content = new ContentCreateDto
         {
-            Section = _section,
+            SectionId = _section.Id,
             Author = "author",
             Title = "title",
             Description = "description",
@@ -192,7 +192,6 @@ public class ContentManagerTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_updates_existing_section()
     {
-        var contentList = new List<Content>();
         var updateSection = new SectionUpdateDto
         {
             Title = "new title",
