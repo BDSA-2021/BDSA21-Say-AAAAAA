@@ -21,9 +21,8 @@ public class SectionControllerTest
     public SectionControllerTest()
     {
         var logger = new Mock<ILogger<SectionController>>();
-        var auth = new Mock<IAuthorizationService>();
         _service = new Mock<IContentService>();
-        _controller = new SectionController(logger.Object, _service.Object, auth.Object);
+        _controller = new SectionController(logger.Object, _service.Object);
     }
 
     [Fact]

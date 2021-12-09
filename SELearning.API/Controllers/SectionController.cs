@@ -13,13 +13,11 @@ public class SectionController : ControllerBase
 {
     private readonly ILogger<SectionController> _logger;
     private readonly IContentService _service;
-    private readonly IAuthorizationService _authService;
 
-    public SectionController(ILogger<SectionController> logger, IContentService service, IAuthorizationService authService)
+    public SectionController(ILogger<SectionController> logger, IContentService service)
     {
         _logger = logger;
         _service = service;
-        _authService = authService;
     }
 
     /// <summary>
