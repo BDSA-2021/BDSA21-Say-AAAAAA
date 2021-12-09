@@ -42,7 +42,7 @@ public record ContentCreateDto
 {
     [Required]
     public int SectionId { get; init; }
-    
+
     [StringLength(50)]
     public string Title { get; init; }
 
