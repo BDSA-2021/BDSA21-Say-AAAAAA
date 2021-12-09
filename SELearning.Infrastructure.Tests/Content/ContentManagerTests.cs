@@ -84,7 +84,7 @@ public class ContentManagerTests : IDisposable
         Assert.Null(entity);
     }
 
-    
+
 
     [Fact]
     public async Task CreateContentAsync_creates_new_content_with_generated_id()

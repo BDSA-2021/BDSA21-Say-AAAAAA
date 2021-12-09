@@ -12,7 +12,7 @@ public class SectionRepositoryTests : IDisposable
     private readonly SectionRepository _repository;
     private static Section _section = new Section { Id = 1, Title = "python", Description = "description" };
 
-    private static User _user = new User{ Id = "ABC", Name = "Adrian"};
+    private static User _user = new User { Id = "ABC", Name = "Adrian" };
     private bool disposedValue;
 
     public SectionRepositoryTests()

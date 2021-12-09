@@ -28,7 +28,7 @@ public class SectionManagerTests : IDisposable
         context.Database.EnsureCreated();
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };
-        _user = new User{ Id = "ABC", Name = "Adrian"};
+        _user = new User { Id = "ABC", Name = "Adrian" };
 
         var content1 = new Content("title", "description", "VideoLink", 3, _user, _section);
         var content2 = new Content("title", "description", "VideoLink", 3, _user, _section);

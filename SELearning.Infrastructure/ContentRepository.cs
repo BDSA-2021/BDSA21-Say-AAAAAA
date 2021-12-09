@@ -111,7 +111,7 @@ public class ContentRepository : IContentRepository
 
         return OperationResult.Deleted;
     }
-    
+
     public async Task<IEnumerable<ContentDto>> GetContentByAuthor(string userId)
     {
         var content = _context.Content

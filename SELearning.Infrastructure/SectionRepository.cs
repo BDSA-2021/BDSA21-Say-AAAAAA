@@ -11,9 +11,9 @@ public class SectionRepository : ISectionRepository
         _context = context;
     }
 
-    
 
-    
+
+
     public async Task<(OperationResult, SectionDto)> AddSection(SectionCreateDto section)
     {
         var entity = new Section
