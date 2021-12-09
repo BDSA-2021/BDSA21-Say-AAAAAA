@@ -1,4 +1,3 @@
-using SELearning.Core.Content;
 using System;
 using System.Threading.Tasks;
 using SELearning.Core.User;
@@ -85,20 +84,7 @@ public class ContentManagerTests : IDisposable
         Assert.Null(entity);
     }
 
-    [Fact]
-    public async Task CreateSectionAsync_creates_new_content_with_generated_id()
-    {
-        var contentList = new List<Content>();
-        var section = new SectionCreateDto { Title = "title", Description = "description" };
-
-        await _manager.AddSection(section);
-
-        var option = await _repository.GetSection(2);
-
-        Assert.NotNull(option.Value.Id);
-        Assert.Equal("title", option.Value.Title);
-        Assert.Equal("description", option.Value.Description);
-    }
+    
 
     [Fact]
     public async Task CreateContentAsync_creates_new_content_with_generated_id()
@@ -137,26 +123,6 @@ public class ContentManagerTests : IDisposable
         Assert.Equal("description", content.Description);
         Assert.Equal("link", content.VideoLink);
         Assert.Equal(3, content.Rating);
-    }
-
-    [Fact]
-    public async Task ReadSectionAsync_returns_all_Sections()
-    {
-        var allSections = await _manager.GetSections();
-
-        Assert.Collection(allSections,
-            section => Assert.Equal(section.Id, _section.Id)
-        );
-    }
-
-    [Fact]
-    public async Task GetSection_by_id_returns_section()
-    {
-        var section = await _manager.GetSection(1);
-
-        Assert.Equal(1, section.Id);
-        Assert.Equal("python", section.Title);
-        Assert.Equal("description", section.Description);
     }
 
     [Fact]

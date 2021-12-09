@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
 using SELearning.Core.User;
 using SELearning.Infrastructure.Credibility;
+using SELearning.Infrastructure.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration

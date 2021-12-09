@@ -4,6 +4,7 @@ using Microsoft.Identity.Web.Resource;
 using SELearning.Core.User;
 using SELearning.Core.Permission;
 using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
+using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.API.Controllers;
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.Permission;
+using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.API.Controllers;
 
