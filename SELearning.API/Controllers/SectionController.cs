@@ -106,13 +106,13 @@ public class SectionController : ControllerBase
 
             var authResult = await _authService.AuthorizeAsync(User, sectionToBeUpdated, "PermissionEditOwnContent OR PermissionEditAnyContent");
 
-            if(authResult.Succeeded)
+            if (authResult.Succeeded)
             {
                 await _service.UpdateSection(ID, section);
                 return NoContent();
             }
             else
-                return Forbid($"User is not allowed to update comment with {ID}");
+                return Forbid($"User is not allowed to update section with {ID}");
         }
         catch (SectionNotFoundException)
         {
@@ -137,13 +137,13 @@ public class SectionController : ControllerBase
 
             var authResult = await _authService.AuthorizeAsync(User, result, "PermissionDeleteOwnContent OR PermissionDeleteAnyContent");
 
-            if(authResult.Succeeded) 
+            if (authResult.Succeeded)
             {
                 await _service.DeleteSection(ID);
                 return NoContent();
             }
             else
-                return Forbid($"User is not allowed to delete comment with {ID}");
+                return Forbid($"User is not allowed to delete section with {ID}");
         }
         catch (SectionNotFoundException)
         {
