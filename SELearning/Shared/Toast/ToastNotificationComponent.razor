@@ -1,13 +1,15 @@
+@using System.Timers;
+
+@implements IDisposable;
 @inject IJSRuntime JsRuntime
 
-<div id="@id" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autoHide="false">
-    <div class="toast-header">
-        <img src="..." class="rounded mr-2" alt="...">
-        <strong class="mr-auto"></strong>
-        <small class="text-muted">@Notification.Title</small>
+<div id="@_id" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autoHide="false">
+    <div class="toast-header @TypeToClass()">
+        <strong class="mr-auto text-white">@Notification.Title</strong>
+        <small class="text-white">@_time</small>
         <button type="button" class="ml-2 mb-1 close" aria-label="Close"
             @onclick="Notification.Dismiss">
-            <span aria-hidden="true">&times;</span>
+            <span class="text-white" aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="toast-body">
@@ -19,11 +21,87 @@
     [Parameter]
     public ToastNotification Notification { get; set; }
 
-    private string id = $"i{Guid.NewGuid().ToString()}";
+    private string _id = $"i{Guid.NewGuid().ToString()}";
+
+    private string _time { get; set; }
+
+    private Timer _loopTimer;
 
     protected override async void OnInitialized()
     {
         await JsRuntime.InvokeVoidAsync("interopFunctions.initToast", $".toast");
         await JsRuntime.InvokeVoidAsync("interopFunctions.showToast", $".toast");
+        RunGetTimeOnLoop();
+    }
+
+    protected string TypeToClass() {
+        switch (Notification.Type)
+        {
+            case ToastType.Info: return "bg-info";
+            case ToastType.Success: return "bg-success";
+            case ToastType.Warning: return "bg-warning";
+            case ToastType.Error: return "bg-danger";
+            default: return "";
+        }
+    }
+
+    protected void RunGetTimeOnLoop() {
+        _loopTimer = new Timer();
+        _loopTimer.Interval = 5000;
+        _loopTimer.AutoReset = true;
+        _loopTimer.Elapsed += (object sender, ElapsedEventArgs e) => {
+            _time = GetRelativeTime();
+            StateHasChanged();
+        };
+        _loopTimer.Start();
+    }
+
+    protected string GetRelativeTime() {
+        // I'll be honest. I ripped this code fromhttps://stackoverflow.com/questions/11/calculate-relative-time-in-c-sharp
+        // It's neither pretty or good, but it works for this. 
+        const int SECOND = 1;
+        const int MINUTE = 60 * SECOND;
+        const int HOUR = 60 * MINUTE;
+        const int DAY = 24 * HOUR;
+        const int MONTH = 30 * DAY;
+        
+        var ts = new TimeSpan(DateTime.Now.Ticks - Notification.Created.Ticks);
+        double delta = Math.Abs(ts.TotalSeconds);
+        
+        if (delta < 1 * MINUTE)
+            return ts.Seconds == 1 ? "one second ago" : ts.Seconds + " seconds ago";
+        
+        if (delta < 2 * MINUTE)
+            return "a minute ago";
+        
+        if (delta < 45 * MINUTE)
+            return ts.Minutes + " minutes ago";
+        
+        if (delta < 90 * MINUTE)
+            return "an hour ago";
+        
+        if (delta < 24 * HOUR)
+            return ts.Hours + " hours ago";
+        
+        if (delta < 48 * HOUR)
+            return "yesterday";
+        
+        if (delta < 30 * DAY)
+            return ts.Days + " days ago";
+        
+        if (delta < 12 * MONTH)
+        {
+            int months = Convert.ToInt32(Math.Floor((double)ts.Days / 30));
+            return months <= 1 ? "one month ago" : months + " months ago";
+        }
+        else
+        {
+            int years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
+            return years <= 1 ? "one year ago" : years + " years ago";
+        }
+    }
+
+    void IDisposable.Dispose() {
+        _loopTimer.Dispose();
     }
 }
