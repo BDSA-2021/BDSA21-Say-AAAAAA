@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SELearning.Infrastructure;
 
@@ -11,9 +12,10 @@ using SELearning.Infrastructure;
 namespace SELearning.Infrastructure.Migrations
 {
     [DbContext(typeof(SELearningContext))]
-    partial class SELearningContextModelSnapshot : ModelSnapshot
+    [Migration("20211209152625_AddUserToComment")]
+    partial class AddUserToComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +35,7 @@ namespace SELearning.Infrastructure.Migrations
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ContentId")
+                    b.Property<int>("ContentId")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -137,7 +139,9 @@ namespace SELearning.Infrastructure.Migrations
 
                     b.HasOne("SELearning.Core.Content.Content", "Content")
                         .WithMany()
-                        .HasForeignKey("ContentId");
+                        .HasForeignKey("ContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
 

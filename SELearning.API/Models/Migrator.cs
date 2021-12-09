@@ -9,7 +9,7 @@ public static class Migrator
 
     private static readonly string[] ContentVideos = new[]
     {
-        "youtube.com/watch?v=iokVvwcut5o", "youtube.com/watch?v=pNdigOmKpv8", "youtube.com/watch?v=St6NEhm-xps", "youtube.com/watch?v=jImdY7O2UdY", "youtube.com/watch?v=2FVfmlnrDW4"
+        "https://youtube.com/embed/iokVvwcut5o", "https://youtube.com/embed/pNdigOmKpv8", "https://youtube.com/embed/St6NEhm-xps", "https://youtube.com/embed/jImdY7O2UdY", "https://youtube.com/embed/2FVfmlnrDW4"
     };
 
     public static IHost Migrate(this IHost host)
@@ -102,12 +102,16 @@ public static class Migrator
         
         foreach (Content c in content) {
             for (int i = 0; i < 5; i++) {
-                comments.Add(new Comment {
-                    Author = ContentTitles[rng.Next(0, 4)],
-                    Text = ContentTitles[rng.Next(0, 4)],
-                    Rating = rng.Next(0, 5000),
-                    Content = c
-                });
+                comments.Add(new Comment(
+                    ContentTitles[rng.Next(0, 4)],
+                    null,
+                    rng.Next(0, 5000), 
+                    c,
+                    new Core.User.User {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = ContentTitles[rng.Next(0, 4)]
+                    }
+                ));
             }
         }
 

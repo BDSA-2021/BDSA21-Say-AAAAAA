@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SELearning.Infrastructure;
 
@@ -11,9 +12,10 @@ using SELearning.Infrastructure;
 namespace SELearning.Infrastructure.Migrations
 {
     [DbContext(typeof(SELearningContext))]
-    partial class SELearningContextModelSnapshot : ModelSnapshot
+    [Migration("20211209180804_RestructureComment")]
+    partial class RestructureComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,6 +42,7 @@ namespace SELearning.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")

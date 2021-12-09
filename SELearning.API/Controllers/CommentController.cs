@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using SELearning.Core.User;
 
 namespace SELearning.API.Controllers;
 
@@ -12,11 +13,13 @@ public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;
     private readonly ICommentService _service;
+    private readonly IUserRepository _userRepository;
 
-    public CommentController(ILogger<CommentController> logger, ICommentService service)
+    public CommentController(ILogger<CommentController> logger, ICommentService service, IUserRepository userRepository)
     {
         _logger = logger;
         _service = service;
+        _userRepository = userRepository;
     }
 
     /// <summary>
@@ -69,11 +72,20 @@ public class CommentController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> CreateComment(CommentCreateDTO comment)
+    public async Task<IActionResult> CreateComment(CommentUserDTO comment)
     {
+        var user = await _userRepository.GetOrAddUser(new UserDTO(
+            User.GetUserId(),
+            User.FindFirstValue(ClaimTypes.GivenName)
+        ));
+
         try
         {
-            var createdComment = await _service.PostComment(comment);
+            var createdComment = await _service.PostComment(new CommentCreateDTO(
+                user,
+                comment.Text,
+                comment.ContentId
+            ));
             return CreatedAtAction(nameof(GetComment), new { ID = createdComment.Id }, createdComment);
         }
         catch (ContentNotFoundException)

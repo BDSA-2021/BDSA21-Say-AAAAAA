@@ -1,4 +1,5 @@
 global using Microsoft.Identity.Web;
+global using System.Security.Claims;
 global using Microsoft.EntityFrameworkCore;
 
 global using SELearning.Core;
