@@ -234,7 +234,7 @@ public class ContentRepositoryTests
     }
 
     [Fact]
-    public async Task CreateContentAsync_given_Content_returns_Created_with_Content()
+    public async Task CreateContentAsync_GivenContent_ReturnsCreated()
     {
         var content = new ContentCreateDto
         {
@@ -309,16 +309,16 @@ public class ContentRepositoryTests
     public async Task ReadContentAsync_returns_all_content()
     {
         var allContent = await _repository.GetContent();
-        var contentDto1 = new ContentDto { Id = 1, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
-        var contentDto2 = new ContentDto { Id = 2, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
-        var contentDto3 = new ContentDto { Id = 3, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
-        var contentDto4 = new ContentDto { Id = 4, Section = _section, Author = _authorUser, Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 0 };
 
-        Assert.Collection(allContent,
-            content => Assert.Equal(contentDto1, content),
-            content => Assert.Equal(contentDto2, content),
-            content => Assert.Equal(contentDto3, content),
-            content => Assert.Equal(contentDto4, content)
+        Assert.All(allContent,
+            content =>
+            {
+                Assert.Equal("author", content.Author.Id);
+                Assert.Equal("title", content.Title);
+                Assert.Equal("description", content.Description);
+                Assert.Equal("VideoLink", content.VideoLink);
+                Assert.Equal(3, content.Rating);
+            }
         );
     }
 
