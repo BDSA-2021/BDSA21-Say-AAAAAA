@@ -16,7 +16,10 @@ public class CredibilityAuthorizationHandlerTests
         var permissionService = new Mock<ICredibilityService>();
         permissionService.Setup(m => m.GetCredibilityScore(user)).ReturnsAsync(score);
 
-        var authHandler = new CredibilityAuthorizationHandler(permissionService.Object);
+        var provider = new Mock<IProvider<ICredibilityService>>();
+        provider.Setup(x => x.Get()).Returns(permissionService.Object);
+
+        var authHandler = new CredibilityAuthorizationHandler(provider.Object);
         authHandler.HandleAsync(authContext).Wait();
 
         return authContext;
