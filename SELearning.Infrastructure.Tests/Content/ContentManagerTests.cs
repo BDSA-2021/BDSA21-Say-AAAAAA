@@ -91,7 +91,7 @@ public class ContentManagerTests : IDisposable
     {
         var content = new ContentCreateDto
         {
-            Section = _section,
+            SectionId = _section.Id,
             Author = _user,
             Title = "title",
             Description = "description",

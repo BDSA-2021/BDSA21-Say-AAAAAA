@@ -13,13 +13,15 @@ public class ContentRepository : IContentRepository
 
     public async Task<(OperationResult, ContentDto)> AddContent(ContentCreateDto content)
     {
+        var section = await _context.Section.FindAsync(content.SectionId);
+
         var entity = new Content(
             content.Title,
             content.Description,
             content.VideoLink,
             null,
             content.Author,
-            content.Section
+            section
         );
 
         _context.Content.Add(entity);

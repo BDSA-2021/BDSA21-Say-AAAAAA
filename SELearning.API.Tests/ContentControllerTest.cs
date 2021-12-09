@@ -90,7 +90,7 @@ public class ContentControllerTest
     public async Task CreateContent_Returns_CreatedAtRoute()
     {
         // Arrange
-        var toCreate = new ContentUserDTO { };
+        var toCreate = new ContentUserDTO { Title = "Title", SectionId = "1" };
 
         // Act
         var actual = (await _controller.CreateContent(toCreate) as CreatedAtActionResult)!;

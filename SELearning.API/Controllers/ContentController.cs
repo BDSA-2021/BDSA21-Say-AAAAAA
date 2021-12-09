@@ -85,7 +85,7 @@ public class ContentController : ControllerBase
             Title = content.Title,
             Description = content.Description,
             VideoLink = content.VideoLink,
-            Section = null, // Im sorry
+            SectionId = int.Parse(content.SectionId!),
             Author = user,
         };
 
@@ -120,7 +120,7 @@ public class ContentController : ControllerBase
                 return NoContent();
             }
             else
-                return Forbid($"User is not allowed to update content with id {ID}");
+                return Forbid();
         }
         catch (ContentNotFoundException)
         {
@@ -154,7 +154,7 @@ public class ContentController : ControllerBase
                 return NoContent();
             }
             else
-                return Forbid($"User is not allowed to delete content with id {ID}");
+                return Forbid();
         }
         catch (ContentNotFoundException)
         {

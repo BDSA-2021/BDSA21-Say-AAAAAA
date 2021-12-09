@@ -55,13 +55,12 @@ public class ContentRepositoryTests
     [Fact]
     public async Task CreateContentAsync_creates_new_content_with_generated_id()
     {
-
         var content = new ContentCreateDto
         {
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Section = _section,
+            SectionId = _section.Id,
             Author = _authorUser
         };
 
@@ -84,7 +83,7 @@ public class ContentRepositoryTests
             Title = "title",
             Description = "description",
             VideoLink = "video link",
-            Section = _section,
+            SectionId = _section.Id,
             Author = new User
             {
                 Id = "Author",

@@ -33,7 +33,7 @@ else
 }
 
 
-builder.Services.AddDbContext<SELearningContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<SELearningContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 builder.Services.AddScoped<ISELearningContext, SELearningContext>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();

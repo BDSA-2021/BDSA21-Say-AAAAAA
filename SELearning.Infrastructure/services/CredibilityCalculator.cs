@@ -18,10 +18,9 @@ public class CredibilityCalculator : ICredibilityService
         if (userIdClaim == null)
             throw new NullReferenceException("User id claim not found!");
 
-        var commentCredibilityScore = _credibilityRepository.GetCommentCredibilityScore(userIdClaim.Value);
-        var contentCredibilityScore = _credibilityRepository.GetContentCredibilityScore(userIdClaim.Value);
-        var scores = new[] { commentCredibilityScore, contentCredibilityScore };
+        var commentCredibilityScore = await _credibilityRepository.GetCommentCredibilityScore(userIdClaim.Value);
+        var contentCredibilityScore = await _credibilityRepository.GetContentCredibilityScore(userIdClaim.Value);
 
-        return (await Task.WhenAll(scores)).Sum();
+        return commentCredibilityScore + contentCredibilityScore;
     }
 }

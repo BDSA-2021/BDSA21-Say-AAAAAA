@@ -13,7 +13,7 @@ public class Provider<T> : IProvider<T>
 
     public T Get()
     {
-        using var scope = _serviceFactory.CreateScope();
+        var scope = _serviceFactory.CreateScope();
 
         T? service = scope.ServiceProvider.GetService<T>();
 
