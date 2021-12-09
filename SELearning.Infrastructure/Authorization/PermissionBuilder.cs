@@ -26,6 +26,6 @@ public class PermissionBuilder
     /// </summary>
     public void Build()
     {
-        Services.TryAddSingleton<IPermissionCredibilityService, PermissionCredibilityService>(); // TODO: Add default service
+        Services.TryAddSingleton<IPermissionCredibilityService, PermissionCredibilityService>();
     }
 }
