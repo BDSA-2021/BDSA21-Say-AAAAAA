@@ -1,4 +1,5 @@
-namespace SELearning.Core.Content;
+namespace SELearning.Core.Section;
+
 public record SectionDto
 {
     public int? Id { get; set; }

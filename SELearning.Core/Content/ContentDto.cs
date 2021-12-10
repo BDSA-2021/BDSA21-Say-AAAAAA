@@ -25,7 +25,7 @@ public record ContentDto : IAuthored
 
     public User.User Author { get; set; }
 
-    public Section Section { get; set; }
+    public Section.Section Section { get; set; }
 }
 
 public record ContentUserDto
@@ -54,7 +54,6 @@ public record ContentCreateDto
 
     [StringLength(50)]
     public User.User Author { get; init; }
-
 
 }
 
