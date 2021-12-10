@@ -12,6 +12,7 @@ public class SectionManagerTests : IDisposable
     private readonly SectionRepository _repository;
     private readonly SectionManager _manager;
     private readonly Section _section;
+    private readonly Section _sectionEmpty;
 
     private readonly User _user;
     private bool disposedValue;
@@ -28,6 +29,7 @@ public class SectionManagerTests : IDisposable
         context.Database.EnsureCreated();
 
         _section = new Section { Id = 1, Title = "python", Description = "description" };
+        _sectionEmpty = new Section { Id = 2, Title = "python", Description = "description" };
         _user = new User { Id = "ABC", Name = "Adrian" };
 
         var content1 = new Content("title", "description", "VideoLink", 3, _user, _section);
@@ -53,7 +55,8 @@ public class SectionManagerTests : IDisposable
         );
 
         context.Section.AddRange(
-            _section
+            _section,
+            _sectionEmpty
         );
 
         context.SaveChanges();
@@ -111,9 +114,9 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task DeleteSectionAsync_deletes_and_returns_Deleted()
     {
-        var response = await _repository.DeleteSection(1);
+        var response = await _repository.DeleteSection(2);
 
-        var entity = await _context.Section.FindAsync(1);
+        var entity = await _context.Section.FindAsync(2);
 
         Assert.Equal(OperationResult.Deleted, response);
         Assert.Null(entity);
@@ -163,7 +166,7 @@ public class SectionManagerTests : IDisposable
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDto { Id = 2, Title = "title", Description = "description" };
+        var sectionDto = new SectionDto { Id = 3, Title = "title", Description = "description" };
 
         Assert.Equal(sectionDto.Id, created.Id);
         Assert.Equal(sectionDto.Title, created.Title);
@@ -174,9 +177,9 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task DeleteSection_do_not_throw_error_and_deletes_section()
     {
-        await _manager.DeleteSection(1);
+        await _manager.DeleteSection(2);
 
-        var entity = await _context.Section.FindAsync(1);
+        var entity = await _context.Section.FindAsync(2);
 
         Assert.Null(entity);
     }
@@ -202,7 +205,8 @@ public class SectionManagerTests : IDisposable
         var allSections = await _repository.GetSections();
 
         Assert.Collection(allSections,
-            section => Assert.Equal(section.Id, _section.Id)
+            section => Assert.Equal(section.Id, 1),
+            section => Assert.Equal(section.Id, 2)
         );
     }
 
