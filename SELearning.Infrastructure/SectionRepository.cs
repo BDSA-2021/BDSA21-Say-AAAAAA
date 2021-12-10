@@ -87,7 +87,8 @@ public class SectionRepository : ISectionRepository
         return (await content.ToListAsync()).AsReadOnly();
     }
 
-    private static SectionDto ConvertToSectionDTO(Section s) {
+    private static SectionDto ConvertToSectionDTO(Section s)
+    {
         return new SectionDto
         {
             Id = s.Id,
