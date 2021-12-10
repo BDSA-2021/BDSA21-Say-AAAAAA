@@ -54,6 +54,11 @@ public class SectionRepository : ISectionRepository
             return OperationResult.NotFound;
         }
 
+        if (entity.Content != null)
+        {
+            return OperationResult.Conflict;
+        }
+
         _context.Section.Remove(entity);
         await _context.SaveChangesAsync();
 
