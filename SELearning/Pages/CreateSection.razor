@@ -1,11 +1,12 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
-@using System.ComponentModel.DataAnnotations
+@using System.Net
 
 @page "/CreateSection"
 
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
+@inject ToastService toasts;
 
 <h1>Create Section</h1>
 
@@ -60,14 +61,14 @@
     try
     {
       var response = await Http.PostAsJsonAsync<SectionCreateDto>("Section", sectionDto);
-        
-      if(response.IsSuccessStatusCode)
+
+      isPosted = response.IsSuccessStatusCode;
+      isNotPosted = !isPosted;
+
+      if (response.StatusCode == HttpStatusCode.Forbidden)
       {
-        isPosted = true;
-      }
-      else
-      {
-        isNotPosted = true;
+        toasts.AddToast(ToastNotification.CreateUnauthorized("create sections"));
+        return;
       }
     } 
     catch(AccessTokenNotAvailableException exception)

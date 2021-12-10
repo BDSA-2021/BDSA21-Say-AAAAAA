@@ -65,4 +65,7 @@ public partial class ToastNotification : IDisposable
 
     public static ToastNotification CreateGenericErrorToastNotification(string message) =>
         new("Fatal error!", $"An error occurred: {message}", ToastType.Error, 10_000);
+
+    public static ToastNotification CreateUnauthorized(string message) =>
+        new("Unauthorized!", $"You are not authorized to {message}", ToastType.Error, 10_000);
 }
