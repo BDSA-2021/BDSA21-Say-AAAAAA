@@ -102,7 +102,6 @@ public class ContentManagerTests : IDisposable
 
         var contentWithID = (await _repository.GetContent(5)).Value;
 
-        Assert.NotNull(contentWithID.Id);
         Assert.Equal(_section, contentWithID.Section);
         Assert.Equal(_user, contentWithID.Author);
         Assert.Equal("title", contentWithID.Title);

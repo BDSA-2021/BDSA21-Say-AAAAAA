@@ -10,7 +10,6 @@ public class ContentRepositoryTests
     private readonly SELearningContext _context;
     private readonly ContentRepository _repository;
     private readonly Section _section;
-    private bool disposedValue;
     private static readonly User _authorUser = new User
     {
         Id = "author",
@@ -66,7 +65,6 @@ public class ContentRepositoryTests
 
         var created = (await _repository.AddContent(content)).Item2;
 
-        Assert.NotNull(created.Id);
         Assert.Equal(_section, created.Section);
         Assert.Equal("author", created.Author.Id);
         Assert.Equal("title", created.Title);

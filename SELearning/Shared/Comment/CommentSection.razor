@@ -80,9 +80,9 @@
         }
     }
 
-    private async Task OnCommentDeleted(CommentDetailsDTO comment)
+    private void OnCommentDeleted(CommentDetailsDTO comment)
     {
-        _comments.Remove(comment);
+       _comments.Remove(comment);
     }
 
     private async Task Alert(Exception exception) {
