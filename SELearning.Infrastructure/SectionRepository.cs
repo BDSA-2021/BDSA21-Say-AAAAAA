@@ -24,14 +24,7 @@ public class SectionRepository : ISectionRepository
 
         await _context.SaveChangesAsync();
 
-        var sectionDto = new SectionDto
-        {
-            Id = entity.Id,
-            Title = entity.Title,
-            Description = entity.Description
-        };
-
-        return (OperationResult.Created, sectionDto);
+        return (OperationResult.Created, ConvertToSectionDTO(entity));
     }
 
     public async Task<OperationResult> UpdateSection(int id, SectionUpdateDto section)
@@ -69,12 +62,7 @@ public class SectionRepository : ISectionRepository
 
     public async Task<IReadOnlyCollection<SectionDto>> GetSections() =>
         (await _context.Section
-                       .Select(s => new SectionDto
-                       {
-                           Id = s.Id,
-                           Title = s.Title,
-                           Description = s.Description
-                       })
+                       .Select(s => ConvertToSectionDTO(s))
                        .ToListAsync())
                        .AsReadOnly();
 
@@ -82,12 +70,7 @@ public class SectionRepository : ISectionRepository
     {
         var section = from s in _context.Section
                       where s.Id == id
-                      select new SectionDto
-                      {
-                          Id = s.Id,
-                          Title = s.Title,
-                          Description = s.Description
-                      };
+                      select ConvertToSectionDTO(s);
 
         return await section.FirstOrDefaultAsync();
     }
@@ -95,20 +78,21 @@ public class SectionRepository : ISectionRepository
     public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
     {
         var section = _context.Section.Single(s => s.Id == id);
-
-        var content = from c in _context.Content
-                      where c.Section == section
-                      select new ContentDto
-                      {
-                          Id = c.Id,
-                          Author = c.Author,
-                          Title = c.Title,
-                          Description = c.Description,
-                          Section = c.Section,
-                          VideoLink = c.VideoLink,
-                          Rating = c.Rating
-                      };
+        var content = _context.Content
+            .Include(x => x.Section)
+            .Include(x => x.Author)
+            .Where(x => x.Section == section)
+            .Select(c => ContentRepository.ConvertToContentDTO(c));
 
         return (await content.ToListAsync()).AsReadOnly();
+    }
+
+    private static SectionDto ConvertToSectionDTO(Section s) {
+        return new SectionDto
+        {
+            Id = s.Id,
+            Title = s.Title,
+            Description = s.Description,
+        };
     }
 }

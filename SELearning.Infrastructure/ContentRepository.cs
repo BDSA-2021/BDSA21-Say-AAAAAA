@@ -97,7 +97,7 @@ public class ContentRepository : IContentRepository
         return (await content.ToListAsync()).AsReadOnly();
     }
 
-    private static ContentDto ConvertToContentDTO(Content c)
+    public static ContentDto ConvertToContentDTO(Content c)
     {
         return new ContentDto
         {

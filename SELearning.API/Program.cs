@@ -38,6 +38,9 @@ builder.Services.AddScoped<ISELearningContext, SELearningContext>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<ISectionRepository, SectionRepository>();
+builder.Services.AddScoped<ISectionService, SectionManager>();
+
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<IContentService, ContentManager>();
 
