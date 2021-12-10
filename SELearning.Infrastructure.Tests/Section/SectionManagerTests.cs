@@ -205,8 +205,8 @@ public class SectionManagerTests : IDisposable
         var allSections = await _repository.GetSections();
 
         Assert.Collection(allSections,
-            section => Assert.Equal(section.Id, 1),
-            section => Assert.Equal(section.Id, 2)
+            section => Assert.Equal(1, section.Id),
+            section => Assert.Equal(2, section.Id)
         );
     }
 
