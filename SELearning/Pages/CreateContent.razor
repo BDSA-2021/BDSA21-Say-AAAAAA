@@ -2,12 +2,13 @@
 @using SELearning.Core.Content
 @using System.ComponentModel.DataAnnotations
 @using SELearning.Core.Section
+@using System.Net;
 
 @page "/CreateContent"
 
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
-@inject ToastService service;
+@inject ToastService toasts;
 
 <h1>Create Content</h1>
 <EditForm class="col-lg-12" Model="@Content" OnValidSubmit="@CreateContentAsync">
@@ -71,15 +72,21 @@
         {
             var response = await Http.PostAsJsonAsync<ContentUserDTO>("Content", Content);
             isPosted = response.IsSuccessStatusCode;
+
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("create content"));
+                return;
+            }
         } 
         catch(AccessTokenNotAvailableException exception)
         {
-            service.AddToast(ToastNotification.CreateNoAccessToastNotification());
+            toasts.AddToast(ToastNotification.CreateNoAccessToastNotification());
             exception.Redirect();
         } 
         catch(Exception exception)
         {
-            service.AddToast(ToastNotification.CreateGenericErrorToastNotification(exception.Message));
+            toasts.AddToast(ToastNotification.CreateGenericErrorToastNotification(exception.Message));
             await this.Alert(exception);
         }
     }
@@ -98,7 +105,7 @@
         }
         catch (AccessTokenNotAvailableException exception)
         {
-            service.AddToast(ToastNotification.CreateNoAccessToastNotification());
+            toasts.AddToast(ToastNotification.CreateNoAccessToastNotification());
             exception.Redirect();
         }
     }

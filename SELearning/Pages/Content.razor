@@ -3,10 +3,12 @@
 @using SELearning.Core.Content;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net
 
 @attribute [Authorize]
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
+@inject ToastService toasts;
 
 <div>
 @if (_content != null) {
@@ -20,18 +22,10 @@
             <p>@_content.Author.Name</p>
         </div>
         <div class="rating-container">
-            <div
-                role="button"
-                class="@((_rateAmount > 0 ? "active" : "") + " arrow-up")"
-                @onclick="OnUpvoteClicked"
-            ></div>
+            <div role="button" class="arrow-up" @onclick="OnUpvoteClicked"></div>
             <span class="rating">@_content.Rating</span>
             <div role="button"  ></div>
-            <div
-                role="button"
-                class="@((_rateAmount < 0 ? "active" : "") + " arrow-down")"
-                @onclick="OnDownvoteClicked"
-            ></div>
+            <div role="button" class="arrow-down" @onclick="OnDownvoteClicked"></div>
         </div>
     </section>
     <p class="description">@_content.Description</p>
@@ -47,8 +41,6 @@
     public int ContentId { get; set; }
 
     private ContentDto _content;
-
-    private int _rateAmount = 0;
 
     protected override async void OnInitialized() {
         await this.GetContent();
@@ -73,9 +65,15 @@
     protected async void OnUpvoteClicked() {
         try
         {
-            await Http.PutAsync($"Content/{this.ContentId}/upvote", null);
+            var responseMessage = await Http.PutAsync($"Content/{this.ContentId}/upvote", null);
+
+            if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("rate"));
+                return;
+            }
+
             _content.Rating += 1;
-            _rateAmount = _rateAmount > 0 ? 0 : 1;
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -90,9 +88,15 @@
     protected async void OnDownvoteClicked() {
         try
         {
-            await Http.PutAsync($"Content/{this.ContentId}/downvote", null);
+            var responseMessage = await Http.PutAsync($"Content/{this.ContentId}/downvote", null);
+
+            if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("rate"));
+                return;
+            }
+
             _content.Rating -= 1;
-            _rateAmount = _rateAmount < 0 ? 0 : -1;
         }
         catch (AccessTokenNotAvailableException exception)
         {

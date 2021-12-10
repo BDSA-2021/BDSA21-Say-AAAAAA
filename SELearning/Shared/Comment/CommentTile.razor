@@ -1,8 +1,10 @@
 @using SELearning.Core.Comment;
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net;
 
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
+@inject ToastService toasts;
 
 <div class="row col-lg-12 comment">
     <div class="col-lg-2 row comment-rating">
@@ -54,7 +56,13 @@
     {
         try
         {
-            await Http.DeleteAsync($"Comment/{Comment.Id}");
+            var responseMessage = await Http.DeleteAsync($"Comment/{Comment.Id}");
+
+            if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("delete comments"));
+                return;
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -70,7 +78,13 @@
     {
         try
         {
-            await Http.PutAsync($"Comment/{Comment.Id}/Upvote", null);
+            var responseMessage = await Http.PutAsync($"Comment/{Comment.Id}/Upvote", null);
+
+            if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("rate"));
+                return;
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -86,7 +100,13 @@
     {
         try
         {
-            await Http.PutAsync($"Comment/{Comment.Id}/Downvote", null);
+            var responseMessage = await Http.PutAsync($"Comment/{Comment.Id}/Downvote", null);
+
+            if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("rate"));
+                return;
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {

@@ -1,7 +1,9 @@
 @using Core.Section
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
+@using System.Net
 @inject HttpClient Http
+@inject ToastService toasts;
 
 <div class="card section" style="width: 18rem;">
     <div class="card-body">
@@ -28,6 +30,12 @@
         try
         {
             var responseMessage = await Http.DeleteAsync($"section/{Sec.Id}");
+
+            if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("delete sections"));
+                return;
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {
