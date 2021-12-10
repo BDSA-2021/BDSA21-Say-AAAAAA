@@ -37,7 +37,7 @@ public class UserController : ControllerBase
         _logger.LogDebug("Getting current user credibility...");
         int credibility = await _credibilityService.GetCredibilityScore(User);
         _logger.LogDebug("Current user has a credbility of {credibility}", credibility);
-        
-        return Ok(new {CurrentCredibility = credibility });
+
+        return Ok(new { CurrentCredibility = credibility });
     }
 }
