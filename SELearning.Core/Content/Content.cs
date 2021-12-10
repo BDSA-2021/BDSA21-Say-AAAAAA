@@ -15,7 +15,7 @@ public class Content
 
     public User.User Author { get; set; }
 
-    public Section Section { get; set; }
+    public Section.Section Section { get; set; }
 
     public Content(string title, string description, string videoLink, int rating)
     {
@@ -25,7 +25,7 @@ public class Content
         Rating = rating;
     }
 
-    public Content(string title, string description, string videoLink, int? rating, User.User author, Section section)
+    public Content(string title, string description, string videoLink, int? rating, User.User author, Section.Section section)
     {
         Title = title;
         Description = description;

@@ -5,6 +5,7 @@ using Moq;
 using SELearning.API.Controllers;
 using SELearning.Core;
 using SELearning.Core.Content;
+using SELearning.Core.Section;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,12 @@ namespace SELearning.API.Tests;
 public class SectionControllerTest
 {
     private readonly SectionController _controller;
-    private readonly Mock<IContentService> _service;
+    private readonly Mock<ISectionService> _service;
 
     public SectionControllerTest()
     {
         var logger = new Mock<ILogger<SectionController>>();
-        _service = new Mock<IContentService>();
+        _service = new Mock<ISectionService>();
         _controller = new SectionController(logger.Object, _service.Object);
     }
 

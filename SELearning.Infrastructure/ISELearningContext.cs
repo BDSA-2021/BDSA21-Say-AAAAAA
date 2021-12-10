@@ -1,3 +1,5 @@
+using SELearning.Core.Section;
+
 namespace SELearning.Infrastructure;
 
 public interface ISELearningContext : IDisposable

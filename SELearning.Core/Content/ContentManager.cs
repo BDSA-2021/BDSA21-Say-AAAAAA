@@ -14,11 +14,6 @@ public class ContentManager : IContentService
         return (await _repository.AddContent(content)).Item2;
     }
 
-    public async Task<SectionDto> AddSection(SectionCreateDto section)
-    {
-        return (await _repository.AddSection(section)).Item2;
-    }
-
     public async Task DecreaseContentRating(int id)
     {
         var content = await _repository.GetContent(id);
@@ -47,14 +42,6 @@ public class ContentManager : IContentService
         }
     }
 
-    public async Task DeleteSection(int id)
-    {
-        if (await _repository.DeleteSection(id) == OperationResult.NotFound)
-        {
-            throw new SectionNotFoundException(id);
-        }
-    }
-
     public async Task<IReadOnlyCollection<ContentDto>> GetContent()
     {
         var content = await _repository.GetContent();
@@ -72,18 +59,6 @@ public class ContentManager : IContentService
         }
 
         return content.Value;
-    }
-
-    public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
-    {
-        var content = await _repository.GetContentInSection(id);
-
-        if (content == null)
-        {
-            throw new SectionNotFoundException(id);
-        }
-
-        return content;
     }
 
     public async Task IncreaseContentRating(int id)
@@ -107,38 +82,11 @@ public class ContentManager : IContentService
         await UpdateContent(id, dto);
     }
 
-    public async Task<IReadOnlyCollection<SectionDto>> GetSections()
-    {
-        var section = await _repository.GetSections();
-
-        return section;
-    }
-
-    public async Task<SectionDto> GetSection(int id)
-    {
-        var section = await _repository.GetSection(id);
-
-        if (section.IsNone)
-        {
-            throw new SectionNotFoundException(id);
-        }
-
-        return section.Value;
-    }
-
     public async Task UpdateContent(int id, ContentUpdateDto content)
     {
         if (await _repository.UpdateContent(id, content) == OperationResult.NotFound)
         {
             throw new ContentNotFoundException(id);
-        }
-    }
-
-    public async Task UpdateSection(int id, SectionUpdateDto section)
-    {
-        if (await _repository.UpdateSection(id, section) == OperationResult.NotFound)
-        {
-            throw new SectionNotFoundException(id);
         }
     }
 

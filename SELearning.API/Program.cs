@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
 using SELearning.Core.User;
 using SELearning.Infrastructure.Credibility;
+using SELearning.Infrastructure.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration
@@ -36,6 +37,9 @@ builder.Services.AddDbContext<SELearningContext>(options => options.UseSqlServer
 builder.Services.AddScoped<ISELearningContext, SELearningContext>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<ISectionRepository, SectionRepository>();
+builder.Services.AddScoped<ISectionService, SectionManager>();
 
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<IContentService, ContentManager>();
