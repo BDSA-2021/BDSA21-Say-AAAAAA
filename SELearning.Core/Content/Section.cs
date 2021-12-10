@@ -1,5 +1,5 @@
 namespace SELearning.Core.Content;
-public class Section
+public class Section : IEquatable<Section>
 {
     public int Id { get; set; }
     public string? Title { get; set; }
@@ -10,4 +10,7 @@ public class Section
     {
         return null;
     }
+
+    public bool Equals(Section other)
+        => other.Id == Id && other.Title == Title && other.Description == Description;
 }
