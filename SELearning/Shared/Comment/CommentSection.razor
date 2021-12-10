@@ -93,10 +93,10 @@
     private void OnCommentDeleted(CommentDetailsDTO comment)
     {
         _comments.Remove(comment);
-        StateHasChanged();
     }
 
-    private async Task Alert(Exception exception) {
+    private async Task Alert(Exception exception) 
+    {
         await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
         System.Console.WriteLine(exception);
     }
