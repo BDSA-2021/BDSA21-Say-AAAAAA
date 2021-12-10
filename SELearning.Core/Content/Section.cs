@@ -11,6 +11,10 @@ public class Section : IEquatable<Section>
         return null;
     }
 
-    public bool Equals(Section other)
-        => other.Id == Id && other.Title == Title && other.Description == Description;
+    public bool Equals(Section? other)
+    {
+        if (other == null) return false;
+
+        return other.Id == Id && other.Title == Title && other.Description == Description;
+    }
 }
