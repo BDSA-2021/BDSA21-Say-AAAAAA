@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.User;
+using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.API.Controllers;
 
@@ -25,7 +26,7 @@ public class UserController : ControllerBase
     [HttpGet("me")]
     public async Task<ActionResult<User>> GetCurrentUser()
     {
-        User user = await _userRepository.GetOrAddUser(new UserDTO(User.GetUserId(), User.FindFirstValue(ClaimTypes.GivenName)));
+        User user = await _userRepository.GetOrAddUser(new UserDTO(User.GetUserId()!, User.FindFirstValue(ClaimTypes.GivenName)));
 
         return Ok(user);
     }
