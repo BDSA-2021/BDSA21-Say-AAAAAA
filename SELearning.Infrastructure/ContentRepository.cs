@@ -26,16 +26,7 @@ public class ContentRepository : IContentRepository
 
         await _context.SaveChangesAsync();
 
-        var contentDto = new ContentDto
-        {
-            Id = entity.Id,
-            Title = entity.Title,
-            Description = entity.Description,
-            VideoLink = entity.VideoLink,
-            Rating = entity.Rating,
-            Author = entity.Author,
-            Section = entity.Section
-        };
+        var contentDto = ConvertToContentDTO(entity);
 
         return (OperationResult.Created, contentDto);
     }
@@ -65,17 +56,7 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Section)
             .Include(x => x.Author)
             .Where(x => x.Id == contentId)
-            .Select(c => new ContentDto
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                VideoLink = c.VideoLink,
-                Rating = c.Rating,
-                Author = c.Author,
-                Section = c.Section
-            }
-            );
+            .Select(c => ConvertToContentDTO(c));
 
         return await content.FirstOrDefaultAsync();
     }
@@ -84,16 +65,7 @@ public class ContentRepository : IContentRepository
         (await _context.Content
                        .Include(x => x.Section)
                        .Include(x => x.Author)
-                       .Select(c => new ContentDto
-                       {
-                           Id = c.Id,
-                           Title = c.Title,
-                           Section = c.Section,
-                           Author = c.Author,
-                           Description = c.Description,
-                           VideoLink = c.VideoLink,
-                           Rating = c.Rating
-                       })
+                       .Select(c => ConvertToContentDTO(c))
                        .ToListAsync())
                        .AsReadOnly();
 
@@ -200,17 +172,7 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Section)
             .Include(x => x.Author)
             .Where(x => x.Section == section)
-            .Select(c => new ContentDto
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                VideoLink = c.VideoLink,
-                Rating = c.Rating,
-                Author = c.Author,
-                Section = c.Section
-            }
-            );
+            .Select(c => ConvertToContentDTO(c));
 
         return (await content.ToListAsync()).AsReadOnly();
     }
@@ -221,18 +183,28 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Section)
             .Include(x => x.Author)
             .Where(x => x.Author.Id == userId)
-            .Select(c => new ContentDto
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                VideoLink = c.VideoLink,
-                Rating = c.Rating,
-                Author = c.Author,
-                Section = c.Section
-            }
-            );
+            .Select(c => ConvertToContentDTO(c));
 
         return (await content.ToListAsync()).AsReadOnly();
     }
+
+    private ContentDto ConvertToContentDTO(Content c)
+    {
+        return new ContentDto
+        {
+            Id = c.Id,
+            Title = c.Title,
+            Description = c.Description,
+            VideoLink = c.VideoLink,
+            Rating = c.Rating,
+            Author = c.Author,
+            Section = new Section
+            {
+                Id = c.Section.Id,
+                Title = c.Section.Title,
+                Description = c.Section.Description
+            }
+        };
+    }
 }
+
