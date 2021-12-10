@@ -18,4 +18,9 @@ public class Section : IEquatable<Section>
 
         return other.Id == Id && other.Title == Title && other.Description == Description;
     }
+
+    public override bool Equals(object? other)
+    {
+        return Equals(other as Section);
+    }
 }
