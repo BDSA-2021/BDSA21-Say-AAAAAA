@@ -53,7 +53,7 @@ public class SectionRepository : ISectionRepository
         {
             return OperationResult.NotFound;
         }
-        
+
         if (entity.Content != null)
         {
             return OperationResult.Conflict;
