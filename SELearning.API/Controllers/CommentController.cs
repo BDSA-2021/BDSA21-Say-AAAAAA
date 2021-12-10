@@ -85,7 +85,7 @@ public class CommentController : ControllerBase
     public async Task<IActionResult> CreateComment(CommentUserDTO comment)
     {
         var user = await _userRepository.GetOrAddUser(new UserDTO(
-            User.GetUserId(),
+            User.GetUserId()!,
             User.FindFirstValue(ClaimTypes.GivenName)
         ));
 

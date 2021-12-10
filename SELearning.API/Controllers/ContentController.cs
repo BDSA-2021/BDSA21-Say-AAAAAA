@@ -75,7 +75,7 @@ public class ContentController : ControllerBase
     public async Task<IActionResult> CreateContent(ContentUserDTO content)
     {
         var user = await _userRepository.GetOrAddUser(new UserDTO(
-            User.GetUserId(),
+            User.GetUserId()!,
             User.FindFirstValue(ClaimTypes.GivenName)
         ));
 
