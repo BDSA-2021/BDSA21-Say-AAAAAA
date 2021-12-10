@@ -10,13 +10,13 @@ public class PermissionCredibilityService : IPermissionCredibilityService
             case Permission.EditOwnContent:
             case Permission.CreateComment:
             case Permission.Rate:
-                return await Task.Run<int>(() => -10);
+                return await Task.Run<int>(() => -2);
             case Permission.EditAnyComment:
             case Permission.EditAnyContent:
             case Permission.DeleteAnyComment:
             case Permission.DeleteAnyContent:
             case Permission.CreateContent:
-                return await Task.Run<int>(() => 1000);
+                return await Task.Run<int>(() => 5);
             case Permission.CreateSection:
             case Permission.EditSection:
             case Permission.DeleteSection:
