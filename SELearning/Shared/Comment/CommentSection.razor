@@ -1,8 +1,10 @@
 @using SELearning.Core.Comment;
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net
 
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
+@inject ToastService toasts;
 
 <section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
     <div class="row">
@@ -67,8 +69,16 @@
                 this.ContentId,
                 _commentText
             ));
+
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                toasts.AddToast(ToastNotification.CreateUnauthorized("post comments"));
+                return;
+            }
+
             var comment = await response.Content.ReadFromJsonAsync<CommentDetailsDTO>(); 
             _comments.Add(comment);
+            StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -82,7 +92,8 @@
 
     private void OnCommentDeleted(CommentDetailsDTO comment)
     {
-       _comments.Remove(comment);
+        _comments.Remove(comment);
+        StateHasChanged();
     }
 
     private async Task Alert(Exception exception) {
