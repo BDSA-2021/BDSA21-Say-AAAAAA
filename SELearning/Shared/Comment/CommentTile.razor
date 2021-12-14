@@ -34,7 +34,7 @@
             </p>
             <div class="col-lg-1">
                 <button type="button" class="btn btn-default btn-lg text-danger" aria-label="Left Align" @onclick="Delete">
-                        <span class="oi oi-trash"></span>
+                    <span class="oi oi-trash"></span>
                 </button>
             </div>
         </div>
@@ -63,7 +63,7 @@
                 toasts.AddToast(ToastNotification.CreateUnauthorized("delete comments"));
                 return;
             }
-            
+
             if(OnCommentDeleted.HasDelegate)
                 await OnCommentDeleted.InvokeAsync(Comment);
 
@@ -74,7 +74,7 @@
         }
         catch (Exception exception)
         {
-            await this.Alert(exception);
+            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 
@@ -96,7 +96,7 @@
         }
         catch (Exception exception)
         {
-            await this.Alert(exception);
+            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 
@@ -111,7 +111,6 @@
                 toasts.AddToast(ToastNotification.CreateUnauthorized("rate"));
                 return;
             }
-
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -119,14 +118,7 @@
         }
         catch (Exception exception)
         {
-            await this.Alert(exception);
+            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
-    }
-
-    // TODO: Place this somewhere else
-    // TODO: If there is time, replace with a toast notification?
-    private async Task Alert(Exception exception) {
-        await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
-        System.Console.WriteLine(exception);
     }
 }

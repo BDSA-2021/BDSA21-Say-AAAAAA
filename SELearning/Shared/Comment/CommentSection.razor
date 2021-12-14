@@ -38,7 +38,7 @@
     private string _commentText = "";
 
     private IList<CommentDetailsDTO> _comments = new List<CommentDetailsDTO>();
-    
+
     protected override async void OnInitialized()
     {
         await this.GetComments();
@@ -57,7 +57,7 @@
         }
         catch (Exception exception)
         {
-            await this.Alert(exception);
+            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 
@@ -86,15 +86,9 @@
         }
         catch (Exception exception)
         {
-            await this.Alert(exception);
+            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 
     private void OnCommentDeleted(CommentDetailsDTO comment) => _comments.Remove(comment);
-
-    private async Task Alert(Exception exception) 
-    {
-        await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
-        System.Console.WriteLine(exception);
-    }
 }
