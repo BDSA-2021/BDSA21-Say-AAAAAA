@@ -4,7 +4,7 @@ using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
 
-public class ContentManagerTests : IDisposable
+public class ContentManagerTests
 {
     private readonly SELearningContext _context;
     private readonly ContentRepository _repository;
@@ -12,7 +12,6 @@ public class ContentManagerTests : IDisposable
     private readonly Section _section;
 
     private readonly User _user;
-    private bool disposedValue;
 
     public ContentManagerTests()
     {
@@ -135,34 +134,5 @@ public class ContentManagerTests : IDisposable
             content => Assert.Equal(3, content.Id),
             content => Assert.Equal(4, content.Id)
         );
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                // TODO: dispose managed state (managed objects)
-            }
-
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
-            disposedValue = true;
-        }
-    }
-
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    // ~CharacterRepositoryTests()
-    // {
-    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-    //     Dispose(disposing: false);
-    // }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }
