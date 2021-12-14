@@ -30,11 +30,6 @@
     [Parameter]
     public EventCallback<ContentDto> OnContentDeleted { get; set; }
 
-    protected override void OnInitialized()
-    {
-        System.Console.WriteLine(content.Id);
-    }
-
     private async Task Delete()
     {
       try

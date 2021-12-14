@@ -42,7 +42,6 @@
 
     private void OnContentDeleted(ContentDto content)
     {
-        System.Console.WriteLine($"Comment from {content.Author} is deleted!");
         _contents.Remove(content);
         StateHasChanged();
     }
