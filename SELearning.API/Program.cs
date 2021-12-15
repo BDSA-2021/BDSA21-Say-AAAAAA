@@ -9,6 +9,8 @@ using SELearning.Core.Content;
 using SELearning.Core.Comment;
 using SELearning.Core.Permission;
 using SELearning.Core.User;
+using SELearning.Infrastructure.User;
+using SELearning.Core.Credibility;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration
