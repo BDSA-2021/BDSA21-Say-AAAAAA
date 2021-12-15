@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Core.Permission;
 using SELearning.Core.User;
+using SELearning.Core.Content;
 using SELearning.Infrastructure.Authorization;
 using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 

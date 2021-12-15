@@ -1,5 +1,6 @@
 #nullable disable
 using SELearning.Core.Permission;
+using SELearning.Core.Section;
 
 namespace SELearning.Core.Content;
 
@@ -23,9 +24,9 @@ public record ContentDto : IAuthored
 
     public int Rating { get; set; }
 
-    public User.User Author { get; set; }
+    public UserDTO Author { get; set; }
 
-    public Section.Section Section { get; set; }
+    public SectionDto Section { get; set; }
 }
 
 public record ContentUserDto
@@ -53,7 +54,7 @@ public record ContentCreateDto
     public string VideoLink { get; init; }
 
     [StringLength(50)]
-    public User.User Author { get; init; }
+    public UserDTO Author { get; init; }
 
 }
 

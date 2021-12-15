@@ -1,6 +1,6 @@
 using System;
 
-namespace SELearning.Core.User;
+namespace SELearning.Infrastructure.User;
 
 public class User : IEquatable<User>
 {

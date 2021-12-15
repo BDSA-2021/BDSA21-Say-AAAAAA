@@ -24,9 +24,9 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("me")]
-    public async Task<ActionResult<User>> GetCurrentUser()
+    public async Task<ActionResult<UserDTO>> GetCurrentUser()
     {
-        User user = await _userRepository.GetOrAddUser(new UserDTO(User.GetUserId()!, User.FindFirstValue(ClaimTypes.GivenName)));
+        UserDTO user = await _userRepository.GetOrAddUser(new UserDTO(User.GetUserId()!, User.FindFirstValue(ClaimTypes.GivenName)));
 
         return Ok(user);
     }

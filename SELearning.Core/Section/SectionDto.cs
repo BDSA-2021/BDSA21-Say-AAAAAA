@@ -1,13 +1,13 @@
 namespace SELearning.Core.Section;
 
-public record SectionDto
+public record SectionDTO
 {
     public int? Id { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
 }
 
-public record SectionCreateDto
+public record SectionCreateDTO
 {
     [StringLength(50)]
     public string? Title { get; set; }
@@ -16,7 +16,7 @@ public record SectionCreateDto
     public string? Description { get; set; }
 }
 
-public record SectionUpdateDto : SectionCreateDto
+public record SectionUpdateDTO : SectionCreateDTO
 {
     public int Id { get; init; }
 }

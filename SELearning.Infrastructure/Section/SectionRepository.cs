@@ -1,6 +1,7 @@
 using SELearning.Core.Section;
+using SELearning.Infrastructure.Content;
 
-namespace SELearning.Infrastructure;
+namespace SELearning.Infrastructure.Section;
 
 public class SectionRepository : ISectionRepository
 {
@@ -17,7 +18,7 @@ public class SectionRepository : ISectionRepository
         {
             Title = section.Title,
             Description = section.Description,
-            Content = new List<Content>(),
+            Content = new List<Content.Content>(),
         };
 
         _context.Section.Add(entity);
@@ -38,7 +39,7 @@ public class SectionRepository : ISectionRepository
 
         entity.Title = section.Title;
         entity.Description = section.Description;
-        entity.Content = new List<Content>();
+        entity.Content = new List<Content.Content>();
 
         await _context.SaveChangesAsync();
 

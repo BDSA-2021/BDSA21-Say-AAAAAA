@@ -1,4 +1,4 @@
-namespace SELearning.Core.Section;
+namespace SELearning.Infrastructure.Section;
 
 public class Section : IEquatable<Section>
 {

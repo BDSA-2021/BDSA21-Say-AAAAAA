@@ -1,6 +1,6 @@
 using SELearning.Core.Section;
 
-namespace SELearning.Infrastructure;
+namespace SELearning.Infrastructure.Content;
 
 public class ContentRepository : IContentRepository
 {
@@ -14,13 +14,14 @@ public class ContentRepository : IContentRepository
     public async Task<(OperationResult, ContentDto)> AddContent(ContentCreateDto content)
     {
         var section = await _context.Section.FindAsync(content.SectionId);
+        var author = await _context.Users.FindAsync(content.Author.Id);
 
         var entity = new Content(
             content.Title,
             content.Description,
             content.VideoLink,
             null,
-            content.Author,
+            author,
             section
         );
 
@@ -106,8 +107,8 @@ public class ContentRepository : IContentRepository
             Description = c.Description,
             VideoLink = c.VideoLink,
             Rating = c.Rating,
-            Author = c.Author,
-            Section = new Section
+            Author = new UserDTO(c.Author.Id, c.Author.Name),
+            Section = new SectionDto
             {
                 Id = c.Section.Id,
                 Title = c.Section.Title,
