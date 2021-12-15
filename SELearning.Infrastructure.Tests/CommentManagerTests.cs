@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using SELearning.Core.User;
+using SELearning.Core.Comment;
+using SELearning.Infrastructure.Comment;
 
 namespace SELearning.Infrastructure.Tests;
 
@@ -8,24 +10,24 @@ public class CommentManagerTests
 {
     readonly ICommentService _service;
 
-    private static readonly Section section = new()
+    private static readonly Section.Section section = new()
     {
         Id = 1,
         Title = "C#",
         Description = "C# tools",
-        Content = new List<Content>()
+        Content = new List<Content.Content>()
     };
 
-    private static User _user = new User { Id = "ABC", Name = "Asger" };
+    private static User.User _user = new User.User { Id = "ABC", Name = "Asger" };
 
-    private static readonly Content content = new("Video on Entity Core", "Nice", "www.hej.dk", 1);
+    private static readonly Content.Content content = new("Video on Entity Core", "Nice", "www.hej.dk", 1);
 
-    private readonly IEnumerable<Comment> _comments = new List<Comment>()
+    private readonly IEnumerable<Comment.Comment> _comments = new List<Comment.Comment>()
     {
-        new Comment("Nice", DateTime.Now, -10, content, _user),
-        new Comment("Cool but boring", DateTime.Now, 0, content, _user),
-        new Comment("This is a great video", DateTime.Now, 0, content, _user),
-        new Comment("Very inappropriate", DateTime.Now, 28, content, _user)
+        new Comment.Comment("Nice", DateTime.Now, -10, content, _user),
+        new Comment.Comment("Cool but boring", DateTime.Now, 0, content, _user),
+        new Comment.Comment("This is a great video", DateTime.Now, 0, content, _user),
+        new Comment.Comment("Very inappropriate", DateTime.Now, 28, content, _user)
     };
 
     public CommentManagerTests()
@@ -54,10 +56,10 @@ public class CommentManagerTests
     [Fact]
     public async void Post_given_acceptable_input_does_post()
     {
-        var dto = new CommentCreateDTO(_user, "Nice explanation", 1);
+        var dto = new CommentCreateDTO(_user.ToUserDTO(), "Nice explanation", 1);
         await _service.PostComment(dto);
 
-        Assert.Equal(_user, (await _service.GetCommentFromCommentId(5)).Author);
+        Assert.Equal(_user.ToUserDTO(), (await _service.GetCommentFromCommentId(5)).Author);
         Assert.Equal("Nice explanation", (await _service.GetCommentFromCommentId(5)).Text);
         Assert.Equal(1, (await _service.GetCommentFromCommentId(5)).ContentId);
         Assert.Equal(0, (await _service.GetCommentFromCommentId(5)).Rating);
@@ -66,7 +68,7 @@ public class CommentManagerTests
     [Fact]
     public async void Post_given_non_existing_content_throws_exception()
     {
-        var dto = new CommentCreateDTO(new User { Id = "ABC", Name = "Amalie" }, "Nice explanation", 50);
+        var dto = new CommentCreateDTO(new UserDTO("ABC", "Amalie"), "Nice explanation", 50);
 
         await Assert.ThrowsAsync<ContentNotFoundException>(() => _service.PostComment(dto));
     }
@@ -190,7 +192,7 @@ public class CommentManagerTests
         var comment = await _service.GetCommentFromCommentId(2);
 
         Assert.Equal("Cool but boring", comment.Text);
-        Assert.Equal(_user, comment.Author);
+        Assert.Equal(_user.ToUserDTO(), comment.Author);
         Assert.Equal(1, comment.ContentId);
         Assert.Equal(2, comment.Id);
         Assert.Equal(0, comment.Rating);

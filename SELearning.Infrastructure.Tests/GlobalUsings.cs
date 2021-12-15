@@ -9,3 +9,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Xunit;
 global using SELearning.Core;
 global using SELearning.Infrastructure.Content;
+global using SELearning.Infrastructure.Comment;
