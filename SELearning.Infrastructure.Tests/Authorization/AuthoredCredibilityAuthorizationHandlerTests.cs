@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using SELearning.Infrastructure.Authorization;
 using System.Linq;
 using SELearning.Core.User;
+using SELearning.Core.Credibility;
 
 namespace SELearning.Infrastructure.Tests;
 
