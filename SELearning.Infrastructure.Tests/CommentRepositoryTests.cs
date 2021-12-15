@@ -30,6 +30,7 @@ public class CommentRepositoryTests
     );
 
     private readonly IEnumerable<Comment.Comment> _comments;
+    private readonly User.User _userAmalie = new User.User { Id = "Amalie", Name = "Amalie" };
 
     public CommentRepositoryTests()
     {
@@ -41,8 +42,6 @@ public class CommentRepositoryTests
         _context = new SELearningContext(builder.Options);
         _context.Database.EnsureCreated();
 
-
-        var _userAmalie = new User.User { Id = "Amalie", Name = "Amalie" };
         _comments = new List<Comment.Comment>()
         {
             new Comment.Comment("Nice", null, null, content, _userAmalie),
@@ -67,12 +66,12 @@ public class CommentRepositoryTests
     [Fact]
     public async Task AddComment_creates_new_comment_with_generated_id()
     {
-        CommentCreateDTO comment = new(new UserDTO("Harleen", "Harleen"), "Nice content", 1);
+        CommentCreateDTO comment = new(_userAmalie.ToUserDTO(), "Nice content", 1);
 
         var created = await _repository.AddComment(comment);
 
         Assert.Equal(6, created.Item2.Id);
-        Assert.Equal("Harleen", created.Item2.Author.Name);
+        Assert.Equal("Amalie", created.Item2.Author.Name);
         Assert.Equal("Nice content", created.Item2.Text);
         Assert.Equal(OperationResult.Created, created.Item1);
     }

@@ -12,8 +12,9 @@ public class CommentRepository : ICommentRepository
     public async Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
     {
         var content = await _context.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);
+        var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == cmt.Author.Id);
 
-        if (content == null)
+        if (content == null || user == null)
         {
             return (OperationResult.NotFound, null!);
         }
@@ -23,7 +24,7 @@ public class CommentRepository : ICommentRepository
             null,
             null,
             content,
-            new User.User { Id = cmt.Author.Id, Name = cmt.Author.Name }
+            user
         );
 
         _context.Comments.Add(comment);
