@@ -23,7 +23,7 @@ public class CommentRepository : ICommentRepository
             null,
             null,
             content,
-            new User.User { Id = cmt.Author.Id, Name = cmt.Author.Name };
+            new User.User { Id = cmt.Author.Id, Name = cmt.Author.Name }
         );
 
         _context.Comments.Add(comment);
