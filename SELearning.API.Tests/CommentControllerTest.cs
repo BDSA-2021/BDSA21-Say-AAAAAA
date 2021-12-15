@@ -21,13 +21,13 @@ public class CommentControllerTest
 {
     private readonly CommentController _controller;
     private readonly Mock<ICommentService> _service;
-    private readonly User _user;
+    private readonly UserDTO _user;
 
     public CommentControllerTest()
     {
         var logger = new Mock<ILogger<CommentController>>();
         var auth = new Mock<IAuthorizationService>();
-        _user = new User { Id = "ABC", Name = "Joachim" };
+        _user = new UserDTO("ABC", "Joachim");
         auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
             .ReturnsAsync(AuthorizationResult.Success);
 

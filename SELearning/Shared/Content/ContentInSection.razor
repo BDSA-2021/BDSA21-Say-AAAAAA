@@ -31,16 +31,16 @@
     [Parameter]
     public string SectionId { get; set; }
 
-    private SectionDto _section = new();
+    private SectionDTO _section = new();
 
-    private List<ContentDto> _contents = new();
+    private List<ContentDTO> _contents = new();
 
     protected async override void OnInitialized()
     {
         await RetrieveContentInSection();
     }
 
-    private void OnContentDeleted(ContentDto content)
+    private void OnContentDeleted(ContentDTO content)
     {
         System.Console.WriteLine($"Comment from {content.Author} is deleted!");
         _contents.Remove(content);
@@ -51,7 +51,7 @@
     {
         try
         {
-            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDto>>($"Section/{SectionId}/Content");
+            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDTO>>($"Section/{SectionId}/Content");
             _contents = content.ToList();
             StateHasChanged();
         }
@@ -65,7 +65,7 @@
     {
         try
         {
-            var section = await Http.GetFromJsonAsync<SectionDto>($"Section/{SectionId}");
+            var section = await Http.GetFromJsonAsync<SectionDTO>($"Section/{SectionId}");
             _section = section;
             StateHasChanged();
         }

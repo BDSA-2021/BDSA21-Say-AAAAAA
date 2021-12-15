@@ -20,10 +20,10 @@
 
 @code {
     [Parameter]
-    public SectionDto Sec { get; init; }
+    public SectionDTO Sec { get; init; }
 
     [Parameter]
-    public Action<SectionDto> OnDeleted { get; set; }
+    public Action<SectionDTO> OnDeleted { get; set; }
 
     private async Task Delete()
     {

@@ -62,7 +62,7 @@
         await this.RetrieveSections();
     }
  
-    private SectionDto[] sections = {}; 
+    private SectionDTO[] sections = {}; 
     private ContentUserDTO Content { get; set; } = new();
     private bool? isPosted = null;
 
@@ -101,7 +101,7 @@
     {
         try
         {
-            sections = await Http.GetFromJsonAsync<SectionDto[]>("Section");
+            sections = await Http.GetFromJsonAsync<SectionDTO[]>("Section");
         }
         catch (AccessTokenNotAvailableException exception)
         {
