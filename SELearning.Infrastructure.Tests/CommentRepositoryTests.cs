@@ -8,12 +8,12 @@ public class CommentRepositoryTests
     private readonly CommentRepository _repository;
     private readonly SELearningContext _context;
 
-    private static readonly Section section = new()
+    private static readonly Section.Section section = new()
     {
         Id = 1,
         Title = "C#",
         Description = "C# tools",
-        Content = new List<Content>()
+        Content = new List<Content.Content>()
     };
 
     private static readonly Content content = new(
