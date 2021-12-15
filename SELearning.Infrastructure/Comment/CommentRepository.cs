@@ -1,5 +1,5 @@
-using SELearning.Core.Comment;
-namespace SELearning.Infrastructure;
+namespace SELearning.Infrastructure.Comment;
+
 public class CommentRepository : ICommentRepository
 {
     private readonly ISELearningContext _context;
@@ -12,7 +12,9 @@ public class CommentRepository : ICommentRepository
     public async Task<(OperationResult, CommentDetailsDTO)> AddComment(CommentCreateDTO cmt)
     {
         var content = await _context.Content.FirstOrDefaultAsync(c => c.Id == cmt.ContentId);
-        if (content == null)
+        var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == cmt.Author.Id);
+
+        if (content == null || user == null)
         {
             return (OperationResult.NotFound, null!);
         }
@@ -22,7 +24,7 @@ public class CommentRepository : ICommentRepository
             null,
             null,
             content,
-            cmt.Author
+            user
         );
 
         _context.Comments.Add(comment);
@@ -81,7 +83,7 @@ public class CommentRepository : ICommentRepository
 
     public async Task<(IEnumerable<CommentDetailsDTO>?, OperationResult)> GetCommentsByContentId(int contentId)
     {
-        Content? content = await _context.Content.FirstOrDefaultAsync(c => c.Id == contentId);
+        Content.Content? content = await _context.Content.FirstOrDefaultAsync(c => c.Id == contentId);
         if (content == null)
         {
             return (null, OperationResult.NotFound);
@@ -109,6 +111,6 @@ public class CommentRepository : ICommentRepository
         return (commentsByAuthor, OperationResult.Succes);
     }
 
-    private static CommentDetailsDTO ConvertToDetailsDTO(Comment c) => new(c.Author, c.Text, c.Id, c.Timestamp, c.Rating, c.Content.Id);
+    private static CommentDetailsDTO ConvertToDetailsDTO(Comment c) => new(new UserDTO(c.Author.Id, c.Author.Name), c.Text, c.Id, c.Timestamp, c.Rating, c.Content.Id);
 
 }

@@ -1,11 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using SELearning.Core.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
-using SELearning.Core.User;
 using SELearning.Infrastructure.Credibility;
 using SELearning.Infrastructure.Authorization;
+using SELearning.Core.Section;
+using SELearning.Core.Content;
+using SELearning.Core.Comment;
+using SELearning.Core.Permission;
+using SELearning.Core.User;
+using SELearning.Infrastructure.User;
+using SELearning.Core.Credibility;
 
 var builder = WebApplication.CreateBuilder(args);
 #region Configuration

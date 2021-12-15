@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using SELearning.Core;
 
 namespace SELearning.Infrastructure.Authorization;
 

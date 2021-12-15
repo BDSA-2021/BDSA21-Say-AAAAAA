@@ -1,6 +1,7 @@
 using SELearning.Core.Section;
+using SELearning.Infrastructure.Content;
 
-namespace SELearning.Infrastructure;
+namespace SELearning.Infrastructure.Section;
 
 public class SectionRepository : ISectionRepository
 {
@@ -11,23 +12,23 @@ public class SectionRepository : ISectionRepository
         _context = context;
     }
 
-    public async Task<(OperationResult, SectionDto)> AddSection(SectionCreateDto section)
+    public async Task<(OperationResult, SectionDTO)> AddSection(SectionCreateDTO section)
     {
         var entity = new Section
         {
             Title = section.Title,
             Description = section.Description,
-            Content = new List<Content>(),
+            Content = new List<Content.Content>(),
         };
 
         _context.Section.Add(entity);
 
         await _context.SaveChangesAsync();
 
-        return (OperationResult.Created, ConvertToSectionDTO(entity));
+        return (OperationResult.Created, entity.ToSectionDTO());
     }
 
-    public async Task<OperationResult> UpdateSection(int id, SectionUpdateDto section)
+    public async Task<OperationResult> UpdateSection(int id, SectionUpdateDTO section)
     {
         var entity = await _context.Section.FirstOrDefaultAsync(s => s.Id == id);
 
@@ -38,7 +39,7 @@ public class SectionRepository : ISectionRepository
 
         entity.Title = section.Title;
         entity.Description = section.Description;
-        entity.Content = new List<Content>();
+        entity.Content = new List<Content.Content>();
 
         await _context.SaveChangesAsync();
 
@@ -65,22 +66,22 @@ public class SectionRepository : ISectionRepository
         return OperationResult.Deleted;
     }
 
-    public async Task<IReadOnlyCollection<SectionDto>> GetSections() =>
+    public async Task<IReadOnlyCollection<SectionDTO>> GetSections() =>
         (await _context.Section
-                       .Select(s => ConvertToSectionDTO(s))
+                       .Select(s => s.ToSectionDTO())
                        .ToListAsync())
                        .AsReadOnly();
 
-    public async Task<Option<SectionDto>> GetSection(int id)
+    public async Task<Option<SectionDTO>> GetSection(int id)
     {
         var section = from s in _context.Section
                       where s.Id == id
-                      select ConvertToSectionDTO(s);
+                      select s.ToSectionDTO();
 
         return await section.FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
+    public async Task<IReadOnlyCollection<ContentDTO>> GetContentInSection(int id)
     {
         var section = _context.Section.Single(s => s.Id == id);
         var content = _context.Content
@@ -90,15 +91,5 @@ public class SectionRepository : ISectionRepository
             .Select(c => ContentRepository.ConvertToContentDTO(c));
 
         return (await content.ToListAsync()).AsReadOnly();
-    }
-
-    private static SectionDto ConvertToSectionDTO(Section s)
-    {
-        return new SectionDto
-        {
-            Id = s.Id,
-            Title = s.Title,
-            Description = s.Description,
-        };
     }
 }

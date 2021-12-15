@@ -1,5 +1,5 @@
 #nullable disable
-namespace SELearning.Core.Content;
+namespace SELearning.Infrastructure.Content;
 
 public class Content
 {

@@ -1,6 +1,6 @@
 using SELearning.Core.Section;
 
-namespace SELearning.Infrastructure;
+namespace SELearning.Infrastructure.Content;
 
 public class ContentRepository : IContentRepository
 {
@@ -11,16 +11,22 @@ public class ContentRepository : IContentRepository
         _context = context;
     }
 
-    public async Task<(OperationResult, ContentDto)> AddContent(ContentCreateDto content)
+    public async Task<(OperationResult, ContentDTO)> AddContent(ContentCreateDto content)
     {
         var section = await _context.Section.FindAsync(content.SectionId);
+        var author = await _context.Users.FirstOrDefaultAsync(c => c.Id == content.Author.Id);
+
+        if (section == null || author == null)
+        {
+            return (OperationResult.NotFound, null!);
+        }
 
         var entity = new Content(
             content.Title,
             content.Description,
             content.VideoLink,
             null,
-            content.Author,
+            author,
             section
         );
 
@@ -33,7 +39,7 @@ public class ContentRepository : IContentRepository
         return (OperationResult.Created, contentDto);
     }
 
-    public async Task<OperationResult> UpdateContent(int id, ContentUpdateDto content)
+    public async Task<OperationResult> UpdateContent(int id, ContentUpdateDTO content)
     {
         var entity = await _context.Content.FirstOrDefaultAsync(c => c.Id == id);
 
@@ -52,7 +58,7 @@ public class ContentRepository : IContentRepository
         return OperationResult.Updated;
     }
 
-    public async Task<Option<ContentDto>> GetContent(int contentId)
+    public async Task<Option<ContentDTO>> GetContent(int contentId)
     {
         var content = _context.Content
             .Include(x => x.Section)
@@ -63,7 +69,7 @@ public class ContentRepository : IContentRepository
         return await content.FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyCollection<ContentDto>> GetContent() =>
+    public async Task<IReadOnlyCollection<ContentDTO>> GetContent() =>
         (await _context.Content
                        .Include(x => x.Section)
                        .Include(x => x.Author)
@@ -86,7 +92,7 @@ public class ContentRepository : IContentRepository
         return OperationResult.Deleted;
     }
 
-    public async Task<IEnumerable<ContentDto>> GetContentByAuthor(string userId)
+    public async Task<IEnumerable<ContentDTO>> GetContentByAuthor(string userId)
     {
         var content = _context.Content
             .Include(x => x.Section)
@@ -97,17 +103,17 @@ public class ContentRepository : IContentRepository
         return (await content.ToListAsync()).AsReadOnly();
     }
 
-    public static ContentDto ConvertToContentDTO(Content c)
+    public static ContentDTO ConvertToContentDTO(Content c)
     {
-        return new ContentDto
+        return new ContentDTO
         {
             Id = c.Id,
             Title = c.Title,
             Description = c.Description,
             VideoLink = c.VideoLink,
             Rating = c.Rating,
-            Author = c.Author,
-            Section = new Section
+            Author = new UserDTO(c.Author.Id, c.Author.Name),
+            Section = new SectionDTO
             {
                 Id = c.Section.Id,
                 Title = c.Section.Title,

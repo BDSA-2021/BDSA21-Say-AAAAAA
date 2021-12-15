@@ -1,13 +1,12 @@
-using SELearning.Core.Section;
 
 namespace SELearning.Infrastructure;
 
 public interface ISELearningContext : IDisposable
 {
-    DbSet<User> Users { get; }
-    DbSet<Section> Section { get; }
-    DbSet<Content> Content { get; }
-    public DbSet<Comment> Comments { get; }
+    DbSet<User.User> Users { get; }
+    DbSet<Section.Section> Section { get; }
+    DbSet<Content.Content> Content { get; }
+    public DbSet<Comment.Comment> Comments { get; }
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

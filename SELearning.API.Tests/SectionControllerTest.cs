@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -30,7 +29,7 @@ public class SectionControllerTest
     public async Task GetContentsBySectionID_Given_Invalid_Section_ID_Returns_NotFound()
     {
         // Arrange
-        var expected = Array.Empty<ContentDto>();
+        var expected = Array.Empty<ContentDTO>();
         _service.Setup(m => m.GetContentInSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act
@@ -44,7 +43,7 @@ public class SectionControllerTest
     public async Task GetSection_Given_Valid_ID_Returns_ContentDTO()
     {
         // Arrange
-        var expected = new SectionDto { Id = 1 };
+        var expected = new SectionDTO { Id = 1 };
         _service.Setup(m => m.GetSection(1)).ReturnsAsync(expected);
 
         // Act
@@ -71,7 +70,7 @@ public class SectionControllerTest
     public async Task GetAllSections_Returns_Collection_Of_Sections()
     {
         // Arrange
-        var expected = Array.Empty<SectionDto>();
+        var expected = Array.Empty<SectionDTO>();
         _service.Setup(m => m.GetSections()).ReturnsAsync(expected);
 
         // Act
@@ -85,8 +84,8 @@ public class SectionControllerTest
     public async Task CreateSection_Returns_CreatedAtRoute()
     {
         // Arrange
-        var toCreate = new SectionCreateDto { Title = "Title" };
-        var expected = new SectionDto { Title = "Title", Id = 1 };
+        var toCreate = new SectionCreateDTO { Title = "Title" };
+        var expected = new SectionDTO { Title = "Title", Id = 1 };
         _service.Setup(m => m.AddSection(toCreate)).ReturnsAsync(expected);
 
         // Act
@@ -102,7 +101,7 @@ public class SectionControllerTest
     public async Task UpdateSection_Given_Valid_ID_Returns_NoContent()
     {
         // Act
-        var response = await _controller.UpdateSection(1, new SectionUpdateDto { Title = "Title" });
+        var response = await _controller.UpdateSection(1, new SectionUpdateDTO { Title = "Title" });
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -112,7 +111,7 @@ public class SectionControllerTest
     public async Task UpdateSection_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var section = new SectionUpdateDto { Title = "Title" };
+        var section = new SectionUpdateDTO { Title = "Title" };
         _service.Setup(m => m.UpdateSection(-1, section)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act

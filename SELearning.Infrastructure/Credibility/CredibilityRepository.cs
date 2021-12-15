@@ -1,5 +1,4 @@
-using SELearning.Core.Comment;
-using SELearning.Core.Content;
+using SELearning.Core.Credibility;
 
 namespace SELearning.Infrastructure.Credibility;
 

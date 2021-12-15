@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace SELearning.Core;
+namespace SELearning.Core.Credibility;
 
 public interface ICredibilityService
 {

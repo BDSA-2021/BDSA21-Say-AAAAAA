@@ -3,17 +3,18 @@ using Microsoft.AspNetCore.Authorization;
 using SELearning.Infrastructure.Authorization;
 using System.Linq;
 using SELearning.Core.User;
+using SELearning.Core.Credibility;
 
 namespace SELearning.Infrastructure.Tests;
 
-record AuthoredResource(User Author) : IAuthored;
+record AuthoredResource(UserDTO Author) : IAuthored;
 
 public class AuthoredCredibilityAuthorizationHandlerTests
 {
     ClaimsPrincipal _user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "homer.simpson") }));
 
-    User _userBart = new User { Id = "bart.simpson", Name = "Bart Simpson" };
-    User _userHomer = new User { Id = "homer.simpson", Name = "Homer Simpson" };
+    UserDTO _userBart = new UserDTO("bart.simpson", "Bart Simpson");
+    UserDTO _userHomer = new UserDTO("homer.simpson", "Homer Simpson");
 
     AuthorizationHandlerContext HandleAsync_WithPermissionsAndResource(
         ClaimsPrincipal user,

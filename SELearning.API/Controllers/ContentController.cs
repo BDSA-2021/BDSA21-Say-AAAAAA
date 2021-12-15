@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using SELearning.Core.Permission;
-using SELearning.Core.User;
 using SELearning.Infrastructure.Authorization;
 using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
@@ -38,10 +36,10 @@ public class ContentController : ControllerBase
     /// <param name="ID">The ID of the content.</param>
     /// <returns>A content with the given ID if it exists, otherwise response type 404: Not Found.</returns>
     [HttpGet("{ID}")]
-    [ProducesResponseType(typeof(ContentDto), 200)]
+    [ProducesResponseType(typeof(ContentDTO), 200)]
     [ProducesResponseType(404)]
     [ActionName(nameof(GetContent))]
-    public async Task<ActionResult<ContentDto>> GetContent(int ID)
+    public async Task<ActionResult<ContentDTO>> GetContent(int ID)
     {
         try
         {
@@ -58,9 +56,9 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <returns>all contents if they can be found, otherwise response type 404: Not Found.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyCollection<ContentDto>), 200)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<ContentDTO>), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<IReadOnlyCollection<ContentDto>>> GetAllContent()
+    public async Task<ActionResult<IReadOnlyCollection<ContentDTO>>> GetAllContent()
     {
         return Ok(await _service.GetContent());
     }
@@ -103,11 +101,11 @@ public class ContentController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.EditAnyContent, Permission.EditOwnContent)]
-    public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDto content)
+    public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDTO content)
     {
         try
         {
-            ContentDto contentToBeUpdated = await _service.GetContent(ID);
+            ContentDTO contentToBeUpdated = await _service.GetContent(ID);
 
             var authResult = await _authService.AuthorizeAsync(
                 User,
@@ -141,7 +139,7 @@ public class ContentController : ControllerBase
     {
         try
         {
-            ContentDto contentToBeDeleted = await _service.GetContent(ID);
+            ContentDTO contentToBeDeleted = await _service.GetContent(ID);
 
             var authResult = await _authService.AuthorizeAsync(
                 User,

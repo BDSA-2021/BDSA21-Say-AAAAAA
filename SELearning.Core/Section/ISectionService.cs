@@ -4,10 +4,10 @@ namespace SELearning.Core.Section;
 
 public interface ISectionService
 {
-    public Task<SectionDto> AddSection(SectionCreateDto section);
+    public Task<SectionDTO> AddSection(SectionCreateDTO section);
     public Task DeleteSection(int id);
-    public Task UpdateSection(int id, SectionUpdateDto section);
-    public Task<IReadOnlyCollection<SectionDto>> GetSections();
-    public Task<SectionDto> GetSection(int id);
-    public Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id);
+    public Task UpdateSection(int id, SectionUpdateDTO section);
+    public Task<IReadOnlyCollection<SectionDTO>> GetSections();
+    public Task<SectionDTO> GetSection(int id);
+    public Task<IReadOnlyCollection<ContentDTO>> GetContentInSection(int id);
 }

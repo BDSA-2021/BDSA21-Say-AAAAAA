@@ -1,6 +1,4 @@
-using System;
-
-namespace SELearning.Core.User;
+namespace SELearning.Infrastructure.User;
 
 public class User : IEquatable<User>
 {
@@ -11,4 +9,6 @@ public class User : IEquatable<User>
 
     public bool Equals(User other)
         => other.Id == Id && other.Name == Name;
+
+    public UserDTO ToUserDTO() => new UserDTO(Id, Name);
 }
