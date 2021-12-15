@@ -16,12 +16,12 @@ public class CommentRepositoryTests
         Content = new List<Content.Content>()
     };
 
-    private static readonly Content content = new(
+    private static readonly Content.Content content = new(
         "Video on Entity Core",
         "Nice",
         "www.hej.dk",
         null,
-        new User
+        new User.User
         {
             Id = "Sarah",
             Name = "Sarah"
@@ -29,7 +29,7 @@ public class CommentRepositoryTests
         section
     );
 
-    private readonly IEnumerable<Comment> _comments;
+    private readonly IEnumerable<Comment.Comment> _comments;
 
     public CommentRepositoryTests()
     {
@@ -42,14 +42,14 @@ public class CommentRepositoryTests
         _context.Database.EnsureCreated();
 
 
-        var _userAmalie = new User { Id = "Amalie", Name = "Amalie" };
-        _comments = new List<Comment>()
+        var _userAmalie = new User.User { Id = "Amalie", Name = "Amalie" };
+        _comments = new List<Comment.Comment>()
         {
-            new Comment("Nice", null, null, content, _userAmalie),
-            new Comment("Cool but boring", null, null, content, new User { Id = "Albert", Name = "Albert" }),
-            new Comment("This is a great video", null, null, content, new User { Id = "Paolo", Name = "Paolo" }),
-            new Comment("Very inappropriate", null, null, content, new User { Id = "Rasmus", Name = "Rasmus" }),
-            new Comment("Nicer", null, null, content, _userAmalie),
+            new Comment.Comment("Nice", null, null, content, _userAmalie),
+            new Comment.Comment("Cool but boring", null, null, content, new User { Id = "Albert", Name = "Albert" }),
+            new Comment.Comment("This is a great video", null, null, content, new User { Id = "Paolo", Name = "Paolo" }),
+            new Comment.Comment("Very inappropriate", null, null, content, new User { Id = "Rasmus", Name = "Rasmus" }),
+            new Comment.Comment("Nicer", null, null, content, _userAmalie),
         };
 
 
