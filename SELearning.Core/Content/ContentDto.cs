@@ -9,10 +9,12 @@ public record ContentUserDTO
     public string Title { get; set; }
     public string Description { get; set; }
     public string VideoLink { get; set; }
+
+    [Required(AllowEmptyStrings = false)]
     public string SectionId { get; set; }
 }
 
-public record ContentDto : IAuthored
+public record ContentDTO : IAuthored
 {
     public int Id { get; set; }
 
@@ -26,17 +28,7 @@ public record ContentDto : IAuthored
 
     public UserDTO Author { get; set; }
 
-    public SectionDto Section { get; set; }
-}
-
-public record ContentUserDto
-{
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public string VideoLink { get; set; }
-
-    [Required(AllowEmptyStrings = false)]
-    public string SectionId { get; set; }
+    public SectionDTO Section { get; set; }
 }
 
 public record ContentCreateDto
@@ -58,7 +50,7 @@ public record ContentCreateDto
 
 }
 
-public record ContentUpdateDto
+public record ContentUpdateDTO
 {
     [StringLength(50)]
     public string Title { get; init; }

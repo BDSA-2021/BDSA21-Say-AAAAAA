@@ -23,7 +23,7 @@ public class ContentControllerTest
 
     private readonly ContentController _controller;
 
-    private readonly User _user;
+    private readonly UserDTO _user;
 
     public ContentControllerTest()
     {
