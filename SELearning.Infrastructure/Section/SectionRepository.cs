@@ -12,7 +12,7 @@ public class SectionRepository : ISectionRepository
         _context = context;
     }
 
-    public async Task<(OperationResult, SectionDto)> AddSection(SectionCreateDto section)
+    public async Task<(OperationResult, SectionDTO)> AddSection(SectionCreateDTO section)
     {
         var entity = new Section
         {
@@ -28,7 +28,7 @@ public class SectionRepository : ISectionRepository
         return (OperationResult.Created, ConvertToSectionDTO(entity));
     }
 
-    public async Task<OperationResult> UpdateSection(int id, SectionUpdateDto section)
+    public async Task<OperationResult> UpdateSection(int id, SectionUpdateDTO section)
     {
         var entity = await _context.Section.FirstOrDefaultAsync(s => s.Id == id);
 
@@ -61,13 +61,13 @@ public class SectionRepository : ISectionRepository
         return OperationResult.Deleted;
     }
 
-    public async Task<IReadOnlyCollection<SectionDto>> GetSections() =>
+    public async Task<IReadOnlyCollection<SectionDTO>> GetSections() =>
         (await _context.Section
                        .Select(s => ConvertToSectionDTO(s))
                        .ToListAsync())
                        .AsReadOnly();
 
-    public async Task<Option<SectionDto>> GetSection(int id)
+    public async Task<Option<SectionDTO>> GetSection(int id)
     {
         var section = from s in _context.Section
                       where s.Id == id
@@ -76,7 +76,7 @@ public class SectionRepository : ISectionRepository
         return await section.FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
+    public async Task<IReadOnlyCollection<ContentDTO>> GetContentInSection(int id)
     {
         var section = _context.Section.Single(s => s.Id == id);
         var content = _context.Content
@@ -88,9 +88,9 @@ public class SectionRepository : ISectionRepository
         return (await content.ToListAsync()).AsReadOnly();
     }
 
-    private static SectionDto ConvertToSectionDTO(Section s)
+    private static SectionDTO ConvertToSectionDTO(Section s)
     {
-        return new SectionDto
+        return new SectionDTO
         {
             Id = s.Id,
             Title = s.Title,

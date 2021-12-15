@@ -9,9 +9,9 @@ public class ContentManagerTests : IDisposable
     private readonly SELearningContext _context;
     private readonly ContentRepository _repository;
     private readonly ContentManager _manager;
-    private readonly Section _section;
+    private readonly Section.Section _section;
 
-    private readonly User _user;
+    private readonly User.User _user;
     private bool disposedValue;
 
     public ContentManagerTests()
