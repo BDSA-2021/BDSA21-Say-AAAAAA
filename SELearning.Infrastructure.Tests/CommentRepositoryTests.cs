@@ -46,9 +46,9 @@ public class CommentRepositoryTests
         _comments = new List<Comment.Comment>()
         {
             new Comment.Comment("Nice", null, null, content, _userAmalie),
-            new Comment.Comment("Cool but boring", null, null, content, new User { Id = "Albert", Name = "Albert" }),
-            new Comment.Comment("This is a great video", null, null, content, new User { Id = "Paolo", Name = "Paolo" }),
-            new Comment.Comment("Very inappropriate", null, null, content, new User { Id = "Rasmus", Name = "Rasmus" }),
+            new Comment.Comment("Cool but boring", null, null, content, new User.User { Id = "Albert", Name = "Albert" }),
+            new Comment.Comment("This is a great video", null, null, content, new User.User { Id = "Paolo", Name = "Paolo" }),
+            new Comment.Comment("Very inappropriate", null, null, content, new User.User { Id = "Rasmus", Name = "Rasmus" }),
             new Comment.Comment("Nicer", null, null, content, _userAmalie),
         };
 
@@ -67,7 +67,7 @@ public class CommentRepositoryTests
     [Fact]
     public async Task AddComment_creates_new_comment_with_generated_id()
     {
-        CommentCreateDTO comment = new(new User { Id = "Harleen", Name = "Harleen" }, "Nice content", 1);
+        CommentCreateDTO comment = new(new UserDTO("Harleen", "Harleen"), "Nice content", 1);
 
         var created = await _repository.AddComment(comment);
 
@@ -80,7 +80,7 @@ public class CommentRepositoryTests
     [Fact]
     public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
     {
-        CommentCreateDTO comment = new(new User { Id = "Harleen", Name = "Harleen" }, "Nice content", 2);
+        CommentCreateDTO comment = new(new UserDTO("Harleen", "Harleen"), "Nice content", 2);
 
         var created = await _repository.AddComment(comment);
 
@@ -154,7 +154,7 @@ public class CommentRepositoryTests
         var read = await _repository.GetCommentsByContentId(1);
 
         Assert.Equal(OperationResult.Succes, read.Item2);
-        Assert.Equal(_comments.Select(x => new CommentDetailsDTO(x.Author, x.Text, x.Id, x.Timestamp, x.Rating, x.Content.Id)), read.Item1);
+        Assert.Equal(_comments.Select(x => new CommentDetailsDTO(x.Author.ToUserDTO(), x.Text, x.Id, x.Timestamp, x.Rating, x.Content.Id)), read.Item1);
     }
 
     [Fact]
