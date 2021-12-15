@@ -11,7 +11,7 @@ public class SectionManager : ISectionService
         _repository = repository;
     }
 
-    public async Task<SectionDto> AddSection(SectionCreateDto section)
+    public async Task<SectionDTO> AddSection(SectionCreateDTO section)
     {
         return (await _repository.AddSection(section)).Item2;
     }
@@ -24,7 +24,7 @@ public class SectionManager : ISectionService
         }
     }
 
-    public async Task<IReadOnlyCollection<ContentDto>> GetContentInSection(int id)
+    public async Task<IReadOnlyCollection<ContentDTO>> GetContentInSection(int id)
     {
         var content = await _repository.GetContentInSection(id);
 
@@ -36,14 +36,14 @@ public class SectionManager : ISectionService
         return content;
     }
 
-    public async Task<IReadOnlyCollection<SectionDto>> GetSections()
+    public async Task<IReadOnlyCollection<SectionDTO>> GetSections()
     {
         var section = await _repository.GetSections();
 
         return section;
     }
 
-    public async Task<SectionDto> GetSection(int id)
+    public async Task<SectionDTO> GetSection(int id)
     {
         var section = await _repository.GetSection(id);
 
@@ -55,7 +55,7 @@ public class SectionManager : ISectionService
         return section.Value;
     }
 
-    public async Task UpdateSection(int id, SectionUpdateDto section)
+    public async Task UpdateSection(int id, SectionUpdateDTO section)
     {
         if (await _repository.UpdateSection(id, section) == OperationResult.NotFound)
         {
