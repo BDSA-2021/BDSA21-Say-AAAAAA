@@ -86,7 +86,7 @@ public class SectionRepositoryTests : IDisposable
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDto { Id = 3, Title = "title", Description = "description" };
+        var sectionDto = new SectionDTO { Id = 3, Title = "title", Description = "description" };
 
         Assert.Equal(sectionDto.Id, created.Id);
         Assert.Equal(sectionDto.Title, created.Title);
