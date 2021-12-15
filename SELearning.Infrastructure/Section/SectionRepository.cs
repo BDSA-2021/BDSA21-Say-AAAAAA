@@ -25,7 +25,7 @@ public class SectionRepository : ISectionRepository
 
         await _context.SaveChangesAsync();
 
-        return (OperationResult.Created, ConvertToSectionDTO(entity));
+        return (OperationResult.Created, entity.ToSectionDTO());
     }
 
     public async Task<OperationResult> UpdateSection(int id, SectionUpdateDTO section)
@@ -55,6 +55,11 @@ public class SectionRepository : ISectionRepository
             return OperationResult.NotFound;
         }
 
+        if (entity.Content != null)
+        {
+            return OperationResult.Conflict;
+        }
+
         _context.Section.Remove(entity);
         await _context.SaveChangesAsync();
 
@@ -63,7 +68,7 @@ public class SectionRepository : ISectionRepository
 
     public async Task<IReadOnlyCollection<SectionDTO>> GetSections() =>
         (await _context.Section
-                       .Select(s => ConvertToSectionDTO(s))
+                       .Select(s => s.ToSectionDTO())
                        .ToListAsync())
                        .AsReadOnly();
 
@@ -71,7 +76,7 @@ public class SectionRepository : ISectionRepository
     {
         var section = from s in _context.Section
                       where s.Id == id
-                      select ConvertToSectionDTO(s);
+                      select s.ToSectionDTO();
 
         return await section.FirstOrDefaultAsync();
     }
@@ -86,15 +91,5 @@ public class SectionRepository : ISectionRepository
             .Select(c => ContentRepository.ConvertToContentDTO(c));
 
         return (await content.ToListAsync()).AsReadOnly();
-    }
-
-    private static SectionDTO ConvertToSectionDTO(Section s)
-    {
-        return new SectionDTO
-        {
-            Id = s.Id,
-            Title = s.Title,
-            Description = s.Description,
-        };
     }
 }
