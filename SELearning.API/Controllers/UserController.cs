@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using SELearning.Core.User;
+using SELearning.Core.Credibility;
 using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.API.Controllers;

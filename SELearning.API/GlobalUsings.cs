@@ -1,8 +1,13 @@
-global using Microsoft.Identity.Web;
-global using System.Security.Claims;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Identity.Web;
 global using SELearning.Core;
+global using SELearning.Core.Comment;
+global using SELearning.Core.Content;
+global using SELearning.Core.Permission;
+global using SELearning.Core.Section;
+global using SELearning.Core.User;
 global using SELearning.Infrastructure;
 global using SELearning.Infrastructure.Comment;
 global using SELearning.Infrastructure.Content;
 global using SELearning.Infrastructure.Section;
+global using System.Security.Claims;

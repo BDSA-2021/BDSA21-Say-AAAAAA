@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using SELearning.Core.User;
-using SELearning.Core.Permission;
-using SELearning.Core.Comment;
-using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 using SELearning.Infrastructure.Authorization;
+using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
 namespace SELearning.API.Controllers;
 
