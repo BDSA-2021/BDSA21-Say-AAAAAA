@@ -29,14 +29,14 @@ public class ContentControllerTest
     {
         var logger = new Mock<ILogger<ContentController>>();
         var authService = new Mock<IAuthorizationService>();
-        _user = new User { Id = "ABC", Name = "Joachim" };
+        _user = new UserDTO("ABC", "Joachim");
         authService.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<IContentService>();
         _service.Setup(x => x.GetContent(It.Is<int>(x => x != 0)))
-                .ReturnsAsync(new ContentDto());
-        _service.Setup(m => m.AddContent(It.IsNotNull<ContentCreateDto>())).ReturnsAsync(new ContentDto { Title = "Title", Id = 1 });
+                .ReturnsAsync(new ContentDTO());
+        _service.Setup(m => m.AddContent(It.IsNotNull<ContentCreateDto>())).ReturnsAsync(new ContentDTO { Title = "Title", Id = 1 });
 
         var userRepo = new Mock<IUserRepository>();
         userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(_user);
@@ -49,7 +49,7 @@ public class ContentControllerTest
     public async Task GetContent_Given_Valid_ID_Returns_ContentDTO()
     {
         // Arrange
-        var expected = new ContentDto { Id = 1 };
+        var expected = new ContentDTO { Id = 1 };
         _service.Setup(m => m.GetContent(1)).ReturnsAsync(expected);
 
         // Act
@@ -76,7 +76,7 @@ public class ContentControllerTest
     public async Task GetAllContent_Returns_Collection_Of_Contents()
     {
         // Arrange
-        var expected = Array.Empty<ContentDto>();
+        var expected = Array.Empty<ContentDTO>();
         _service.Setup(m => m.GetContent()).ReturnsAsync(expected);
 
         // Act
@@ -96,7 +96,7 @@ public class ContentControllerTest
         var actual = (await _controller.CreateContent(toCreate) as CreatedAtActionResult)!;
 
         // Assert
-        Assert.Equal(new ContentDto { Title = "Title", Id = 1 }, actual.Value);
+        Assert.Equal(new ContentDTO { Title = "Title", Id = 1 }, actual.Value);
         Assert.Equal("GetContent", actual.ActionName);
         Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
     }
@@ -105,7 +105,7 @@ public class ContentControllerTest
     public async Task UpdateContent_Given_Valid_ID_Returns_NoContent()
     {
         // Act
-        var response = await _controller.UpdateContent(1, new ContentUpdateDto { Title = "Title" });
+        var response = await _controller.UpdateContent(1, new ContentUpdateDTO { Title = "Title" });
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -115,7 +115,7 @@ public class ContentControllerTest
     public async Task UpdateContent_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var content = new ContentUpdateDto { Title = "Title" };
+        var content = new ContentUpdateDTO { Title = "Title" };
         _service.Setup(m => m.UpdateContent(-1, content)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
