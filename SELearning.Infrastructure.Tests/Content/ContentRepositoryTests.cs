@@ -22,32 +22,25 @@ public class ContentRepositoryTests
         connection.Open();
         var builder = new DbContextOptionsBuilder<SELearningContext>();
         builder.UseSqlite(connection);
-        var context = new SELearningContext(builder.Options);
-        context.Database.EnsureCreated();
+        _context = new SELearningContext(builder.Options);
+        _context.Database.EnsureCreated();
 
         _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
 
-        var content1 = new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section);
-        var content2 = new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section);
-        var content3 = new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section);
-        var content4 = new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section);
-
         var contentList = new List<Content.Content>
         {
-            content1,
-            content2,
-            content3,
-            content4
+            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
+            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
+            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
+            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section)
         };
 
-        _section.Content = contentList;
+        _context.Content.AddRange(contentList);
+        _context.Section.Add(_section);
+        _context.Users.Add(_authorUser);
 
-        context.Content.AddRange(contentList);
-        context.Section.Add(_section);
+        _context.SaveChanges();
 
-        context.SaveChanges();
-
-        _context = context;
         _repository = new ContentRepository(_context);
     }
 
@@ -82,7 +75,7 @@ public class ContentRepositoryTests
             Description = "description",
             VideoLink = "video link",
             SectionId = _section.Id,
-            Author = new UserDTO("Author", "Author"),
+            Author = _authorUser.ToUserDTO(),
         };
 
         var (status, created) = await _repository.AddContent(content);
@@ -95,7 +88,7 @@ public class ContentRepositoryTests
             VideoLink = "video link",
             Rating = 0,
             Section = _section.ToSectionDTO(),
-            Author = new UserDTO("Author", "Author")
+            Author = _authorUser.ToUserDTO()
         };
 
         Assert.Equal(contentDto, created);

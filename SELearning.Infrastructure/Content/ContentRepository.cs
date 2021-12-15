@@ -14,7 +14,12 @@ public class ContentRepository : IContentRepository
     public async Task<(OperationResult, ContentDTO)> AddContent(ContentCreateDto content)
     {
         var section = await _context.Section.FindAsync(content.SectionId);
-        var author = await _context.Users.FindAsync(content.Author.Id);
+        var author = await _context.Users.FirstOrDefaultAsync(c => c.Id == content.Author.Id);
+
+        if (section == null || author == null)
+        {
+            return (OperationResult.NotFound, null!);
+        }
 
         var entity = new Content(
             content.Title,
