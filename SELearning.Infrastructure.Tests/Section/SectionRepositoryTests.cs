@@ -7,15 +7,13 @@ using SELearning.Infrastructure.Section;
 
 namespace SELearning.Infrastructure.Tests;
 
-public class SectionRepositoryTests : IDisposable
+public class SectionRepositoryTests
 {
     private readonly SELearningContext _context;
     private readonly SectionRepository _repository;
-
     private static Section.Section _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
     private static Section.Section _sectionEmpty = new Section.Section { Id = 2, Title = "python", Description = "description" };
     private static User.User _user = new User.User { Id = "ABC", Name = "Adrian" };
-    private bool disposedValue;
 
     public SectionRepositoryTests()
     {
@@ -220,25 +218,5 @@ public class SectionRepositoryTests : IDisposable
                       };
 
         Assert.Equal(content, contentInSection);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                // TODO: dispose managed state (managed objects)
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

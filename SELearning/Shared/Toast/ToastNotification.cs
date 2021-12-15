@@ -68,4 +68,10 @@ public partial class ToastNotification : IDisposable
 
     public static ToastNotification CreateUnauthorized(string message) =>
         new("Unauthorized!", $"You are not authorized to {message}", ToastType.Error, 10_000);
+
+    public static ToastNotification CreateLoggedError(string message)
+    {
+        System.Console.WriteLine(message);
+        return CreateGenericErrorToastNotification(message);
+    }
 }

@@ -86,15 +86,8 @@
         } 
         catch(Exception exception)
         {
-            toasts.AddToast(ToastNotification.CreateGenericErrorToastNotification(exception.Message));
-            await this.Alert(exception);
+            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
-    }
-
-    private async Task Alert(Exception exception)
-    {
-        await JsRuntime.InvokeVoidAsync("alert", exception.ToString());
-        System.Console.WriteLine(exception);
     }
 
     protected async Task RetrieveSections()
