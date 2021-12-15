@@ -15,7 +15,7 @@ public class CredibilityRepositoryTest
     [InlineData(12345679, new int[] { 20, 9876543, 2109876, 359240 })]
     public async Task GetContentCredibilityScore_WithContent_ReturnsSum(int expectedSum, int[] ratings)
     {
-        var contents = ratings.Select(r => new ContentDto { Rating = r });
+        var contents = ratings.Select(r => new ContentDTO { Rating = r });
         var contentService = new Mock<IContentService>();
         contentService.Setup(m => m.GetContentByAuthor(_userId)).ReturnsAsync(contents);
         var commentService = new Mock<ICommentService>();
