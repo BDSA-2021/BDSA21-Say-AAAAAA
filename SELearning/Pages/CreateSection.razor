@@ -52,7 +52,7 @@
   }
     private SectionDto[] sections = {}; 
 
-    private SectionCreateDto sectionDto { get; set; } = new();
+    private SectionCreateDTO sectionDto { get; set; } = new();
 
   private bool isPosted = false;
   private bool isNotPosted = false;
@@ -61,7 +61,7 @@
   {
     try
     {
-      var response = await Http.PostAsJsonAsync<SectionCreateDto>("Section", sectionDto);
+      var response = await Http.PostAsJsonAsync<SectionCreateDTO>("Section", sectionDto);
 
       isPosted = response.IsSuccessStatusCode;
       isNotPosted = !isPosted;

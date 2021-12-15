@@ -7,7 +7,7 @@
 <section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
     <div class="row">
         <!-- List of comments -->
-        @foreach(SectionDto sec in _sections)
+        @foreach(SectionDTO sec in _sections)
         {
             <SectionTile Sec="@sec" OnDeleted="@OnSectionDeleted" />
         }
@@ -15,7 +15,7 @@
 </section>
 
 @code{
-    private List<SectionDto> _sections = new();
+    private List<SectionDTO> _sections = new();
 
     protected async override void OnInitialized()
     {
@@ -26,7 +26,7 @@
     {
         try
         {
-            var sectionDtos = await Http.GetFromJsonAsync<IEnumerable<SectionDto>>("Section");
+            var sectionDtos = await Http.GetFromJsonAsync<IEnumerable<SectionDTO>>("Section");
             _sections.AddRange(sectionDtos);
             StateHasChanged();
         }
@@ -36,7 +36,7 @@
         }
     }
 
-    void OnSectionDeleted(SectionDto deletedSection)
+    void OnSectionDeleted(SectionDTO deletedSection)
     {
         _sections.Remove(deletedSection);
         StateHasChanged();
