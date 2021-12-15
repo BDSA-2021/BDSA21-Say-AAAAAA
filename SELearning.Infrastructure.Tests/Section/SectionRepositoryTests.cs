@@ -11,8 +11,9 @@ public class SectionRepositoryTests : IDisposable
 {
     private readonly SELearningContext _context;
     private readonly SectionRepository _repository;
-    private static Section.Section _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
 
+    private static Section.Section _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
+    private static Section.Section _sectionEmpty = new Section { Id = 2, Title = "python", Description = "description" };
     private static User.User _user = new User.User { Id = "ABC", Name = "Adrian" };
     private bool disposedValue;
 
@@ -48,7 +49,8 @@ public class SectionRepositoryTests : IDisposable
         );
 
         context.Section.AddRange(
-            _section
+            _section,
+            _sectionEmpty
         );
 
         context.SaveChanges();
@@ -84,7 +86,7 @@ public class SectionRepositoryTests : IDisposable
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDTO { Id = 2, Title = "title", Description = "description" };
+        var sectionDto = new SectionDto { Id = 3, Title = "title", Description = "description" };
 
         Assert.Equal(sectionDto.Id, created.Id);
         Assert.Equal(sectionDto.Title, created.Title);
@@ -121,7 +123,8 @@ public class SectionRepositoryTests : IDisposable
         var allSections = await _repository.GetSections();
 
         Assert.Collection(allSections,
-            section => Assert.Equal(section.Id, _section.Id)
+            section => Assert.Equal(1, section.Id),
+            section => Assert.Equal(2, section.Id)
         );
     }
 
@@ -181,11 +184,19 @@ public class SectionRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteSectionAsync_deletes_and_returns_Deleted()
+    public async Task DeleteSection_with_content_returns_Conflict()
     {
         var response = await _repository.DeleteSection(1);
 
-        var entity = await _context.Section.FindAsync(1);
+        Assert.Equal(OperationResult.Conflict, response);
+    }
+
+    [Fact]
+    public async Task DeleteSectionAsync_deletes_and_returns_Deleted()
+    {
+        var response = await _repository.DeleteSection(2);
+
+        var entity = await _context.Section.FindAsync(2);
 
         Assert.Equal(OperationResult.Deleted, response);
         Assert.Null(entity);

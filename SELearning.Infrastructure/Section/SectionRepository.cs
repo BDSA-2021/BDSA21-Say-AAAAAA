@@ -25,7 +25,7 @@ public class SectionRepository : ISectionRepository
 
         await _context.SaveChangesAsync();
 
-        return (OperationResult.Created, ConvertToSectionDTO(entity));
+        return (OperationResult.Created, entity.ToSectionDTO());
     }
 
     public async Task<OperationResult> UpdateSection(int id, SectionUpdateDTO section)
@@ -53,6 +53,11 @@ public class SectionRepository : ISectionRepository
         if (entity == null)
         {
             return OperationResult.NotFound;
+        }
+
+        if (entity.Content != null)
+        {
+            return OperationResult.Conflict;
         }
 
         _context.Section.Remove(entity);
@@ -86,15 +91,5 @@ public class SectionRepository : ISectionRepository
             .Select(c => ContentRepository.ConvertToContentDTO(c));
 
         return (await content.ToListAsync()).AsReadOnly();
-    }
-
-    private static SectionDTO ConvertToSectionDTO(Section s)
-    {
-        return new SectionDTO
-        {
-            Id = s.Id,
-            Title = s.Title,
-            Description = s.Description,
-        };
     }
 }
