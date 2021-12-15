@@ -1,4 +1,4 @@
-﻿namespace SELearning.Core;
+﻿namespace SELearning.Core.Credibility;
 
 public interface ICredibilityRepository
 {

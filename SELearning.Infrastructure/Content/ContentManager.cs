@@ -9,7 +9,7 @@ public class ContentManager : IContentService
         _repository = repository;
     }
 
-    public async Task<ContentDto> AddContent(ContentCreateDto content)
+    public async Task<ContentDTO> AddContent(ContentCreateDto content)
     {
         return (await _repository.AddContent(content)).Item2;
     }
@@ -23,7 +23,7 @@ public class ContentManager : IContentService
             throw new ContentNotFoundException(id);
         }
 
-        ContentUpdateDto dto = new()
+        ContentUpdateDTO dto = new()
         {
             Title = content.Value.Title,
             Description = content.Value.Description,
@@ -42,14 +42,14 @@ public class ContentManager : IContentService
         }
     }
 
-    public async Task<IReadOnlyCollection<ContentDto>> GetContent()
+    public async Task<IReadOnlyCollection<ContentDTO>> GetContent()
     {
         var content = await _repository.GetContent();
 
         return content;
     }
 
-    public async Task<ContentDto> GetContent(int id)
+    public async Task<ContentDTO> GetContent(int id)
     {
         var content = await _repository.GetContent(id);
 
@@ -71,7 +71,7 @@ public class ContentManager : IContentService
             throw new ContentNotFoundException(id);
         }
 
-        ContentUpdateDto dto = new()
+        ContentUpdateDTO dto = new()
         {
             Title = content.Value.Title,
             Description = content.Value.Description,
@@ -82,7 +82,7 @@ public class ContentManager : IContentService
         await UpdateContent(id, dto);
     }
 
-    public async Task UpdateContent(int id, ContentUpdateDto content)
+    public async Task UpdateContent(int id, ContentUpdateDTO content)
     {
         if (await _repository.UpdateContent(id, content) == OperationResult.NotFound)
         {
@@ -90,6 +90,6 @@ public class ContentManager : IContentService
         }
     }
 
-    public async Task<IEnumerable<ContentDto>> GetContentByAuthor(string userId)
+    public async Task<IEnumerable<ContentDTO>> GetContentByAuthor(string userId)
         => await _repository.GetContentByAuthor(userId);
 }

@@ -1,3 +1,5 @@
+using SELearning.Infrastructure.User;
+
 namespace SELearning.API.Models;
 
 public static class Migrator
@@ -90,7 +92,7 @@ public static class Migrator
                     "Some description",
                     ContentVideos[rng.Next(0, 4)],
                     rng.Next(0, 5000),
-                    new Core.User.User
+                    new User
                     {
                         Id = Guid.NewGuid().ToString(),
                         Name = ContentTitles[rng.Next(0, 4)]
@@ -119,7 +121,7 @@ public static class Migrator
                     null,
                     rng.Next(0, 5000),
                     c,
-                    new Core.User.User
+                    new User
                     {
                         Id = Guid.NewGuid().ToString(),
                         Name = ContentTitles[rng.Next(0, 4)]

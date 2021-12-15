@@ -8,20 +8,20 @@ public class CommentRepositoryTests
     private readonly CommentRepository _repository;
     private readonly SELearningContext _context;
 
-    private static readonly Section section = new()
+    private static readonly Section.Section section = new()
     {
         Id = 1,
         Title = "C#",
         Description = "C# tools",
-        Content = new List<Content>()
+        Content = new List<Content.Content>()
     };
 
-    private static readonly Content content = new(
+    private static readonly Content.Content content = new(
         "Video on Entity Core",
         "Nice",
         "www.hej.dk",
         null,
-        new User
+        new User.User
         {
             Id = "Sarah",
             Name = "Sarah"
@@ -29,7 +29,8 @@ public class CommentRepositoryTests
         section
     );
 
-    private readonly IEnumerable<Comment> _comments;
+    private readonly IEnumerable<Comment.Comment> _comments;
+    private readonly User.User _userAmalie = new User.User { Id = "Amalie", Name = "Amalie" };
 
     public CommentRepositoryTests()
     {
@@ -41,15 +42,13 @@ public class CommentRepositoryTests
         _context = new SELearningContext(builder.Options);
         _context.Database.EnsureCreated();
 
-
-        var _userAmalie = new User { Id = "Amalie", Name = "Amalie" };
-        _comments = new List<Comment>()
+        _comments = new List<Comment.Comment>()
         {
-            new Comment("Nice", null, null, content, _userAmalie),
-            new Comment("Cool but boring", null, null, content, new User { Id = "Albert", Name = "Albert" }),
-            new Comment("This is a great video", null, null, content, new User { Id = "Paolo", Name = "Paolo" }),
-            new Comment("Very inappropriate", null, null, content, new User { Id = "Rasmus", Name = "Rasmus" }),
-            new Comment("Nicer", null, null, content, _userAmalie),
+            new Comment.Comment("Nice", null, null, content, _userAmalie),
+            new Comment.Comment("Cool but boring", null, null, content, new User.User { Id = "Albert", Name = "Albert" }),
+            new Comment.Comment("This is a great video", null, null, content, new User.User { Id = "Paolo", Name = "Paolo" }),
+            new Comment.Comment("Very inappropriate", null, null, content, new User.User { Id = "Rasmus", Name = "Rasmus" }),
+            new Comment.Comment("Nicer", null, null, content, _userAmalie),
         };
 
 
@@ -67,12 +66,12 @@ public class CommentRepositoryTests
     [Fact]
     public async Task AddComment_creates_new_comment_with_generated_id()
     {
-        CommentCreateDTO comment = new(new User { Id = "Harleen", Name = "Harleen" }, "Nice content", 1);
+        CommentCreateDTO comment = new(_userAmalie.ToUserDTO(), "Nice content", 1);
 
         var created = await _repository.AddComment(comment);
 
         Assert.Equal(6, created.Item2.Id);
-        Assert.Equal("Harleen", created.Item2.Author.Name);
+        Assert.Equal("Amalie", created.Item2.Author.Name);
         Assert.Equal("Nice content", created.Item2.Text);
         Assert.Equal(OperationResult.Created, created.Item1);
     }
@@ -80,7 +79,7 @@ public class CommentRepositoryTests
     [Fact]
     public async Task AddComment__given_non_existing_ContentId_returns_NotFound()
     {
-        CommentCreateDTO comment = new(new User { Id = "Harleen", Name = "Harleen" }, "Nice content", 2);
+        CommentCreateDTO comment = new(new UserDTO("Harleen", "Harleen"), "Nice content", 2);
 
         var created = await _repository.AddComment(comment);
 
@@ -154,7 +153,7 @@ public class CommentRepositoryTests
         var read = await _repository.GetCommentsByContentId(1);
 
         Assert.Equal(OperationResult.Succes, read.Item2);
-        Assert.Equal(_comments.Select(x => new CommentDetailsDTO(x.Author, x.Text, x.Id, x.Timestamp, x.Rating, x.Content.Id)), read.Item1);
+        Assert.Equal(_comments.Select(x => new CommentDetailsDTO(x.Author.ToUserDTO(), x.Text, x.Id, x.Timestamp, x.Rating, x.Content.Id)), read.Item1);
     }
 
     [Fact]

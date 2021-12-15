@@ -25,10 +25,10 @@
 @code {
 
     [Parameter]
-    public ContentDto content { get; set; }
+    public ContentDTO content { get; set; }
 
     [Parameter]
-    public EventCallback<ContentDto> OnContentDeleted { get; set; }
+    public EventCallback<ContentDTO> OnContentDeleted { get; set; }
 
     private async Task Delete()
     {

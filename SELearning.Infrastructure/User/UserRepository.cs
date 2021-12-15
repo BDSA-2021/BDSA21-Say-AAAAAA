@@ -1,4 +1,4 @@
-namespace SELearning.Infrastructure;
+namespace SELearning.Infrastructure.User;
 
 public class UserRepository : IUserRepository
 {
@@ -9,7 +9,7 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<User> GetOrAddUser(UserDTO user)
+    public async Task<UserDTO> GetOrAddUser(UserDTO user)
     {
         var retrievedUser = await _context
             .Users
@@ -17,17 +17,22 @@ public class UserRepository : IUserRepository
 
         if (retrievedUser != null)
         {
-            return retrievedUser;
+            return ConvertToDTO(retrievedUser);
         }
 
         var createUser = new User
         {
+
+
             Id = user.Id,
             Name = user.Name
         };
+
         await _context.Users.AddAsync(createUser);
         await _context.SaveChangesAsync();
 
-        return createUser;
+        return ConvertToDTO(createUser);
     }
+
+    private UserDTO ConvertToDTO(User user) => new UserDTO(user.Id, user.Name);
 }

@@ -9,9 +9,9 @@ public class ContentManagerTests
     private readonly SELearningContext _context;
     private readonly ContentRepository _repository;
     private readonly ContentManager _manager;
-    private readonly Section _section;
+    private readonly Section.Section _section;
 
-    private readonly User _user;
+    private readonly User.User _user;
 
     public ContentManagerTests()
     {
@@ -24,19 +24,19 @@ public class ContentManagerTests
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        _user = new User { Id = "toucan", Name = "Næbdyr" };
+        _user = new User.User { Id = "toucan", Name = "Næbdyr" };
 
-        var content1 = new Content("title", "description", "link", 3, _user, _section);
-        var content2 = new Content("title", "description", "link", 3, _user, _section);
-        var content3 = new Content("title", "description", "link", 3, _user, _section);
-        var content4 = new Content("title", "description", "link", 3, _user, _section);
+        var content1 = new Content.Content("title", "description", "link", 3, _user, _section);
+        var content2 = new Content.Content("title", "description", "link", 3, _user, _section);
+        var content3 = new Content.Content("title", "description", "link", 3, _user, _section);
+        var content4 = new Content.Content("title", "description", "link", 3, _user, _section);
         content1.Id = 1;
         content1.Id = 2;
         content1.Id = 3;
         content1.Id = 4;
 
-        _section = new Section { Id = 1, Title = "python", Description = "description" };
-        _section.Content = new List<Content>
+        _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
+        _section.Content = new List<Content.Content>
         {
             content1,
             content2,
@@ -91,7 +91,7 @@ public class ContentManagerTests
         var content = new ContentCreateDto
         {
             SectionId = _section.Id,
-            Author = _user,
+            Author = _user.ToUserDTO(),
             Title = "title",
             Description = "description",
             VideoLink = "video link",
@@ -101,8 +101,8 @@ public class ContentManagerTests
 
         var contentWithID = (await _repository.GetContent(5)).Value;
 
-        Assert.Equal(_section, contentWithID.Section);
-        Assert.Equal(_user, contentWithID.Author);
+        Assert.Equal(_section.ToSectionDTO(), contentWithID.Section);
+        Assert.Equal(_user.ToUserDTO(), contentWithID.Author);
         Assert.Equal("title", contentWithID.Title);
         Assert.Equal("description", contentWithID.Description);
         Assert.Equal("video link", contentWithID.VideoLink);
@@ -115,8 +115,8 @@ public class ContentManagerTests
         var content = await _manager.GetContent(1);
 
         Assert.Equal(1, content.Id);
-        Assert.Equal(_section, content.Section);
-        Assert.Equal(_user, content.Author);
+        Assert.Equal(_section.ToSectionDTO(), content.Section);
+        Assert.Equal(_user.ToUserDTO(), content.Author);
         Assert.Equal("title", content.Title);
         Assert.Equal("description", content.Description);
         Assert.Equal("link", content.VideoLink);

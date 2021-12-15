@@ -40,7 +40,7 @@
     [Parameter]
     public int ContentId { get; set; }
 
-    private ContentDto _content;
+    private ContentDTO _content;
 
     protected override async void OnInitialized() {
         await this.GetContent();
@@ -49,7 +49,7 @@
     protected async Task GetContent() {
         try
         {
-            _content = await Http.GetFromJsonAsync<ContentDto>($"Content/{this.ContentId}");
+            _content = await Http.GetFromJsonAsync<ContentDTO>($"Content/{this.ContentId}");
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)

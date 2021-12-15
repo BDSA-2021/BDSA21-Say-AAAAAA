@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using SELearning.Core.Permission;
 using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.API.Controllers;
@@ -27,9 +26,9 @@ public class SectionController : ControllerBase
     /// <param name="sectionID">The ID of the section.</param>
     /// <returns>A collection of contents in the section if it exists, otherwise response type 404: Not Found.</returns>
     [HttpGet("{ID}/Content")]
-    [ProducesResponseType(typeof(IReadOnlyCollection<ContentDto>), 200)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<ContentDTO>), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<IReadOnlyCollection<ContentDto>>> GetContentsBySectionID(int ID)
+    public async Task<ActionResult<IReadOnlyCollection<ContentDTO>>> GetContentsBySectionID(int ID)
     {
         try
         {
@@ -47,10 +46,10 @@ public class SectionController : ControllerBase
     /// <param name="ID">The ID of the section.</param>
     /// <returns>A section with the given ID if it exists, otherwise response type 404: Not Found.</returns>
     [HttpGet("{ID}")]
-    [ProducesResponseType(typeof(SectionDto), 200)]
+    [ProducesResponseType(typeof(SectionDTO), 200)]
     [ProducesResponseType(404)]
     [ActionName(nameof(GetSection))]
-    public async Task<ActionResult<SectionDto>> GetSection(int ID)
+    public async Task<ActionResult<SectionDTO>> GetSection(int ID)
     {
         try
         {
@@ -67,9 +66,9 @@ public class SectionController : ControllerBase
     /// </summary>
     /// <returns>all sections if they can be found, otherwise response type 404: Not Found.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyCollection<SectionDto>), 200)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<SectionDTO>), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<IReadOnlyCollection<SectionDto>>> GetAllSections()
+    public async Task<ActionResult<IReadOnlyCollection<SectionDTO>>> GetAllSections()
     {
         return Ok(await _service.GetSections());
     }
@@ -82,7 +81,7 @@ public class SectionController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [AuthorizePermission(Permission.CreateSection)]
-    public async Task<IActionResult> CreateSection(SectionCreateDto section)
+    public async Task<IActionResult> CreateSection(SectionCreateDTO section)
     {
         var createdSection = await _service.AddSection(section);
         return CreatedAtAction(nameof(GetSection), new { ID = createdSection.Id }, createdSection);
@@ -98,7 +97,7 @@ public class SectionController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.EditSection)]
-    public async Task<IActionResult> UpdateSection(int ID, SectionUpdateDto section)
+    public async Task<IActionResult> UpdateSection(int ID, SectionUpdateDTO section)
     {
         try
         {

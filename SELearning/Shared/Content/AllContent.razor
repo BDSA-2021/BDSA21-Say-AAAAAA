@@ -14,14 +14,14 @@
 </section>
 
 @code{
-    private List<ContentDto> _allContent = new();
+    private List<ContentDTO> _allContent = new();
 
     protected async override void OnInitialized()
     {
         await RetrieveContent();
     }
 
-    private void OnContentDeleted(ContentDto content)
+    private void OnContentDeleted(ContentDTO content)
     {
         _allContent.Remove(content);
         StateHasChanged();
@@ -31,7 +31,7 @@
     {
         try
         {
-            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDto>>("Content");
+            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDTO>>("Content");
             _allContent = content.ToList();
             StateHasChanged();
         }

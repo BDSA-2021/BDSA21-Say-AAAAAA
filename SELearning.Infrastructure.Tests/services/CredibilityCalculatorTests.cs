@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using SELearning.Core.Credibility;
+using SELearning.Infrastructure.Credibility;
 
 namespace SELearning.Infrastructure.Tests;
 

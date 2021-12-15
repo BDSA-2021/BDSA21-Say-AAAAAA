@@ -1,5 +1,4 @@
-using SELearning.Core.Content;
-using SELearning.Core.User;
+using SELearning.Infrastructure.Section;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,10 +10,11 @@ public class SectionManagerTests : IDisposable
     private readonly SELearningContext _context;
     private readonly SectionRepository _repository;
     private readonly SectionManager _manager;
-    private readonly Section _section;
-    private readonly Section _sectionEmpty;
 
-    private readonly User _user;
+    private readonly Section.Section _section;
+    private readonly Section.Section _sectionEmpty;
+
+    private readonly User.User _user;
     private bool disposedValue;
 
     public SectionManagerTests()
@@ -28,16 +28,16 @@ public class SectionManagerTests : IDisposable
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        _section = new Section { Id = 1, Title = "python", Description = "description" };
-        _sectionEmpty = new Section { Id = 2, Title = "python", Description = "description" };
-        _user = new User { Id = "ABC", Name = "Adrian" };
+        _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
+        _sectionEmpty = new Section.Section { Id = 2, Title = "python", Description = "description" };
+        _user = new User.User { Id = "ABC", Name = "Adrian" };
 
-        var content1 = new Content("title", "description", "VideoLink", 3, _user, _section);
-        var content2 = new Content("title", "description", "VideoLink", 3, _user, _section);
-        var content3 = new Content("title", "description", "VideoLink", 3, _user, _section);
-        var content4 = new Content("title", "description", "VideoLink", 3, _user, _section);
+        var content1 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
+        var content2 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
+        var content3 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
+        var content4 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
 
-        var contentList = new List<Content>
+        var contentList = new List<Content.Content>
         {
             content1,
             content2,
@@ -72,13 +72,13 @@ public class SectionManagerTests : IDisposable
         var contentInSection = await _repository.GetContentInSection(1);
 
         var content = from c in _section.Content
-                      select new ContentDto
+                      select new ContentDTO
                       {
                           Id = c.Id,
-                          Author = c.Author,
+                          Author = c.Author.ToUserDTO(),
                           Title = c.Title,
                           Description = c.Description,
-                          Section = c.Section,
+                          Section = c.Section.ToSectionDTO(),
                           VideoLink = c.VideoLink,
                           Rating = c.Rating
                       };
@@ -89,8 +89,8 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_updates_and_returns_Updated()
     {
-        var contentList = new List<Content>();
-        var section = new SectionUpdateDto
+        var contentList = new List<Content.Content>();
+        var section = new SectionUpdateDTO
         {
             Title = "new title",
             Description = "description",
@@ -125,8 +125,8 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_Content_returns_NotFound()
     {
-        var contentList = new List<Content>();
-        var section = new SectionUpdateDto
+        var contentList = new List<Content.Content>();
+        var section = new SectionUpdateDTO
         {
             Title = "title",
             Description = "description",
@@ -140,8 +140,8 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
-        var contentList = new List<Content>();
-        var section = new SectionCreateDto { Title = "title", Description = "description" };
+        var contentList = new List<Content.Content>();
+        var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var created = (await _repository.AddSection(section)).Item2;
 
@@ -161,12 +161,12 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task CreateSectionAsync_given_Section_returns_Section_with_Section()
     {
-        var contentList = new List<Content>();
-        var section = new SectionCreateDto { Title = "title", Description = "description" };
+        var contentList = new List<Content.Content>();
+        var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDto { Id = 3, Title = "title", Description = "description" };
+        var sectionDto = new SectionDTO { Id = 3, Title = "title", Description = "description" };
 
         Assert.Equal(sectionDto.Id, created.Id);
         Assert.Equal(sectionDto.Title, created.Title);
@@ -187,8 +187,8 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_id_returns_NotFound()
     {
-        var contentList = new List<Content>();
-        var section = new SectionUpdateDto
+        var contentList = new List<Content.Content>();
+        var section = new SectionUpdateDTO
         {
             Title = "title",
             Description = "description",
@@ -213,8 +213,8 @@ public class SectionManagerTests : IDisposable
     [Fact]
     public async Task UpdateSectionAsync_updates_existing_section()
     {
-        var contentList = new List<Content>();
-        var section = new SectionUpdateDto
+        var contentList = new List<Content.Content>();
+        var section = new SectionUpdateDTO
         {
             Title = "title",
             Description = "description",

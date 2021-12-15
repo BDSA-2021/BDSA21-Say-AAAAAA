@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using SELearning.Core.Permission;
+using SELearning.Core.Credibility;
 
 namespace SELearning.Infrastructure.Authorization;
 
