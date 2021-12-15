@@ -68,7 +68,7 @@ public class SectionRepository : ISectionRepository
 
     public async Task<IReadOnlyCollection<SectionDTO>> GetSections() =>
         (await _context.Section
-                       .Select(s => ConvertToSectionDTO(s))
+                       .Select(s => s.ToSectionDTO())
                        .ToListAsync())
                        .AsReadOnly();
 
@@ -76,7 +76,7 @@ public class SectionRepository : ISectionRepository
     {
         var section = from s in _context.Section
                       where s.Id == id
-                      select ConvertToSectionDTO(s);
+                      select s.ToSectionDTO();
 
         return await section.FirstOrDefaultAsync();
     }
