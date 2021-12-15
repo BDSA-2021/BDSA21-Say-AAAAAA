@@ -1,3 +1,5 @@
+using SELearning.Core.Section;
+
 namespace SELearning.Infrastructure.Section;
 
 public class Section : IEquatable<Section>
@@ -23,4 +25,6 @@ public class Section : IEquatable<Section>
     {
         return Equals(other as Section);
     }
+
+    public SectionDTO ToSectionDTO() => new SectionDTO { Id = Id, Title = Title, Description = Description };
 }
