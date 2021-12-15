@@ -14,6 +14,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
-    <PackageReference Include="Microsoft.EntityframeworkCore.SqlServer" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityframeworkCore.SqlServer" Version="6.0.1" />
   </ItemGroup>
 </Project>
