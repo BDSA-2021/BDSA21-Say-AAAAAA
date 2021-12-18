@@ -12,14 +12,16 @@ public class DynamicDictionary : IDynamicDictionary
 
     public T Get<T>(string key)
     {
-        var fullKey = (key, nameof(T));
+        var fullKey = (key, GetTypeName<T>());
 
         if (!_dict.ContainsKey(fullKey))
-            throw new KeyNotFoundException($"there was no key '{key}' of type {nameof(T)} in the dictionary");
+            throw new KeyNotFoundException($"there was no key '{key}' of type {GetTypeName<T>()} in the dictionary");
 
         return (T)_dict[fullKey];
     }
 
     public void Set<T>(string key, T value)
-        => _dict.Add((key, nameof(T)), value ?? throw new ArgumentNullException(nameof(value)));
+        => _dict[(key, GetTypeName<T>())] = value ?? throw new ArgumentNullException(nameof(value));
+
+    private string GetTypeName<T>() => typeof(T).FullName ?? typeof(T).Name;
 }
