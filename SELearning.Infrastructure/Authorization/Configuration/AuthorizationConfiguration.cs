@@ -11,7 +11,6 @@ public static class AuthorizationConfiguration
         // Inject asp net Authorization handler and policy implementations
         services.AddSingleton<IAuthorizationHandler, CredibilityAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, AuthoredCredibilityAuthorizationHandler>();
-        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddSingleton<IProvider<ICredibilityService>, Provider<ICredibilityService>>();
 
         return new(services);

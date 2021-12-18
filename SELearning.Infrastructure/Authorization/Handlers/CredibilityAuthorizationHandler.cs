@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using SELearning.Core.Credibility;
+using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
 
