@@ -12,12 +12,18 @@ public class CredibilityOperationTests
     public CredibilityOperationTests()
     {
         var permissionService = new Mock<ICredibilityService>();
-        permissionService.Setup(m => m.GetCredibilityScore(_user)).ReturnsAsync(1000);
+        permissionService.Setup(m => m.GetCredibilityScore(It.IsNotNull<ClaimsPrincipal>())).ReturnsAsync(1000);
 
-        var provider = new Mock<IProvider<ICredibilityService>>();
-        provider.Setup(x => x.Get()).Returns(permissionService.Object);
+        var permissionCredibilityService = new Mock<IPermissionCredibilityService>();
+        permissionCredibilityService.Setup(m => m.GetRequiredCredibility(It.IsNotNull<Permission>())).ReturnsAsync(500);
+
+        var permissionCredServiceProvider = new Mock<IProvider<IPermissionCredibilityService>>();
+        permissionCredServiceProvider.Setup(x => x.Get()).Returns(permissionCredibilityService.Object);
+
+        var credServiceProvider = new Mock<IProvider<ICredibilityService>>();
+        credServiceProvider.Setup(x => x.Get()).Returns(permissionService.Object);
         
-        _testPipelineOperation = new CredibilityOperation(null, provider.Object);
+        _testPipelineOperation = new CredibilityOperation(permissionCredServiceProvider.Object, credServiceProvider.Object);
         _user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson"), new Claim(ClaimTypes.Role, "Moderator"), new Claim(ClaimTypes.Role, "AnotherOne") }));
     }
 
@@ -28,20 +34,25 @@ public class CredibilityOperationTests
         PermissionAuthorizationContext context = new PermissionAuthorizationContext(_user, Enumerable.Empty<Permission>());
 
         await _testPipelineOperation.Invoke(context);
-        IEnumerable<int> result = context.Data.Get<IEnumerable<int>>("RequiredCredibilityScore");
 
-        Assert.Equal(Enumerable.Empty<int>(), result);
+        IEnumerable<int> resultCredScores = context.Data.Get<IEnumerable<int>>("RequiredCredibilityScores");
+        int resultUserScore = context.Data.Get<int>("UserCredibilityScore");
+
+        Assert.Equal(1000, resultUserScore);
+        Assert.Equal(Enumerable.Empty<int>(), resultCredScores);
     }
 
     [Fact]
-    public async Task Invoke_UserWithModeratorRole_IsModeratorAddedAndSetToFalse()
+    public async Task Invoke_WithRequiredPermissionsAndUser_ReturnsRequiredCredAndUserCredFromContextData()
     {
-        var userWithModeratorRole = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson"), new Claim(ClaimTypes.Role, "AnotherOne") }));
-        PermissionAuthorizationContext context = new PermissionAuthorizationContext(userWithModeratorRole, Enumerable.Empty<Permission>());
+        PermissionAuthorizationContext context = new PermissionAuthorizationContext(_user, new List<Permission>{Permission.CreateComment, Permission.CreateContent});
 
         await _testPipelineOperation.Invoke(context);
-        bool result = context.Data.Get<bool>("IsModerator");
 
-        Assert.False(result);
+        IEnumerable<int> resultCredScores = context.Data.Get<IEnumerable<int>>("RequiredCredibilityScores");
+        int resultUserScore = context.Data.Get<int>("UserCredibilityScore");
+
+        Assert.Equal(1000, resultUserScore);
+        Assert.Equal(new List<int>{500, 500}, resultCredScores);
     }
 }
