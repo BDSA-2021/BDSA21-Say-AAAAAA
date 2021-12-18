@@ -15,7 +15,7 @@ public class DynamicDictionary : IDynamicDictionary
         var fullKey = (key, GetTypeName<T>());
 
         if (!_dict.ContainsKey(fullKey))
-            throw new KeyNotFoundException($"there was no key '{key}' of type {nameof(T)} in the dictionary");
+            throw new KeyNotFoundException($"there was no key '{key}' of type {GetTypeName<T>()} in the dictionary");
 
         return (T)_dict[fullKey];
     }
