@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using SELearning.Core.Collections;
 using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
@@ -9,7 +10,7 @@ namespace SELearning.Infrastructure.Authorization;
 /// <value></value>
 public record PermissionRequirement : IAuthorizationRequirement
 {
-    public PermissionRequirement(Permission p) => this.Permission = p;
+    public PermissionRequirement(IDynamicDictionary data) => this.Data = data;
 
-    public Permission Permission { get; init; }
+    public IDynamicDictionary Data { get; init; }
 }

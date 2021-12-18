@@ -1,3 +1,4 @@
+using SELearning.Core.Collections;
 using SELearning.Infrastructure.Authorization;
 
 namespace SELearning.Infrastructure.Tests;
@@ -5,10 +6,12 @@ namespace SELearning.Infrastructure.Tests;
 public class PermissionRequirementTests
 {
     [Fact]
-    public void PermissionGetter_GivenPermissionInConstructor_ReturnsSamePermission()
+    public void PermissionGetter_GivenPermissionDataInConstructor_ReturnsSamePermissionData()
     {
-        PermissionRequirement req = new(Permission.DeleteAnyComment);
+        var dictionary = new DynamicDictionary();
 
-        Assert.Equal(Permission.DeleteAnyComment, req.Permission);
+        PermissionRequirement req = new(dictionary);
+
+        Assert.Equal(dictionary, req.Data);
     }
 }
