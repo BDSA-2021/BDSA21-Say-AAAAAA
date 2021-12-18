@@ -44,7 +44,7 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         }
 
         var policy = new AuthorizationPolicyBuilder();
-        policy.AddRequirements(new CredibilityPermissionRequirement(requiredScores.ToArray()));
+        policy.AddRequirements(new CredibilityPermissionRequirement(requiredScores.ToArray()), new PermissionRequirement(requiredScores.Select(x => x.Item1).ToArray()));
 
         return policy.Build();
     }
