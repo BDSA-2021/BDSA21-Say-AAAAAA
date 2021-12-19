@@ -56,6 +56,9 @@ builder.Services.AddScoped<ICredibilityRepository, CredibilityRepository>();
 builder.Services.AddScoped<ICredibilityService, CredibilityCalculator>();
 
 builder.Services.AddPermissionAuthorization()
+                    .AddRule<UserCredibilityRule>()
+                    .AddResourceRule<UserCredibilityRule>()
+                    .AddResourceRule<AuthoredResourceRule>()
                     .Build();
 
 builder.Services.AddHealthChecks()

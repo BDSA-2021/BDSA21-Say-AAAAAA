@@ -53,7 +53,7 @@ public class PermissionDeciderTests
     {
         // Arrange
         IDictionary<perm.Permission, IEnumerable<IRule>> permissions = new Dictionary<perm.Permission, IEnumerable<IRule>>();
-        perm.PermissionDecider permissionDecider = new perm.PermissionDecider(permissions);
+        perm.PermissionDecider permissionDecider = new perm.PermissionDecider(permissions, null!);
 
         // Act
         bool result = await permissionDecider.IsAllowed(new ClaimsPrincipal(), CreateComment);
@@ -69,7 +69,7 @@ public class PermissionDeciderTests
         // Arrange
         IDictionary<perm.Permission, IEnumerable<IRule>> permissions = new Dictionary<perm.Permission, IEnumerable<IRule>>();
         permissions.Add(CreateComment, rules);
-        PermissionDecider permissionDecider = new PermissionDecider(permissions);
+        PermissionDecider permissionDecider = new PermissionDecider(permissions, null!);
 
         // Act
         bool result = await permissionDecider.IsAllowed(new ClaimsPrincipal(), CreateComment);
@@ -91,7 +91,7 @@ public class PermissionDeciderTests
 
         permissions.Add(CreateComment, rules);
 
-        PermissionDecider permissionDecider = new PermissionDecider(permissions);
+        PermissionDecider permissionDecider = new PermissionDecider(permissions, null!);
 
         // Act
         bool result = await permissionDecider.IsAllowed(new ClaimsPrincipal(), CreateComment);

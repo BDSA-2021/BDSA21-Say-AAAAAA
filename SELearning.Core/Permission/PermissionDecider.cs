@@ -8,7 +8,9 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
     private readonly IDictionary<Permission, IEnumerable<IRule>> _permissions;
     private readonly IDictionary<Permission, IEnumerable<IResourceRule>> _resourcePermissions;
 
-    public PermissionDecider(IDictionary<Permission, IEnumerable<IRule>> permissionRules, IDictionary<Permission, IEnumerable<IResourceRule>> resourcePermissions = null) // TODO: Remove null
+    public PermissionDecider(
+        IDictionary<Permission, IEnumerable<IRule>> permissionRules, 
+        IDictionary<Permission, IEnumerable<IResourceRule>> resourcePermissions)
     {
         _permissions = permissionRules;
         _resourcePermissions = resourcePermissions;

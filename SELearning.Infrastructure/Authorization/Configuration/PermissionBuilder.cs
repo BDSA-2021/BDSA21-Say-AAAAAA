@@ -16,6 +16,8 @@ public class PermissionBuilder
     public IServiceCollection Services { get; }
 
     private IPolicyPipelineOperation? _pipeline;
+    private Dictionary<Permission, List<IRule>> _rules = new Dictionary<Permission, List<IRule>>();
+    private Dictionary<Permission, List<IResourceRule>> _resourceRules = new Dictionary<Permission, List<IResourceRule>>();
 
     public PermissionBuilder(IServiceCollection services)
         => Services = services;
@@ -23,6 +25,42 @@ public class PermissionBuilder
     public PermissionBuilder AddPermissionCredibilityService(IPermissionCredibilityService service)
     {
         Services.TryAddSingleton<IPermissionCredibilityService>(service);
+        return this;
+    }
+
+    public PermissionBuilder AddRule<T>(Permission p) where T : IRule, new()
+    {
+        if(!_rules.ContainsKey(p))
+            _rules.Add(p, new List<IRule>());
+
+        _rules[p].Add(new T());
+
+        return this;
+    }
+
+    public PermissionBuilder AddRule<T>() where T : IRule, new()
+    {
+        foreach(Permission p in Enum.GetValues<Permission>())
+            AddRule<T>(p);
+
+        return this;
+    }
+
+    public PermissionBuilder AddResourceRule<T>(Permission p) where T : IResourceRule, new()
+    {
+        if(!_resourceRules.ContainsKey(p))
+                _resourceRules.Add(p, new List<IResourceRule>());
+
+        _resourceRules[p].Add(new T());
+
+        return this;
+    }
+
+    public PermissionBuilder AddResourceRule<T>() where T : IResourceRule, new()
+    {
+        foreach(Permission p in Enum.GetValues<Permission>())
+            AddResourceRule<T>(p);
+
         return this;
     }
 
@@ -48,7 +86,8 @@ public class PermissionBuilder
 
                             
         Services.AddSingleton<IPolicyPipelineOperation>(_pipeline!);
-
+        Services.AddSingleton<IPermissionService, PermissionDecider>(x => new PermissionDecider(_rules.AsEnumerable().AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable()), _resourceRules.AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable())));
+        Services.AddSingleton<IResourcePermissionService, PermissionDecider>(x => new PermissionDecider(_rules.AsEnumerable().AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable()), _resourceRules.AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable())));
         Services.TryAddSingleton<IPermissionCredibilityService, PermissionCredibilityService>();
     }
 }
