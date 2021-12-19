@@ -1,5 +1,6 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SELearning.Core.User
 
 @inject HttpClient Http
 @inject NavigationManager Navigation
@@ -8,7 +9,7 @@
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity.Name! | Current Credibility: @UserCredibility.CurrentCredibility
+        Hello, @context.User.Identity.Name! | Current Credibility: @UserCredibility.currentCredibility
         
         <button class="nav-link btn btn-link" @onclick="BeginLogout">Log out</button>
     </Authorized>
@@ -19,7 +20,7 @@
 
 @code{
 
-    private Credibility UserCredibility { get; set; } = new Credibility{CurrentCredibility = 0};
+    private UserCredibiityDTO UserCredibility = new(0);
     
     protected override async void OnInitialized()
     {
@@ -27,7 +28,7 @@
 
         if(authState.User.Identity.IsAuthenticated)
         {
-            UserCredibility = await Http.GetFromJsonAsync<Credibility>("User/Me/Credibility");
+            UserCredibility = await Http.GetFromJsonAsync<UserCredibiityDTO>("User/Me/Credibility");
             StateHasChanged();
         }
     }
@@ -36,10 +37,5 @@
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
-    }
-
-    private class Credibility
-    {
-        public int CurrentCredibility { get; set; }
     }
 }

@@ -32,12 +32,12 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("me/credibility")]
-    public async Task<ActionResult<int>> GetCurrentUserCredibility()
+    public async Task<ActionResult<UserCredibiityDTO>> GetCurrentUserCredibility()
     {
         _logger.LogDebug("Getting current user credibility...");
         int credibility = await _credibilityService.GetCredibilityScore(User);
         _logger.LogDebug("Current user has a credbility of {credibility}", credibility);
 
-        return Ok(new { CurrentCredibility = credibility });
+        return Ok(new UserCredibiityDTO(credibility));
     }
 }
