@@ -42,7 +42,4 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         else
             context.Fail();
     }
-
-    private bool IsModerator(PermissionAuthorizationContext context)
-        => context.Data.Get<bool>("IsModerator");
 }
