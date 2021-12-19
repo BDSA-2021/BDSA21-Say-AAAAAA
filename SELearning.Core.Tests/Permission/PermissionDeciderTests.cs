@@ -20,6 +20,7 @@ public class PermissionDeciderTests
 
     private readonly IDynamicDictionary _context;
     private readonly Dictionary<perm.Permission, IEnumerable<IResourceRule>> _resourceRules;
+    private readonly Dictionary<perm.Permission, IEnumerable<IRule>> _permissionRules;
 
     public PermissionDeciderTests()
     {
@@ -27,6 +28,16 @@ public class PermissionDeciderTests
         _context.Set<bool>("IsModerator", false);
 
         _resourceRules = new Dictionary<perm.Permission, IEnumerable<IResourceRule>>
+        {
+            {CreateComment, new List<MockRule>{new(false), new(true)}},
+            {EditAnyComment, new List<MockRule>{new(true), new(true)}},
+            {Rate, new List<MockRule>{new(true), new(false)}},
+            {EditSection, new List<MockRule>{new(true), new(false) ,new(true)}},
+            {CreateSection, new List<MockRule>{new(true), new(true) ,new(true)}},
+            {DeleteAnyComment, new List<MockRule>{new(true, false), new(true, false) ,new(true, false)}},
+        };
+
+        _permissionRules = new Dictionary<perm.Permission, IEnumerable<IRule>>
         {
             {CreateComment, new List<MockRule>{new(false), new(true)}},
             {EditAnyComment, new List<MockRule>{new(true), new(true)}},
@@ -92,7 +103,6 @@ public class PermissionDeciderTests
     [Fact]
     public async Task IsAllowed_OneResourcePermissionEvaluatedToTrue_ReturnTrue()
     {
-        IDictionary<perm.Permission, IEnumerable<IResourceRule>> resourcePermissions = new Dictionary<perm.Permission, IEnumerable<IResourceRule>>();
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
 
         bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection}, "Abe");
@@ -103,7 +113,6 @@ public class PermissionDeciderTests
     [Fact]
     public async Task IsAllowed_NoResourceRulesToEvaluatePermission_ReturnTrue()
     {
-        IDictionary<perm.Permission, IEnumerable<IResourceRule>> resourcePermissions = new Dictionary<perm.Permission, IEnumerable<IResourceRule>>();
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
 
         bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{DeleteAnyComment}, "Abe");
@@ -112,9 +121,8 @@ public class PermissionDeciderTests
     }
 
     [Fact]
-    public async Task IsAllowed_NoPermissionsEvaluatedAsTrue_ReturnFalse()
+    public async Task IsAllowed_NoResourcePermissionsEvaluatedAsTrue_ReturnFalse()
     {
-        IDictionary<perm.Permission, IEnumerable<IResourceRule>> resourcePermissions = new Dictionary<perm.Permission, IEnumerable<IResourceRule>>();
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
 
         bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, Rate, EditSection}, "Abe");
@@ -123,13 +131,43 @@ public class PermissionDeciderTests
     }
 
     [Fact]
-    public async Task IsAllowed_UserIsAModerator_ReturnTrue()
+    public async Task IsAllowed_ResourcePermissionUserIsAModerator_ReturnTrue()
     {
-        IDictionary<perm.Permission, IEnumerable<IResourceRule>> resourcePermissions = new Dictionary<perm.Permission, IEnumerable<IResourceRule>>();
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
         _context.Set<bool>("IsModerator", true);
 
         bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection}, "Abe");
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task IsAllowed_OnePermissionEvaluatedToTrue_ReturnTrue()
+    {
+        perm.PermissionDecider permissionDecider = new perm.PermissionDecider(_permissionRules, null!);
+
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection});
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task IsAllowed_NoPermissionsEvaluatedAsTrue_ReturnFalse()
+    {
+        perm.PermissionDecider permissionDecider = new perm.PermissionDecider(_permissionRules, null!);
+
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, Rate, EditSection});
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task IsAllowed_PermissionUserIsAModerator_ReturnTrue()
+    {
+        perm.PermissionDecider permissionDecider = new perm.PermissionDecider(_permissionRules, null!);
+        _context.Set<bool>("IsModerator", true);
+
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection});
 
         Assert.True(result);
     }

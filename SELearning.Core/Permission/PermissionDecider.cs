@@ -33,12 +33,15 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
             if (!PermissionHasRules(requestedPermission, _permissions))
                 return true;
 
-            foreach(IRule rule in _permissions[requestedPermission])
-                if(!(await rule.IsAllowed(context, requestedPermission)))
-                    return false;
+            bool result = (await Task.WhenAll(_permissions[requestedPermission]
+                                                        .Select(rule => rule.IsAllowed(context, requestedPermission))))
+                                                        .All(isAllowed => isAllowed);
+
+            if(result)
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions, object ressource)
