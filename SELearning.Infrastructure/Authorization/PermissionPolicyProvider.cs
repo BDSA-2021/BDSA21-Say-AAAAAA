@@ -11,12 +11,9 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {
     private DefaultAuthorizationPolicyProvider DefaultProvider { get; }
 
-    private readonly IPermissionCredibilityService _permissionCredibilityService;
-
-    public PermissionPolicyProvider(IOptions<AuthorizationOptions> options, IPermissionCredibilityService permissionCredibilityService)
+    public PermissionPolicyProvider(IOptions<AuthorizationOptions> options)
     {
         DefaultProvider = new DefaultAuthorizationPolicyProvider(options);
-        _permissionCredibilityService = permissionCredibilityService;
     }
 
     public async Task<AuthorizationPolicy> GetDefaultPolicyAsync() => await DefaultProvider.GetDefaultPolicyAsync();

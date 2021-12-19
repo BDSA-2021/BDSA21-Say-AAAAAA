@@ -17,9 +17,9 @@ namespace SELearning.Infrastructure.Authorization;
 public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
     private readonly IPermissionService _permissionService;
-    private readonly IPolicyPipelineOperation _dataPipeline;
+    private readonly IEnumerable<IPolicyPipelineOperation> _dataPipeline;
     private readonly ILogger<CredibilityAuthorizationHandler>? _logger;
-    public PermissionAuthorizationHandler(IPermissionService permissionService, IPolicyPipelineOperation dataPipeline, ILogger<CredibilityAuthorizationHandler>? logger = null)
+    public PermissionAuthorizationHandler(IPermissionService permissionService, IEnumerable<IPolicyPipelineOperation> dataPipeline, ILogger<CredibilityAuthorizationHandler>? logger = null)
     {
         _permissionService = permissionService;
         _dataPipeline = dataPipeline;
@@ -30,7 +30,8 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
     {
         // Prepare authorization context
         var permissionContext = new PermissionAuthorizationContext(context.User, requirement.Permissions);
-        await _dataPipeline.Invoke(permissionContext);
+        foreach (IPolicyPipelineOperation operation in _dataPipeline)
+            await operation.Invoke(permissionContext);
 
         // Evaluate permission
         bool isPermitted = await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions);

@@ -9,11 +9,6 @@ namespace SELearning.Infrastructure.Authorization;
 /// </summary>
 public interface IPolicyPipelineOperation
 {
-    /// <summary>
-    /// Sets the next pipeline module to be invoked after this current instance
-    /// </summary>
-    /// <param name="operation">The next pipeline operation</param>
-    void SetNext(IPolicyPipelineOperation operation);
 
     /// <summary>
     /// Starts the pipeline operation and invokes the next pipeline operation when done

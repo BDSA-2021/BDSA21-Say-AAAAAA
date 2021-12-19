@@ -14,11 +14,11 @@ public class ResourcePermissionAuthorizationHandler : AuthorizationHandler<Resou
 {
     private readonly ILogger<ResourcePermissionAuthorizationHandler>? _logger;
     private readonly IResourcePermissionService _permissionService;
-    private readonly IPolicyPipelineOperation _dataPipeline;
+    private readonly IEnumerable<IPolicyPipelineOperation> _dataPipeline;
 
     public ResourcePermissionAuthorizationHandler(
         IResourcePermissionService permissionService,
-        IPolicyPipelineOperation dataPipeline,
+        IEnumerable<IPolicyPipelineOperation> dataPipeline,
         ILogger<ResourcePermissionAuthorizationHandler>? logger = null)
     {
         _permissionService = permissionService;
@@ -30,7 +30,8 @@ public class ResourcePermissionAuthorizationHandler : AuthorizationHandler<Resou
     {
         // Prepare authorization context
         var permissionContext = new PermissionAuthorizationContext(context.User, requirement.Permissions);
-        await _dataPipeline.Invoke(permissionContext);
+        foreach (IPolicyPipelineOperation operation in _dataPipeline)
+            await operation.Invoke(permissionContext);
 
         // Evaluate permission
         bool isPermitted = await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions, resource);

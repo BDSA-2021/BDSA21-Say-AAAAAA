@@ -66,11 +66,6 @@ public class PermissionBuilder
 
     private PermissionBuilder AddPermissionPipeline(IPolicyPipelineOperation operation)
     {
-        if(_pipeline == null)
-            _pipeline = operation;
-        else
-            _pipeline.SetNext(operation);
-
         return this;
     }
 
@@ -79,15 +74,10 @@ public class PermissionBuilder
     /// </summary>
     public void Build()
     {
-        var serviceProvider = Services.BuildServiceProvider();
-        AddPermissionPipeline(new ModeratorOperation());
-        AddPermissionPipeline(new CredibilityOperation(serviceProvider.GetRequiredService<IProvider<IPermissionCredibilityService>>(),
-                                                        serviceProvider.GetRequiredService<IProvider<ICredibilityService>>()));
-
-                            
-        Services.AddSingleton<IPolicyPipelineOperation>(_pipeline!);
+        Services.AddSingleton<IPolicyPipelineOperation, ModeratorOperation>();
+        Services.AddSingleton<IPolicyPipelineOperation, CredibilityOperation>();
         Services.AddSingleton<IPermissionService, PermissionDecider>(x => new PermissionDecider(_rules.AsEnumerable().AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable()), _resourceRules.AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable())));
         Services.AddSingleton<IResourcePermissionService, PermissionDecider>(x => new PermissionDecider(_rules.AsEnumerable().AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable()), _resourceRules.AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable())));
-        Services.TryAddSingleton<IPermissionCredibilityService, PermissionCredibilityService>();
+        Services.TryAddScoped<IPermissionCredibilityService, PermissionCredibilityService>();
     }
 }
