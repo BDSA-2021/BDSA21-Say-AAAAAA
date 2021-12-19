@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -16,16 +17,16 @@ public class PermissionPolicyProviderTests
     }
 
     [Theory]
-    [InlineData("PermissionCreateComment", 1)]
-    [InlineData("PermissionCreateComment OR PermissionCreateComment", 2)]
+    [InlineData("PermissionRequirement PermissionCreateComment", 1)]
+    [InlineData("PermissionRequirement PermissionCreateComment OR PermissionCreateContent", 2)]
     public async Task GetPolicyAsync_ProvideKnownPolicy_ReturnPolicyWithPermissionRequirement(string permissions, int expectedNumPermissions)
     {
         var result = await _policyProvider.GetPolicyAsync(permissions);
 
-        Assert.IsType<CredibilityPermissionRequirement>(result?.Requirements[0]);
+        Assert.IsType<PermissionRequirement>(result?.Requirements[0]);
 
-        var requirement = (CredibilityPermissionRequirement)result?.Requirements[0]!;
-        Assert.Equal(expectedNumPermissions, requirement.RequiredCredibilityScores.Count);
+        var requirement = (PermissionRequirement)result?.Requirements[0]!;
+        Assert.Equal(expectedNumPermissions, requirement.Permissions.Count());
     }
 
     [Fact]
