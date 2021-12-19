@@ -4,7 +4,7 @@ using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
 
-public interface IResourcePermissionService
+public interface IResourceAuthorizationPermissionService
 {
     Task<AuthorizationResult> Authorize(ClaimsPrincipal user, object resource, params Permission[] permissions);
 }
