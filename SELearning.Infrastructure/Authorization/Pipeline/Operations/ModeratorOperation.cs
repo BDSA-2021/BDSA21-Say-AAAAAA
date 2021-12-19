@@ -10,6 +10,7 @@ public class ModeratorOperation : BasePipelineOperation
         bool isModerator = context.User.FindAll(ClaimTypes.Role).Any(x => x.Value == AuthorizationConstants.ROLE_MODERATOR);
 
         context.Data.Set<bool>("IsModerator", isModerator);
+        context.Data.Set<string>("UserId", context.User.GetUserId()!);
 
         return Task.CompletedTask;
     }

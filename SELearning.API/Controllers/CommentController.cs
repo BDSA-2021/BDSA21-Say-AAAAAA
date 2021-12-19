@@ -15,13 +15,13 @@ public class CommentController : ControllerBase
     private readonly ILogger<CommentController> _logger;
     private readonly ICommentService _service;
     private readonly IUserRepository _userRepository;
-    private readonly IAuthorizationService _authService;
+    private readonly IResourceAuthorizationPermissionService _authService;
 
     public CommentController(
         ILogger<CommentController> logger,
         ICommentService service,
         IUserRepository userRepository,
-        IAuthorizationService authService
+        IResourceAuthorizationPermissionService authService
     )
     {
         _logger = logger;
@@ -118,10 +118,10 @@ public class CommentController : ControllerBase
         try
         {
             var commentToUpdate = await _service.GetCommentFromCommentId(ID);
-            var authResult = await _authService.AuthorizeAsync(
+            var authResult = await _authService.Authorize(
                 User,
                 commentToUpdate,
-                PermissionsToPolicyName(Permission.EditAnyComment, Permission.EditOwnComment));
+                Permission.EditAnyComment, Permission.EditOwnComment);
             if (!authResult.Succeeded)
                 return Forbid();
 
@@ -148,10 +148,10 @@ public class CommentController : ControllerBase
         try
         {
             var commentToUpdate = await _service.GetCommentFromCommentId(ID);
-            AuthorizationResult authResult = await _authService.AuthorizeAsync(
+            AuthorizationResult authResult = await _authService.Authorize(
                 User,
                 commentToUpdate,
-                PermissionsToPolicyName(Permission.DeleteAnyComment, Permission.DeleteOwnComment));
+                Permission.DeleteAnyComment, Permission.DeleteOwnComment);
             if (!authResult.Succeeded)
                 return Forbid();
 

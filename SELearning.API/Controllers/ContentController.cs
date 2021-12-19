@@ -14,14 +14,14 @@ public class ContentController : ControllerBase
 {
     private readonly ILogger<ContentController> _logger;
     private readonly IContentService _service;
-    private readonly IAuthorizationService _authService;
+    private readonly IResourceAuthorizationPermissionService _authService;
     private readonly IUserRepository _userRepository;
 
     public ContentController(
         ILogger<ContentController> logger,
         IContentService service,
         IUserRepository userRepository,
-        IAuthorizationService authService
+        IResourceAuthorizationPermissionService authService
     )
     {
         _logger = logger;
@@ -107,10 +107,10 @@ public class ContentController : ControllerBase
         {
             ContentDTO contentToBeUpdated = await _service.GetContent(ID);
 
-            var authResult = await _authService.AuthorizeAsync(
+            var authResult = await _authService.Authorize(
                 User,
                 contentToBeUpdated,
-                PermissionsToPolicyName(Permission.EditAnyContent, Permission.EditOwnContent));
+                Permission.EditAnyContent, Permission.EditOwnContent);
 
             if (authResult.Succeeded)
             {
@@ -141,10 +141,10 @@ public class ContentController : ControllerBase
         {
             ContentDTO contentToBeDeleted = await _service.GetContent(ID);
 
-            var authResult = await _authService.AuthorizeAsync(
+            var authResult = await _authService.Authorize(
                 User,
                 contentToBeDeleted,
-                PermissionsToPolicyName(Permission.DeleteAnyContent, Permission.DeleteOwnContent));
+                Permission.DeleteAnyContent, Permission.DeleteOwnContent);
 
             if (authResult.Succeeded)
             {
