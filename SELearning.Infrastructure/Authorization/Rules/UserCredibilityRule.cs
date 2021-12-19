@@ -5,9 +5,13 @@ using SELearning.Core.Permission;
 namespace SELearning.Infrastructure.Authorization;
 
 
-public class UserCredibilityRule : IRule, IResourceRule
+public class UserCredibilityRule : BaseResourceRule, IRule
 {
-    public Type EvaluateableType => typeof(object);
+    public UserCredibilityRule()
+        : base(typeof(object))
+    {
+        
+    }
 
     [Obsolete]
     public Task<bool> IsAllowed(ClaimsPrincipal user, Permission permission)
@@ -25,16 +29,11 @@ public class UserCredibilityRule : IRule, IResourceRule
         return await Task.Run<bool>(() => userCredScore >= requiredCredScore);
     }
 
-    public async Task<bool> IsAllowed(IDynamicDictionaryRead context, Permission permission, object resource)
+    public async override Task<bool> IsAllowed(IDynamicDictionaryRead context, Permission permission, object resource)
     {
         if(!IsEvaluateable(resource))
             return await Task.Run<bool>(() => false);
 
         return await IsAllowed(context, permission);
-    }
-
-    public bool IsEvaluateable(object resource)
-    {
-        return EvaluateableType.IsInstanceOfType(resource);
     }
 }
