@@ -4,7 +4,7 @@ using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
 
-public class ResourcePermissionService : IResourcePermissionService
+public class ResourcePermissionService : IResourceAuthorizationPermissionService
 {
     private readonly IAuthorizationService _authService;
 
