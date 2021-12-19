@@ -39,8 +39,10 @@ public class PermissionBuilder
     /// Injects the added permissions to the dependency injection system
     /// </summary>
     public void Build()
-    {
+    {   
+        if(_pipeline != null)
+            Services.AddSingleton<IPolicyPipelineOperation>(_pipeline);
+
         Services.TryAddSingleton<IPermissionCredibilityService, PermissionCredibilityService>();
-        Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
     }
 }
