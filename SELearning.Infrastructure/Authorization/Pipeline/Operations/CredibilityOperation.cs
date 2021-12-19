@@ -40,6 +40,6 @@ public class CredibilityOperation : BasePipelineOperation
             credScores.Add(await credService.GetRequiredCredibility(permission));
         }
 
-        data.Set("RequiredCredibilityScores", credScores);
+        data.Set("RequiredCredibilityScores", credScores.AsEnumerable());
     }
 }
