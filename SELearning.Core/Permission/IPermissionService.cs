@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using SELearning.Core.Collections;
 
 namespace SELearning.Core.Permission;
 
@@ -14,4 +15,6 @@ public interface IPermissionService
     /// <param name="requestedPermission">The requested permission</param>
     /// <returns>Returns true if the user is allowed and false if not</returns>
     Task<bool> IsAllowed(ClaimsPrincipal user, Permission requestedPermission);
+
+    Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions);
 }
