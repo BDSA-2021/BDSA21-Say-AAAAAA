@@ -51,15 +51,19 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
             if (!PermissionHasRules(requestedPermission, _resourcePermissions))
                 return true;
 
-            foreach(IResourceRule rule in _resourcePermissions[requestedPermission].Where(x => x.IsEvaluateable(ressource)))
-                if(!(await rule.IsAllowed(context, requestedPermission, ressource)))
-                    return false;
+            bool result = (await Task.WhenAll(_resourcePermissions[requestedPermission]
+                                                        .Where(x => x.IsEvaluateable(ressource))
+                                                        .Select(rule => rule.IsAllowed(context, requestedPermission, ressource))))
+                                                        .All(isAllowed => isAllowed);
+
+            if(result)
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     private bool UserIsAModerator(IDynamicDictionaryRead context) => context.Get<bool>("IsModerator");
 
-    private bool PermissionHasRules<T>(Permission p, IDictionary<Permission, T> ruleTables) => _permissions.ContainsKey(p) && _permissions[p].Count() != 0;
+    private bool PermissionHasRules<T>(Permission p, IDictionary<Permission, IEnumerable<T>> ruleTables) => ruleTables.ContainsKey(p) && ruleTables[p].Count() != 0;
 }
