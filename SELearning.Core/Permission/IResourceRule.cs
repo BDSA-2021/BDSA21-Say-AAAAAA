@@ -9,5 +9,5 @@ public interface IResourceRule
 
     bool IsEvaluateable(object resource);
 
-    Task<bool> IsAllowed(IDynamicDictionaryRead context, Permission permission, in object resource);
+    Task<bool> IsAllowed(IDynamicDictionaryRead context, Permission permission, object resource);
 }
