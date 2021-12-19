@@ -33,13 +33,13 @@ public class CredibilityOperation : BasePipelineOperation
     private async Task GetPermissionCredibilityScores(IDynamicDictionary data, IEnumerable<Permission> requestedPermission)
     {
         IPermissionCredibilityService credService = _permCredibilityServiceProvider.Get();
-        IList<int> credScores = new List<int>();
+        Dictionary<Permission, int> credScores = new();
 
         foreach (Permission permission in requestedPermission)
         {
-            credScores.Add(await credService.GetRequiredCredibility(permission));
+            credScores.Add(permission, await credService.GetRequiredCredibility(permission));
         }
 
-        data.Set("RequiredCredibilityScores", credScores.AsEnumerable());
+        data.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores", credScores);
     }
 }

@@ -35,11 +35,11 @@ public class CredibilityOperationTests
 
         await _testPipelineOperation.Invoke(context);
 
-        IEnumerable<int> resultCredScores = context.Data.Get<IEnumerable<int>>("RequiredCredibilityScores");
+        IReadOnlyDictionary<Permission, int> resultCredScores = context.Data.Get<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores");
         int resultUserScore = context.Data.Get<int>("UserCredibilityScore");
 
         Assert.Equal(1000, resultUserScore);
-        Assert.Equal(Enumerable.Empty<int>(), resultCredScores);
+        Assert.Equal(new Dictionary<Permission, int>(), resultCredScores);
     }
 
     [Fact]
@@ -49,10 +49,10 @@ public class CredibilityOperationTests
 
         await _testPipelineOperation.Invoke(context);
 
-        IEnumerable<int> resultCredScores = context.Data.Get<IEnumerable<int>>("RequiredCredibilityScores");
+        IReadOnlyDictionary<Permission, int> resultCredScores = context.Data.Get<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores");
         int resultUserScore = context.Data.Get<int>("UserCredibilityScore");
 
         Assert.Equal(1000, resultUserScore);
-        Assert.Equal(new List<int>{500, 500}, resultCredScores);
+        Assert.Equal(new Dictionary<Permission, int>(){ {Permission.CreateComment, 500}, {Permission.CreateContent, 500}}, resultCredScores);
     }
 }
