@@ -42,8 +42,8 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         return policy.Build();
     }
 
-    public static string PermissionsToPolicyName<T>(params Permission[] permissions) where T : BasePermissionRequirement
-        => $"{typeof(T).Name} {PermissionsToPolicyName(permissions)}";
+    public static string PermissionsToRequirementPolicyName<R>(params Permission[] permissions) where R : BasePermissionRequirement
+        => $"{typeof(R).Name} {PermissionsToPolicyName(permissions)}";
 
     public static string PermissionsToPolicyName(params Permission[] permissions)
         => string.Join(

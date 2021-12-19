@@ -18,6 +18,6 @@ public class ResourcePermissionService : IResourceAuthorizationPermissionService
         return await _authService.AuthorizeAsync(
                 user,
                 resource,
-                PermissionPolicyProvider.PermissionsToPolicyName<ResourcePermissionRequirement>(permissions));
+                PermissionPolicyProvider.PermissionsToRequirementPolicyName<ResourcePermissionRequirement>(permissions));
     }
 }
