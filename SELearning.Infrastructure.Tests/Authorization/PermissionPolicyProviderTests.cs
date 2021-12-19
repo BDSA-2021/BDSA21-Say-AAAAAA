@@ -106,4 +106,11 @@ public class PermissionPolicyProviderTests
 
         Assert.False(success);
     }
+
+    [Fact]
+    public void PermissionsToRequirementPolicyName_GivenRequirement_PrependsRequirementName()
+    {
+        var policyName = PermissionPolicyProvider.PermissionsToRequirementPolicyName<ResourcePermissionRequirement>(CreateComment);
+        Assert.Equal("ResourcePermissionRequirement PermissionCreateComment", policyName);
+    }
 }
