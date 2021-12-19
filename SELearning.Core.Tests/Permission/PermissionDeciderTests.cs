@@ -6,6 +6,7 @@ using perm = SELearning.Core.Permission;
 using static SELearning.Core.Permission.Permission;
 using System.Security.Claims;
 using SELearning.Core.Permission;
+using SELearning.Core.Collections;
 
 namespace SELearning.Core.Tests;
 
@@ -81,5 +82,10 @@ public class MockRule : perm.IRule
     public async Task<bool> IsAllowed(ClaimsPrincipal user, perm.Permission permission)
     {
         return await Task.Run<bool>(() => _returnResult);
+    }
+
+    public Task<bool> IsAllowed(IDynamicDictionaryRead context, perm.Permission permission)
+    {
+        throw new NotImplementedException();
     }
 }
