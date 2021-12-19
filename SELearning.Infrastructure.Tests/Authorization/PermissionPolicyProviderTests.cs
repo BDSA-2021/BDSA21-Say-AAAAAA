@@ -72,4 +72,38 @@ public class PermissionPolicyProviderTests
         var succeeded = PermissionPolicyProvider.TryParsePolicyPermissions(policyName, out var permissions);
         Assert.False(succeeded);
     }
+
+    [Fact]
+    public void TryParsePolicyPermissionsRequirement_GivenPermissionRequirementPolicy_ReturnsPermissionRequirement()
+    {
+        var policyName = "PermissionRequirement PermissionCreateComment OR PermissionEditAnyComment";
+        var expectedRequirement = new PermissionRequirement(CreateComment, EditAnyComment);
+        var success = PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
+
+        Assert.True(success);
+        Assert.IsType<PermissionRequirement>(parsedRequirement);
+        Assert.Equal(expectedRequirement.Permissions, parsedRequirement.Permissions);
+    }
+
+    [Fact]
+    public void TryParsePolicyPermissionsRequirement_GivenResourcePermissionRequirementPolicy_ReturnsResourcePermissionRequirement()
+    {
+        var policyName = "ResourcePermissionRequirement PermissionCreateComment OR PermissionEditAnyComment";
+        var expectedRequirement = new ResourcePermissionRequirement(CreateComment, EditAnyComment);
+        var success = PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
+
+        Assert.True(success);
+        Assert.IsType<ResourcePermissionRequirement>(parsedRequirement);
+        Assert.Equal(expectedRequirement.Permissions, parsedRequirement.Permissions);
+    }
+
+    [Fact]
+    public void TryParsePolicyPermissionsRequirement_GivenNoRequirementPolicy_Fails()
+    {
+        var policyName = "PermissionCreateComment OR PermissionEditAnyComment";
+        var expectedRequirement = new PermissionRequirement(CreateComment, EditAnyComment);
+        var success = PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
+
+        Assert.False(success);
+    }
 }
