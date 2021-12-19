@@ -9,6 +9,10 @@ namespace SELearning.Infrastructure.Authorization;
 
 /// <summary>
 /// Evaluates the credibility permission requirement and notifies the Authorization context about the result.
+/// This is an ASP.NET authorization handler that connects ASP.NET to our own
+/// permission-based access rules. This handler specifically handles permissions
+/// that are NOT resource-based (i.e. "simple" permissions like "user can create
+/// content").
 /// </summary>
 public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
@@ -28,16 +32,8 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         var permissionContext = new PermissionAuthorizationContext(context.User, requirement.Permissions);
         await _dataPipeline.Invoke(permissionContext);
 
-        // If the user is a moderator then everything is allowed
-        if (IsModerator(permissionContext))
-        {
-            _logger?.LogDebug($"User {context.User.GetUserId()} is a moderator");
-            context.Succeed(requirement);
-            return;
-        }
-
         // Evaluate permission
-        bool isPermitted = await _permissionService.IsAllowed(context.User, requirement.Permissions.First());
+        bool isPermitted = await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions);
 
         _logger?.LogDebug($"User {context.User.GetUserId()} is permitted access: {isPermitted}");
 

@@ -6,14 +6,18 @@ using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
 
+/// This is an ASP.NET authorization handler that connects ASP.NET to our own
+/// permission-based access rules. This handler specifically handles permissions
+/// that are resource-based (i.e. if the permission needs to check that the
+/// author of a comment is the user requesting to delete it).
 public class ResourcePermissionAuthorizationHandler : AuthorizationHandler<ResourcePermissionRequirement, IAuthored>
 {
     private readonly ILogger<ResourcePermissionAuthorizationHandler>? _logger;
-    private readonly IPermissionService _permissionService;
+    private readonly IResourcePermissionService _permissionService;
     private readonly IPolicyPipelineOperation _dataPipeline;
 
     public ResourcePermissionAuthorizationHandler(
-        IPermissionService permissionService, 
+        IResourcePermissionService permissionService,
         IPolicyPipelineOperation dataPipeline,
         ILogger<ResourcePermissionAuthorizationHandler>? logger = null)
     {
@@ -28,16 +32,8 @@ public class ResourcePermissionAuthorizationHandler : AuthorizationHandler<Resou
         var permissionContext = new PermissionAuthorizationContext(context.User, requirement.Permissions);
         await _dataPipeline.Invoke(permissionContext);
 
-        // If the user is a moderator then everything is allowed
-        if (IsModerator(permissionContext))
-        {
-            _logger?.LogDebug($"User {context.User.GetUserId()} is a moderator");
-            context.Succeed(requirement);
-            return;
-        }
-
         // Evaluate permission
-        bool isPermitted = await _permissionService.IsAllowed(context.User, requirement.Permissions.First());
+        bool isPermitted = await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions, resource);
 
         _logger?.LogDebug($"User {context.User.GetUserId()} has access: {isPermitted}");
 

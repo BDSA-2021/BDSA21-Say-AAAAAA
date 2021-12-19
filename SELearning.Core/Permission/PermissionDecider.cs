@@ -16,7 +16,7 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
 
     public async Task<bool> IsAllowed(ClaimsPrincipal user, Permission requestedPermission)
     {
-        if (!PermissionHasRules(requestedPermission))
+        if (!PermissionHasRules(requestedPermission, _permissions))
             return true;
 
         return (await Task.WhenAll(_permissions[requestedPermission].Select(rule => rule.IsAllowed(user, requestedPermission))))
@@ -25,9 +25,12 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
 
     public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions)
     {
+        if(UserIsAModerator(context))
+            return true;
+
         foreach(Permission requestedPermission in requestedPermissions)
         {
-            if (!PermissionHasRules(requestedPermission))
+            if (!PermissionHasRules(requestedPermission, _permissions))
                 return true;
 
             foreach(IRule rule in _permissions[requestedPermission])
@@ -40,9 +43,12 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
 
     public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions, object ressource)
     {
+        if(UserIsAModerator(context))
+            return true;
+
         foreach(Permission requestedPermission in requestedPermissions)
         {
-            if (!PermissionHasRules(requestedPermission))
+            if (!PermissionHasRules(requestedPermission, _resourcePermissions))
                 return true;
 
             foreach(IResourceRule rule in _resourcePermissions[requestedPermission].Where(x => x.IsEvaluateable(ressource)))
@@ -53,5 +59,7 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
         return true;
     }
 
-    private bool PermissionHasRules(Permission p) => _permissions.ContainsKey(p) && _permissions[p].Count() != 0;
+    private bool UserIsAModerator(IDynamicDictionaryRead context) => context.Get<bool>("IsModerator");
+
+    private bool PermissionHasRules<T>(Permission p, IDictionary<Permission, T> ruleTables) => _permissions.ContainsKey(p) && _permissions[p].Count() != 0;
 }
