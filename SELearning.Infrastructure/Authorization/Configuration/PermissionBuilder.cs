@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using SELearning.Core.Credibility;
 using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
@@ -25,7 +26,7 @@ public class PermissionBuilder
         return this;
     }
 
-    public PermissionBuilder AddPermissionPipeline(IPolicyPipelineOperation operation)
+    private PermissionBuilder AddPermissionPipeline(IPolicyPipelineOperation operation)
     {
         if(_pipeline == null)
             _pipeline = operation;
@@ -39,9 +40,14 @@ public class PermissionBuilder
     /// Injects the added permissions to the dependency injection system
     /// </summary>
     public void Build()
-    {   
-        if(_pipeline != null)
-            Services.AddSingleton<IPolicyPipelineOperation>(_pipeline);
+    {
+        var serviceProvider = Services.BuildServiceProvider();
+        AddPermissionPipeline(new ModeratorOperation());
+        AddPermissionPipeline(new CredibilityOperation(serviceProvider.GetRequiredService<IProvider<IPermissionCredibilityService>>(),
+                                                        serviceProvider.GetRequiredService<IProvider<ICredibilityService>>()));
+
+                            
+        Services.AddSingleton<IPolicyPipelineOperation>(_pipeline!);
 
         Services.TryAddSingleton<IPermissionCredibilityService, PermissionCredibilityService>();
     }

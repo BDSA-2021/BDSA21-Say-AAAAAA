@@ -55,7 +55,8 @@ builder.Services.AddScoped<ICommentService, CommentManager>();
 builder.Services.AddScoped<ICredibilityRepository, CredibilityRepository>();
 builder.Services.AddScoped<ICredibilityService, CredibilityCalculator>();
 
-builder.Services.AddPermissionAuthorization().Build();
+builder.Services.AddPermissionAuthorization()
+                    .Build();
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<SELearningContext>();
