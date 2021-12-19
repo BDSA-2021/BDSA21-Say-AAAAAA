@@ -12,6 +12,7 @@ public static class AuthorizationConfiguration
         services.AddSingleton<IAuthorizationHandler, CredibilityAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, AuthoredCredibilityAuthorizationHandler>();
         services.AddSingleton<IProvider<ICredibilityService>, Provider<ICredibilityService>>();
+        services.AddScoped<IResourceAuthorizationPermissionService, ResourcePermissionService>();
 
         return new(services);
     }
