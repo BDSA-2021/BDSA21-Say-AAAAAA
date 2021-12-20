@@ -1,14 +1,14 @@
+@page "/CreateContent"
+
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
-@using System.ComponentModel.DataAnnotations
 @using SELearning.Core.Section
 @using System.Net;
 
-@page "/CreateContent"
-
-@inject HttpClient Http
-@inject IJSRuntime JsRuntime
-@inject ToastService toasts;
+@inject HttpClient _httpClient
+@inject IJSRuntime _jsRuntime
+@inject ToastService _toastService;
+@inject NavigationManager _navManager
 
 <h1>Create Content</h1>
 <EditForm class="col-lg-12" Model="@Content" OnValidSubmit="@CreateContentAsync">
@@ -28,77 +28,69 @@
     <div class="form-group">
         <InputSelect class="form-control" @bind-Value="Content.SectionId">
             <option value="">Select section...</option>
-            @foreach (var sec in sections)
+            @foreach (var sec in _sections)
             {
-                <option value="@sec.Id">@sec.Title</option>        
+                <option value="@sec.Id">@sec.Title</option>
             }
         </InputSelect>
     </div>
     <div class="form-group">
         <button class="btn btn-primary" type="submit">Create Content</button>
     </div>
-</EditForm> 
-
-@if (isPosted != null)
-{
-    if ((bool) isPosted)
-    {
-        <div class="alert alert-success" role="alert">
-            The content was succesfully posted!
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-danger" role="alert">
-            The content could not be posted!
-        </div>
-    }
-}
+</EditForm>
 
 @code
 {
+    private SectionDTO[] _sections = {};
+    private ContentUserDTO Content { get; } = new();
+
     protected override async Task OnInitializedAsync()
     {
-        await this.RetrieveSections();
+        await RetrieveSections();
     }
- 
-    private SectionDTO[] sections = {}; 
-    private ContentUserDTO Content { get; set; } = new();
-    private bool? isPosted = null;
 
     private async Task CreateContentAsync()
     {
         try
         {
-            var response = await Http.PostAsJsonAsync<ContentUserDTO>("Content", Content);
-            isPosted = response.IsSuccessStatusCode;
+            var response = await _httpClient.PostAsJsonAsync("Content", Content);
 
-            if (response.StatusCode == HttpStatusCode.Forbidden)
+            if (response.IsSuccessStatusCode)
             {
-                toasts.AddToast(ToastNotification.CreateUnauthorized("create content"));
-                return;
-            }
-        } 
-        catch(AccessTokenNotAvailableException exception)
-        {
-            toasts.AddToast(ToastNotification.CreateNoAccessToastNotification());
-            exception.Redirect();
-        } 
-        catch(Exception exception)
-        {
-            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
-        }
-    }
+                _toastService.AddToast(new ToastNotification("The Content was succesfully posted!", ToastType.Success, 10000));
 
-    protected async Task RetrieveSections()
-    {
-        try
-        {
-            sections = await Http.GetFromJsonAsync<SectionDTO[]>("Section");
+                var content = await response.Content.ReadFromJsonAsync<ContentDTO>();
+                _navManager.NavigateTo($"/content/{content!.Id}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                _toastService.AddToast(ToastNotification.CreateUnauthorized("create content"));
+            }
+            else
+            {
+                _toastService.AddToast(new ToastNotification("The Content could not be posted", ToastType.Error, 10000));
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {
-            toasts.AddToast(ToastNotification.CreateNoAccessToastNotification());
+            _toastService.AddToast(ToastNotification.CreateNoAccessToastNotification());
+            exception.Redirect();
+        }
+        catch (Exception exception)
+        {
+            _toastService.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
+        }
+    }
+
+    private async Task RetrieveSections()
+    {
+        try
+        {
+            _sections = await _httpClient.GetFromJsonAsync<SectionDTO[]>("Section");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            _toastService.AddToast(ToastNotification.CreateNoAccessToastNotification());
             exception.Redirect();
         }
     }

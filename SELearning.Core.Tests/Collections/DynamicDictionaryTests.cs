@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using SELearning.Core.Collections;
 
-namespace SELearning.Core.Tests;
+namespace SELearning.Core.Tests.Collections;
 
 public class DynamicDictionaryTests
 {
@@ -10,7 +10,7 @@ public class DynamicDictionaryTests
     public void Get_GivenKeyAndType_ReturnsInsertedValue()
     {
         var dict = new DynamicDictionary();
-        dict.Set<int>("my-key", 1234);
+        dict.Set("my-key", 1234);
 
         var result = dict.Get<int>("my-key");
 
@@ -21,7 +21,7 @@ public class DynamicDictionaryTests
     public void Get_GivenKeyButIncorrectType_ThrowsKeyException()
     {
         var dict = new DynamicDictionary();
-        dict.Set<int>("my-key", 1234);
+        dict.Set("my-key", 1234);
 
         Assert.Throws<KeyNotFoundException>(() => dict.Get<string>("my-key"));
     }
@@ -30,7 +30,7 @@ public class DynamicDictionaryTests
     public void Get_GivenIncorrectKeyButCorrectType_ThrowsKeyException()
     {
         var dict = new DynamicDictionary();
-        dict.Set<int>("my-key", 1234);
+        dict.Set("my-key", 1234);
 
         Assert.Throws<KeyNotFoundException>(() => dict.Get<int>("not-my-key"));
     }
@@ -46,7 +46,7 @@ public class DynamicDictionaryTests
     public void Set_GivenSameKeysAndDifferentTypes_InsertsBothValues()
     {
         var dict = new DynamicDictionary();
-        dict.Set<int>("my-key", 1234);
+        dict.Set("my-key", 1234);
         dict.Set<string>("my-key", "pepperoni");
 
         Assert.Equal(1234, dict.Get<int>("my-key"));
@@ -57,8 +57,8 @@ public class DynamicDictionaryTests
     public void Set_GivenSameKeysAndSameTypes_OverwritesOldValue()
     {
         var dict = new DynamicDictionary();
-        dict.Set<int>("my-key", 1234);
-        dict.Set<int>("my-key", 5678);
+        dict.Set("my-key", 1234);
+        dict.Set("my-key", 5678);
 
         Assert.Equal(5678, dict.Get<int>("my-key"));
     }

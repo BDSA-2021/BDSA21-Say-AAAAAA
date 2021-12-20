@@ -1,16 +1,14 @@
 using System;
 using System.Linq;
 using SELearning.Core.User;
-using SELearning.Core.Comment;
-using SELearning.Infrastructure.Comment;
 
 namespace SELearning.Infrastructure.Tests;
 
 public class CommentManagerTests
 {
-    readonly ICommentService _service;
+    private readonly ICommentService _service;
 
-    private static readonly Section.Section section = new()
+    private static readonly Section.Section Section = new()
     {
         Id = 1,
         Title = "C#",
@@ -18,16 +16,16 @@ public class CommentManagerTests
         Content = new List<Content.Content>()
     };
 
-    private static User.User _user = new User.User { Id = "ABC", Name = "Asger" };
+    private static readonly User.User User = new() { Id = "ABC", Name = "Asger" };
 
-    private static readonly Content.Content content = new("Video on Entity Core", "Nice", "www.hej.dk", 1);
+    private static readonly Content.Content Content = new("Video on Entity Core", "Nice", "www.hej.dk", 1);
 
-    private readonly IEnumerable<Comment.Comment> _comments = new List<Comment.Comment>()
+    private readonly IEnumerable<Comment.Comment> _comments = new List<Comment.Comment>
     {
-        new Comment.Comment("Nice", DateTime.Now, -10, content, _user),
-        new Comment.Comment("Cool but boring", DateTime.Now, 0, content, _user),
-        new Comment.Comment("This is a great video", DateTime.Now, 0, content, _user),
-        new Comment.Comment("Very inappropriate", DateTime.Now, 28, content, _user)
+        new("Nice", DateTime.Now, -10, Content, User),
+        new("Cool but boring", DateTime.Now, 0, Content, User),
+        new("This is a great video", DateTime.Now, 0, Content, User),
+        new("Very inappropriate", DateTime.Now, 28, Content, User)
     };
 
     public CommentManagerTests()
@@ -37,29 +35,29 @@ public class CommentManagerTests
         connection.Open();
         var builder = new DbContextOptionsBuilder<SELearningContext>();
         builder.UseSqlite(connection);
-        SELearningContext _context = new(builder.Options);
-        _context.Database.EnsureCreated();
+        SELearningContext context = new(builder.Options);
+        context.Database.EnsureCreated();
 
-        ICommentRepository _repo = new CommentRepository(_context);
-        _service = new CommentManager(_repo);
-        _context.Content.Add(content);
+        ICommentRepository repo = new CommentRepository(context);
+        _service = new CommentManager(repo);
+        context.Content.Add(Content);
 
-        section.Content!.Add(content);
+        Section.Content!.Add(Content);
 
-        _context.Comments.AddRange(
+        context.Comments.AddRange(
             _comments
         );
 
-        _context.SaveChanges();
+        context.SaveChanges();
     }
 
     [Fact]
     public async void Post_given_acceptable_input_does_post()
     {
-        var dto = new CommentCreateDTO(_user.ToUserDTO(), "Nice explanation", 1);
+        var dto = new CommentCreateDTO(User.ToUserDTO(), "Nice explanation", 1);
         await _service.PostComment(dto);
 
-        Assert.Equal(_user.ToUserDTO(), (await _service.GetCommentFromCommentId(5)).Author);
+        Assert.Equal(User.ToUserDTO(), (await _service.GetCommentFromCommentId(5)).Author);
         Assert.Equal("Nice explanation", (await _service.GetCommentFromCommentId(5)).Text);
         Assert.Equal(1, (await _service.GetCommentFromCommentId(5)).ContentId);
         Assert.Equal(0, (await _service.GetCommentFromCommentId(5)).Rating);
@@ -100,7 +98,7 @@ public class CommentManagerTests
     [Fact]
     public async void Remove_given_existing_id_succeeds()
     {
-        CommentDetailsDTO comment = await _service.GetCommentFromCommentId(1);
+        var comment = await _service.GetCommentFromCommentId(1);
         Assert.NotNull(comment);
         await _service.RemoveComment(1);
         await Assert.ThrowsAsync<CommentNotFoundException>(() => _service.GetCommentFromCommentId(1));
@@ -171,13 +169,14 @@ public class CommentManagerTests
     [Fact]
     public async void GetCommentsFromContentId_returns_all_comments_given_correct_contentId()
     {
-        IEnumerable<CommentDetailsDTO> comments = await _service.GetCommentsFromContentId(1);
+        var comments = await _service.GetCommentsFromContentId(1);
 
-        Assert.Contains((await _service.GetCommentFromCommentId(1)), comments);
-        Assert.Contains((await _service.GetCommentFromCommentId(2)), comments);
-        Assert.Contains((await _service.GetCommentFromCommentId(3)), comments);
-        Assert.Contains((await _service.GetCommentFromCommentId(4)), comments);
-        Assert.Equal(4, comments.Count());
+        var commentDetailsDtos = comments.ToList();
+        Assert.Contains(await _service.GetCommentFromCommentId(1), commentDetailsDtos);
+        Assert.Contains(await _service.GetCommentFromCommentId(2), commentDetailsDtos);
+        Assert.Contains(await _service.GetCommentFromCommentId(3), commentDetailsDtos);
+        Assert.Contains(await _service.GetCommentFromCommentId(4), commentDetailsDtos);
+        Assert.Equal(4, commentDetailsDtos.Count);
     }
 
     [Fact]
@@ -192,7 +191,7 @@ public class CommentManagerTests
         var comment = await _service.GetCommentFromCommentId(2);
 
         Assert.Equal("Cool but boring", comment.Text);
-        Assert.Equal(_user.ToUserDTO(), comment.Author);
+        Assert.Equal(User.ToUserDTO(), comment.Author);
         Assert.Equal(1, comment.ContentId);
         Assert.Equal(2, comment.Id);
         Assert.Equal(0, comment.Rating);

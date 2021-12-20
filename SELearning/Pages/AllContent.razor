@@ -1,11 +1,11 @@
 @page "/AllContent"
 
-@using Core.Section
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
 @using SELearning.Shared.Content;
 
-@inject HttpClient Http
+@inject HttpClient _httpClient
+@inject ToastService _toastService
 
 <div class="container">
     <div class="get-quote">
@@ -14,22 +14,29 @@
                 <h1 class="left-block float-left">All Content</h1>
             </div>
             <div class="col-sm-2 col-12">
-                <a class="btn btn-primary right-block float-right" href="createcontent" role="button">Add Content</a>
+                <a class="btn btn-primary right-block float-right" href="CreateContent" role="button">Add Content</a>
             </div>
         </div>
     </div>
 </div>
 
-<ContentList RetrieveContent="@RetrieveContent" />
+<ContentList RetrieveContent="@RetrieveContent"/>
 
 @code {
-    protected async Task<List<ContentDTO>> RetrieveContent()
+
+    private async Task<List<ContentDTO>> RetrieveContent()
     {
         List<ContentDTO> contents = new();
-        
+
         try
         {
-            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDTO>>("Content");
+            var content = await _httpClient.GetFromJsonAsync<IEnumerable<ContentDTO>>("Content");
+            if (content == null)
+            {
+                _toastService.AddToast(new ToastNotification("No Content Found", ToastType.Warning));
+                return contents;
+            }
+
             return content.ToList();
         }
         catch (AccessTokenNotAvailableException exception)
@@ -39,4 +46,5 @@
 
         return contents;
     }
+
 }

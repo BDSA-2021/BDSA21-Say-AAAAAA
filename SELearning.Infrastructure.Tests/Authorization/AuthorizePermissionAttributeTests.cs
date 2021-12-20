@@ -1,6 +1,4 @@
 using System;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
 using SELearning.Infrastructure.Authorization;
 using static SELearning.Core.Permission.Permission;
 
@@ -12,9 +10,12 @@ public class PermissionAttributeTests
     [InlineData("PermissionRequirement PermissionCreateComment", CreateComment)]
     [InlineData("PermissionRequirement PermissionEditAnyComment", EditAnyComment)]
     [InlineData("PermissionRequirement PermissionCreateContent", CreateContent)]
-    [InlineData("PermissionRequirement PermissionCreateComment OR PermissionEditAnyComment", CreateComment, EditAnyComment)]
-    [InlineData("PermissionRequirement PermissionEditAnyComment OR PermissionRate OR PermissionDeleteAnyContent", EditAnyComment, Rate, DeleteAnyContent)]
-    public void Init_WithPermission_SetsPolicyWithPrefixAndPermissionName(string expectedPolicyName, params Permission[] p)
+    [InlineData("PermissionRequirement PermissionCreateComment OR PermissionEditAnyComment", CreateComment,
+        EditAnyComment)]
+    [InlineData("PermissionRequirement PermissionEditAnyComment OR PermissionRate OR PermissionDeleteAnyContent",
+        EditAnyComment, Rate, DeleteAnyContent)]
+    public void Init_WithPermission_SetsPolicyWithPrefixAndPermissionName(string expectedPolicyName,
+        params Permission[] p)
     {
         AuthorizePermissionAttribute attr = new(p);
 

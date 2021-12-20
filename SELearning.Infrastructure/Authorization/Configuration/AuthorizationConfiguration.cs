@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using SELearning.Core.Credibility;
 using SELearning.Core.Permission;
+using SELearning.Infrastructure.Authorization.Handlers;
 
-namespace SELearning.Infrastructure.Authorization;
+namespace SELearning.Infrastructure.Authorization.Configuration;
 
 public static class AuthorizationConfiguration
 {
@@ -17,6 +18,6 @@ public static class AuthorizationConfiguration
         services.AddSingleton<IProvider<ICredibilityService>, Provider<ICredibilityService>>();
         services.AddSingleton<IProvider<IPermissionCredibilityService>, Provider<IPermissionCredibilityService>>();
 
-        return new(services);
+        return new PermissionBuilder(services);
     }
 }

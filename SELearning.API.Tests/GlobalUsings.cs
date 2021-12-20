@@ -4,7 +4,6 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Logging;
 global using Moq;
 global using SELearning.API.Controllers;
-global using SELearning.Core;
 global using SELearning.Core.Comment;
 global using SELearning.Core.Content;
 global using SELearning.Core.Permission;

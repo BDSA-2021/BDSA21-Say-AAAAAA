@@ -9,7 +9,7 @@ namespace SELearning.Infrastructure.Authorization;
 /// </summary>
 public abstract record BasePermissionRequirement : IAuthorizationRequirement
 {
-    public BasePermissionRequirement(params Permission[] p) => this.Permissions = p;
+    protected BasePermissionRequirement(params Permission[] p) => Permissions = p;
 
     public IEnumerable<Permission> Permissions { get; init; }
 }

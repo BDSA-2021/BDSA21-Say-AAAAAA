@@ -1,7 +1,4 @@
-using static SELearning.Core.Permission.Permission;
-
 namespace SELearning.Core.Permission;
-
 
 public enum Permission
 {

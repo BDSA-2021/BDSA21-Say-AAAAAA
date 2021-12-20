@@ -1,5 +1,4 @@
 using SELearning.Core.Section;
-using SELearning.Infrastructure.Content;
 
 namespace SELearning.Infrastructure.Section;
 
@@ -18,7 +17,7 @@ public class SectionRepository : ISectionRepository
         {
             Title = section.Title,
             Description = section.Description,
-            Content = new List<Content.Content>(),
+            Content = new List<Content.Content>()
         };
 
         _context.Section.Add(entity);
@@ -68,9 +67,9 @@ public class SectionRepository : ISectionRepository
 
     public async Task<IReadOnlyCollection<SectionDTO>> GetSections() =>
         (await _context.Section
-                       .Select(s => s.ToSectionDTO())
-                       .ToListAsync())
-                       .AsReadOnly();
+            .Select(s => s.ToSectionDTO())
+            .ToListAsync())
+        .AsReadOnly();
 
     public async Task<Option<SectionDTO>> GetSection(int id)
     {
@@ -87,8 +86,8 @@ public class SectionRepository : ISectionRepository
         var content = _context.Content
             .Include(x => x.Section)
             .Include(x => x.Author)
-            .Where(x => x.Section == section)
-            .Select(c => ContentRepository.ConvertToContentDTO(c));
+            .Where(x => x.Section.Equals(section))
+            .Select(c => c.ToContentDTO());
 
         return (await content.ToListAsync()).AsReadOnly();
     }

@@ -16,11 +16,10 @@ public class SectionControllerTest
     public async Task GetContentsBySectionID_Given_Invalid_Section_ID_Returns_NotFound()
     {
         // Arrange
-        var expected = Array.Empty<ContentDTO>();
         _service.Setup(m => m.GetContentInSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act
-        var response = (await _controller.GetContentsBySectionID(-1)).Result;
+        var response = (await _controller.GetContentsBySectionId(-1)).Result;
 
         // Assert
         Assert.IsType<NotFoundResult>(response);

@@ -1,14 +1,14 @@
 @using System.Timers;
 
 @implements IDisposable;
-@inject IJSRuntime JsRuntime
+@inject IJSRuntime _jsRuntime
 
 <div id="@_id" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autoHide="false">
     <div class="toast-header @TypeToClass()">
         <strong class="mr-auto text-white">@Notification.Title</strong>
-        <small class="text-white">@_time</small>
+        <small class="text-white">@Time</small>
         <button type="button" class="ml-2 mb-1 close" aria-label="Close"
-            @onclick="Notification.Dismiss">
+                @onclick="Notification.Dismiss">
             <span class="text-white" aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -18,90 +18,93 @@
 </div>
 
 @code {
+
     [Parameter]
     public ToastNotification Notification { get; set; }
 
     private string _id = $"i{Guid.NewGuid().ToString()}";
 
-    private string _time { get; set; }
+    private string Time { get; set; }
 
     private Timer _loopTimer;
 
     protected override async void OnInitialized()
     {
-        await JsRuntime.InvokeVoidAsync("interopFunctions.initToast", $".toast");
-        await JsRuntime.InvokeVoidAsync("interopFunctions.showToast", $".toast");
+        await _jsRuntime.InvokeVoidAsync("interopFunctions.initToast", ".toast");
+        await _jsRuntime.InvokeVoidAsync("interopFunctions.showToast", ".toast");
         RunGetTimeOnLoop();
     }
 
-    protected string TypeToClass() {
-        switch (Notification.Type)
+    private string TypeToClass()
+    {
+        return Notification.Type switch
         {
-            case ToastType.Info: return "bg-info";
-            case ToastType.Success: return "bg-success";
-            case ToastType.Warning: return "bg-warning";
-            case ToastType.Error: return "bg-danger";
-            default: return "";
-        }
+            ToastType.Info => "bg-info",
+            ToastType.Success => "bg-success",
+            ToastType.Warning => "bg-warning",
+            ToastType.Error => "bg-danger",
+            _ => ""
+            };
     }
 
-    protected void RunGetTimeOnLoop() {
+    private void RunGetTimeOnLoop()
+    {
         _loopTimer = new Timer();
         _loopTimer.Interval = 5000;
         _loopTimer.AutoReset = true;
-        _loopTimer.Elapsed += (object sender, ElapsedEventArgs e) => {
-            _time = GetRelativeTime();
+        _loopTimer.Elapsed += (_, _) =>
+        {
+            Time = GetRelativeTime();
             StateHasChanged();
         };
         _loopTimer.Start();
     }
 
-    protected string GetRelativeTime() {
-        // I'll be honest. I ripped this code fromhttps://stackoverflow.com/questions/11/calculate-relative-time-in-c-sharp
-        // It's neither pretty or good, but it works for this. 
-        const int SECOND = 1;
-        const int MINUTE = 60 * SECOND;
-        const int HOUR = 60 * MINUTE;
-        const int DAY = 24 * HOUR;
-        const int MONTH = 30 * DAY;
-        
+    private string GetRelativeTime()
+    {
+    // I'll be honest. I ripped this code fromhttps://stackoverflow.com/questions/11/calculate-relative-time-in-c-sharp
+    // It's neither pretty or good, but it works for this. 
+        const int second = 1;
+        const int minute = 60 * second;
+        const int hour = 60 * minute;
+        const int day = 24 * hour;
+        const int month = 30 * day;
+
         var ts = new TimeSpan(DateTime.Now.Ticks - Notification.Created.Ticks);
-        double delta = Math.Abs(ts.TotalSeconds);
-        
-        if (delta < 1 * MINUTE)
-            return ts.Seconds == 1 ? "one second ago" : ts.Seconds + " seconds ago";
-        
-        if (delta < 2 * MINUTE)
-            return "a minute ago";
-        
-        if (delta < 45 * MINUTE)
-            return ts.Minutes + " minutes ago";
-        
-        if (delta < 90 * MINUTE)
-            return "an hour ago";
-        
-        if (delta < 24 * HOUR)
-            return ts.Hours + " hours ago";
-        
-        if (delta < 48 * HOUR)
-            return "yesterday";
-        
-        if (delta < 30 * DAY)
-            return ts.Days + " days ago";
-        
-        if (delta < 12 * MONTH)
+        var delta = Math.Abs(ts.TotalSeconds);
+
+        switch (delta)
         {
-            int months = Convert.ToInt32(Math.Floor((double)ts.Days / 30));
-            return months <= 1 ? "one month ago" : months + " months ago";
-        }
-        else
-        {
-            int years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
-            return years <= 1 ? "one year ago" : years + " years ago";
+            case < 1 * minute:
+                return ts.Seconds == 1 ? "one second ago" : ts.Seconds + " seconds ago";
+            case < 2 * minute:
+                return "a minute ago";
+            case < 45 * minute:
+                return ts.Minutes + " minutes ago";
+            case < 90 * minute:
+                return "an hour ago";
+            case < 24 * hour:
+                return ts.Hours + " hours ago";
+            case < 48 * hour:
+                return "yesterday";
+            case < 30 * day:
+                return ts.Days + " days ago";
+            case < 12 * month:
+            {
+                var months = Convert.ToInt32(Math.Floor((double) ts.Days / 30));
+                return months <= 1 ? "one month ago" : months + " months ago";
+            }
+            default:
+            {
+                var years = Convert.ToInt32(Math.Floor((double) ts.Days / 365));
+                return years <= 1 ? "one year ago" : years + " years ago";
+            }
         }
     }
 
-    void IDisposable.Dispose() {
+    void IDisposable.Dispose()
+    {
         _loopTimer.Dispose();
     }
+
 }

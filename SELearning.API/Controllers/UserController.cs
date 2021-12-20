@@ -8,7 +8,7 @@ namespace SELearning.API.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("/Api/[controller]")]
+[Route("/Api/[controller]/me")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class UserController : ControllerBase
 {
@@ -16,27 +16,28 @@ public class UserController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly ICredibilityService _credibilityService;
 
-    public UserController(ILogger<UserController> logger, IUserRepository userRepo, ICredibilityService credibilityService)
+    public UserController(ILogger<UserController> logger, IUserRepository userRepo,
+        ICredibilityService credibilityService)
     {
         _logger = logger;
         _userRepository = userRepo;
         _credibilityService = credibilityService;
     }
 
-    [HttpGet("me")]
+    [HttpGet]
     public async Task<ActionResult<UserDTO>> GetCurrentUser()
     {
-        UserDTO user = await _userRepository.GetOrAddUser(new UserDTO(User.GetUserId()!, User.FindFirstValue(ClaimTypes.GivenName)));
+        var user = await _userRepository.GetOrAddUser(
+            new UserDTO(User.GetUserId()!, User.FindFirstValue(ClaimTypes.GivenName))
+        );
 
         return Ok(user);
     }
 
-    [HttpGet("me/credibility")]
+    [HttpGet("credibility")]
     public async Task<ActionResult<UserCredibiityDTO>> GetCurrentUserCredibility()
     {
-        _logger.LogDebug("Getting current user credibility...");
-        int credibility = await _credibilityService.GetCredibilityScore(User);
-        _logger.LogDebug("Current user has a credbility of {credibility}", credibility);
+        var credibility = await _credibilityService.GetCredibilityScore(User);
 
         return Ok(new UserCredibiityDTO(credibility));
     }

@@ -4,12 +4,8 @@ public delegate void OnChangeHandler();
 
 public class ToastService
 {
-    public IList<ToastNotification> Notifications { get; init; } = new List<ToastNotification>();
-    private IList<OnChangeHandler> _onChangeHandlers = new List<OnChangeHandler>();
-
-    public ToastService()
-    {
-    }
+    public IList<ToastNotification> Notifications { get; } = new List<ToastNotification>();
+    private readonly IList<OnChangeHandler> _onChangeHandlers = new List<OnChangeHandler>();
 
     public void AddToast(ToastNotification notification)
     {

@@ -1,11 +1,9 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using SELearning.Core.Credibility;
 using SELearning.Core.Permission;
+using SELearning.Infrastructure.Authorization.Pipeline;
 
-namespace SELearning.Infrastructure.Authorization;
-
+namespace SELearning.Infrastructure.Authorization.Handlers;
 
 /// <summary>
 /// Evaluates the credibility permission requirement and notifies the Authorization context about the result.
@@ -19,24 +17,28 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
     private readonly IPermissionService _permissionService;
     private readonly IEnumerable<IAuthorizationContextPipelineOperation> _dataPipeline;
     private readonly ILogger<PermissionAuthorizationHandler>? _logger;
-    public PermissionAuthorizationHandler(IPermissionService permissionService, IEnumerable<IAuthorizationContextPipelineOperation> dataPipeline, ILogger<PermissionAuthorizationHandler>? logger = null)
+
+    public PermissionAuthorizationHandler(IPermissionService permissionService,
+        IEnumerable<IAuthorizationContextPipelineOperation> dataPipeline,
+        ILogger<PermissionAuthorizationHandler>? logger = null)
     {
         _permissionService = permissionService;
         _dataPipeline = dataPipeline;
         _logger = logger;
     }
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        PermissionRequirement requirement)
     {
         // Prepare authorization context
         var permissionContext = new PermissionAuthorizationContext(context.User, requirement.Permissions);
-        foreach (IAuthorizationContextPipelineOperation operation in _dataPipeline)
+        foreach (var operation in _dataPipeline)
             await operation.Invoke(permissionContext);
 
         // Evaluate permission
-        bool isPermitted = await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions);
+        var isPermitted = await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions);
 
-        _logger?.LogDebug($"User {context.User.GetUserId()} is permitted access: {isPermitted}");
+        _logger?.LogDebug("User {userId} is permitted access: {isPermitted}", context.User.GetUserId(), isPermitted);
 
         if (isPermitted)
             context.Succeed(requirement);

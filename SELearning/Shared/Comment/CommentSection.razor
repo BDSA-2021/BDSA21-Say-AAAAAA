@@ -2,18 +2,19 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Net
 
-@inject HttpClient Http
-@inject IJSRuntime JsRuntime
-@inject ToastService toasts;
+@inject HttpClient _httpClient
+@inject IJSRuntime _jsRuntime
+@inject ToastService _toastService;
 
-<section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
+<section class="comment-list container-fluid">
+    <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
     <div class="row">
         <!-- Comment section header-->
         <h3>Comments</h3>
     </div>
     <div class="row">
         <!-- List of comments -->
-        @foreach(CommentDetailsDTO comment in _comments)
+        @foreach (var comment in _comments)
         {
             <CommentTile Comment="@comment" OnCommentDeleted="@OnCommentDeleted"/>
         }
@@ -32,6 +33,7 @@
 </section>
 
 @code{
+
     [Parameter]
     public int ContentId { get; set; }
 
@@ -41,14 +43,14 @@
 
     protected override async void OnInitialized()
     {
-        await this.GetComments();
-    } 
+        await GetComments();
+    }
 
     private async Task GetComments()
     {
         try
         {
-            _comments = await Http.GetFromJsonAsync<List<CommentDetailsDTO>>($"Comment/content/{this.ContentId}");
+            _comments = await _httpClient.GetFromJsonAsync<List<CommentDetailsDTO>>($"Comment/content/{ContentId}");
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)
@@ -57,7 +59,7 @@
         }
         catch (Exception exception)
         {
-            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
+            _toastService.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 
@@ -65,18 +67,18 @@
     {
         try
         {
-            using var response = await Http.PostAsJsonAsync("Comment", new CommentUserDTO(
-                this.ContentId,
+            using var response = await _httpClient.PostAsJsonAsync("Comment", new CommentUserDTO(
+                ContentId,
                 _commentText
-            ));
+                ));
 
             if (response.StatusCode == HttpStatusCode.Forbidden)
             {
-                toasts.AddToast(ToastNotification.CreateUnauthorized("post comments"));
+                _toastService.AddToast(ToastNotification.CreateUnauthorized("post comments"));
                 return;
             }
 
-            var comment = await response.Content.ReadFromJsonAsync<CommentDetailsDTO>(); 
+            var comment = await response.Content.ReadFromJsonAsync<CommentDetailsDTO>();
             _comments.Add(comment);
             StateHasChanged();
         }
@@ -86,7 +88,7 @@
         }
         catch (Exception exception)
         {
-            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
+            _toastService.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 

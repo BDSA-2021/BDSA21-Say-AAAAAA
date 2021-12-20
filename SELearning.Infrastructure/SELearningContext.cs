@@ -1,4 +1,3 @@
-
 namespace SELearning.Infrastructure;
 
 public class SELearningContext : DbContext, ISELearningContext
@@ -11,7 +10,9 @@ public class SELearningContext : DbContext, ISELearningContext
 
     public DbSet<Comment.Comment> Comments => Set<Comment.Comment>();
 
-    public SELearningContext(DbContextOptions<SELearningContext> options) : base(options) { }
+    public SELearningContext(DbContextOptions<SELearningContext> options) : base(options)
+    {
+    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -28,6 +29,5 @@ public class SELearningContext : DbContext, ISELearningContext
         builder.Entity<Content.Content>()
             .HasIndex(t => t.Id)
             .IsUnique();
-
     }
 }

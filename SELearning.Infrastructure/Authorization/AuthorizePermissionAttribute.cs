@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using SELearning.Core.Permission;
 
@@ -8,7 +7,7 @@ namespace SELearning.Infrastructure.Authorization;
 /// Authorization attribute with the required permission.
 /// </summary>
 /// <remarks>
-/// When adding mulitple permissions to this attribute, the permission will be evaluted
+/// When adding multiple permissions to this attribute, the permission will be evaluated
 /// as 'or' - that is, authorization is granted if the user has at least one of the
 /// specified permissions. In order to have the permissions to be evaluated as 'and'
 /// (i.e. the user should have all of the specified permissions), you have to add
@@ -35,7 +34,8 @@ public class AuthorizePermissionAttribute : AuthorizeAttribute
     public AuthorizePermissionAttribute(params Permission[] permissions)
     {
         if (permissions.Length < 1)
-            throw new ArgumentException("A permission requirement attribute must have at least one required permission");
+            throw new ArgumentException(
+                "A permission requirement attribute must have at least one required permission");
 
         Policy = PermissionPolicyProvider.PermissionsToRequirementPolicyName<PermissionRequirement>(permissions);
     }

@@ -1,14 +1,4 @@
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-using SELearning.API.Controllers;
 using SELearning.Core.Credibility;
-using SELearning.Core.User;
-using Xunit;
 
 namespace SELearning.API.Tests;
 
@@ -16,8 +6,7 @@ public class UserControllerTests
 {
     private readonly UserController _controller;
     private readonly Mock<IUserRepository> _repository;
-    private readonly Mock<ICredibilityService> _credibilityService;
-    private readonly UserDTO _user = new UserDTO("ABC", "The cheese man");
+    private readonly UserDTO _user = new("ABC", "The cheese man");
 
     public UserControllerTests()
     {
@@ -30,12 +19,16 @@ public class UserControllerTests
             new(ClaimTypes.GivenName, _user.Name)
         }));
 
-        _credibilityService = new Mock<ICredibilityService>();
-        _credibilityService.Setup(c => c.GetCredibilityScore(identity)).ReturnsAsync(10);
+        var credibilityService = new Mock<ICredibilityService>();
+        credibilityService.Setup(c => c.GetCredibilityScore(identity)).ReturnsAsync(10);
 
-        _controller = new UserController(logger.Object, _repository.Object, _credibilityService.Object);
-        _controller.ControllerContext = new ControllerContext();
-        _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = identity };
+        _controller = new UserController(logger.Object, _repository.Object, credibilityService.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = identity }
+            }
+        };
     }
 
     [Fact]

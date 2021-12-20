@@ -1,6 +1,6 @@
 @using SELearning.Core.Content
 
-@inject HttpClient Http
+@inject HttpClient _httpClient
 
 <section class="comment-list container-fluid">
     <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
@@ -14,6 +14,7 @@
 </section>
 
 @code {
+
     [Parameter]
     public Func<Task<List<ContentDTO>>> RetrieveContent { get; set; }
 
@@ -25,9 +26,10 @@
         StateHasChanged();
     }
 
-    protected void OnContentDeleted(ContentDTO content)
+    private void OnContentDeleted(ContentDTO content)
     {
         _contents.Remove(content);
         StateHasChanged();
     }
+
 }

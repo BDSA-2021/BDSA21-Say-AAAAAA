@@ -1,13 +1,16 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using SELearning.Infrastructure.Authorization;
+using SELearning.Infrastructure.Authorization.Pipeline;
+using SELearning.Infrastructure.Authorization.Pipeline.Operations;
 
-namespace SELearning.Infrastructure.Authorization;
-
+namespace SELearning.Infrastructure.Tests.Authorization.Pipeline.Operations;
 
 public class ModeratorOperationTests
 {
-    private IAuthorizationContextPipelineOperation _testPipelineOperation;
+    private readonly IAuthorizationContextPipelineOperation _testPipelineOperation;
+
     public ModeratorOperationTests()
     {
         _testPipelineOperation = new ModeratorOperation();
@@ -16,12 +19,19 @@ public class ModeratorOperationTests
     [Fact]
     public async Task Invoke_UserWithModeratorRole_IsModeratorAddedAndSetToTrueAndUserIdAdded()
     {
-        var userWithModeratorRole = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson"), new Claim(ClaimTypes.NameIdentifier, "Adrian"), new Claim(ClaimTypes.Role, "Moderator"), new Claim(ClaimTypes.Role, "AnotherOne") }));
-        PermissionAuthorizationContext context = new PermissionAuthorizationContext(userWithModeratorRole, Enumerable.Empty<Permission>());
+        var userWithModeratorRole = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+        {
+            new(ClaimTypes.Name, "homer.simpson"),
+            new(ClaimTypes.NameIdentifier, "Adrian"),
+            new(ClaimTypes.Role, "Moderator"),
+            new(ClaimTypes.Role, "AnotherOne")
+        }));
+        var context =
+            new PermissionAuthorizationContext(userWithModeratorRole, Enumerable.Empty<Permission>());
 
         await _testPipelineOperation.Invoke(context);
-        bool result = context.Data.Get<bool>("IsModerator");
-        string userIdResult = context.Data.Get<string>("UserId");
+        var result = context.Data.Get<bool>("IsModerator");
+        var userIdResult = context.Data.Get<string>("UserId");
 
         Assert.True(result);
         Assert.Equal("Adrian", userIdResult);
@@ -30,12 +40,18 @@ public class ModeratorOperationTests
     [Fact]
     public async Task Invoke_UserWithModeratorRole_IsModeratorAddedAndSetToFalseAndUserIdAdded()
     {
-        var userWithModeratorRole = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson"), new Claim(ClaimTypes.NameIdentifier, "Adrian"), new Claim(ClaimTypes.Role, "AnotherOne") }));
-        PermissionAuthorizationContext context = new PermissionAuthorizationContext(userWithModeratorRole, Enumerable.Empty<Permission>());
+        var userWithModeratorRole = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+        {
+            new(ClaimTypes.Name, "homer.simpson"),
+            new(ClaimTypes.NameIdentifier, "Adrian"),
+            new(ClaimTypes.Role, "AnotherOne")
+        }));
+        var context =
+            new PermissionAuthorizationContext(userWithModeratorRole, Enumerable.Empty<Permission>());
 
         await _testPipelineOperation.Invoke(context);
-        bool result = context.Data.Get<bool>("IsModerator");
-        string userIdResult = context.Data.Get<string>("UserId");
+        var result = context.Data.Get<bool>("IsModerator");
+        var userIdResult = context.Data.Get<string>("UserId");
 
         Assert.False(result);
         Assert.Equal("Adrian", userIdResult);

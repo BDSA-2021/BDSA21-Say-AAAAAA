@@ -1,6 +1,4 @@
-using System;
 using System.Threading.Tasks;
-using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
 
@@ -26,22 +24,27 @@ public class ContentManagerTests
 
         _user = new User.User { Id = "toucan", Name = "Næbdyr" };
 
-        var content1 = new Content.Content("title", "description", "link", 3, _user, _section);
-        var content2 = new Content.Content("title", "description", "link", 3, _user, _section);
-        var content3 = new Content.Content("title", "description", "link", 3, _user, _section);
-        var content4 = new Content.Content("title", "description", "link", 3, _user, _section);
+        var content1 = new Infrastructure.Content.Content("title", "description", "link", 3, _user, _section);
+        var content2 = new Infrastructure.Content.Content("title", "description", "link", 3, _user, _section);
+        var content3 = new Infrastructure.Content.Content("title", "description", "link", 3, _user, _section);
+        var content4 = new Infrastructure.Content.Content("title", "description", "link", 3, _user, _section);
         content1.Id = 1;
         content1.Id = 2;
         content1.Id = 3;
         content1.Id = 4;
 
-        _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
-        _section.Content = new List<Content.Content>
+        _section = new Section.Section
         {
-            content1,
-            content2,
-            content3,
-            content4
+            Id = 1,
+            Title = "python",
+            Description = "description",
+            Content = new List<Infrastructure.Content.Content>
+            {
+                content1,
+                content2,
+                content3,
+                content4
+            }
         };
 
         context.Content.AddRange(content1, content2, content3, content4);
@@ -84,7 +87,6 @@ public class ContentManagerTests
     }
 
 
-
     [Fact]
     public async Task CreateContentAsync_creates_new_content_with_generated_id()
     {
@@ -94,19 +96,19 @@ public class ContentManagerTests
             Author = _user.ToUserDTO(),
             Title = "title",
             Description = "description",
-            VideoLink = "video link",
+            VideoLink = "video link"
         };
 
         await _manager.AddContent(content);
 
-        var contentWithID = (await _repository.GetContent(5)).Value;
+        var contentWithId = (await _repository.GetContent(5)).Value;
 
-        Assert.Equal(_section.ToSectionDTO(), contentWithID.Section);
-        Assert.Equal(_user.ToUserDTO(), contentWithID.Author);
-        Assert.Equal("title", contentWithID.Title);
-        Assert.Equal("description", contentWithID.Description);
-        Assert.Equal("video link", contentWithID.VideoLink);
-        Assert.Equal(0, contentWithID.Rating);
+        Assert.Equal(_section.ToSectionDTO(), contentWithId.Section);
+        Assert.Equal(_user.ToUserDTO(), contentWithId.Author);
+        Assert.Equal("title", contentWithId.Title);
+        Assert.Equal("description", contentWithId.Description);
+        Assert.Equal("video link", contentWithId.VideoLink);
+        Assert.Equal(0, contentWithId.Rating);
     }
 
     [Fact]

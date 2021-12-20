@@ -10,8 +10,7 @@ public record ContentUserDTO
     public string Description { get; set; }
     public string VideoLink { get; set; }
 
-    [Required(AllowEmptyStrings = false)]
-    public string SectionId { get; set; }
+    [Required(AllowEmptyStrings = false)] public string SectionId { get; set; }
 }
 
 public record ContentDTO : IAuthored
@@ -33,32 +32,23 @@ public record ContentDTO : IAuthored
 
 public record ContentCreateDto
 {
-    [Required]
-    public int SectionId { get; init; }
+    [Required] public int SectionId { get; init; }
 
-    [StringLength(50)]
-    public string Title { get; init; }
+    [StringLength(50)] public string Title { get; init; }
 
-    [StringLength(50)]
-    public string Description { get; init; }
+    [StringLength(50)] public string Description { get; init; }
 
-    [StringLength(50)]
-    public string VideoLink { get; init; }
+    [StringLength(50)] public string VideoLink { get; init; }
 
-    [StringLength(50)]
-    public UserDTO Author { get; init; }
-
+    [StringLength(50)] public UserDTO Author { get; init; }
 }
 
 public record ContentUpdateDTO
 {
-    [StringLength(50)]
-    public string Title { get; init; }
+    [StringLength(50)] public string Title { get; init; }
 
-    [StringLength(50)]
-    public string Description { get; init; }
+    [StringLength(50)] public string Description { get; init; }
 
-    [StringLength(50)]
-    public string VideoLink { get; init; }
+    [StringLength(50)] public string VideoLink { get; init; }
     public int Rating { get; init; }
 }

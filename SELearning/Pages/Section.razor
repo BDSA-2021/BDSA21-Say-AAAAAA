@@ -5,7 +5,8 @@
 @using SELearning.Core.Content
 @using SELearning.Shared.Content;
 
-@inject HttpClient Http
+@inject HttpClient _httpClient
+@inject ToastService _toastService
 
 <div class="container">
     <div class="get-quote">
@@ -14,7 +15,7 @@
                 <h1 class="left-block float-left">@_section.Title</h1>
             </div>
             <div class="col-sm-2 col-12">
-                <a class="btn btn-primary right-block float-right" href="createcontent" role="button">Add Content</a>
+                <a class="btn btn-primary right-block float-right" href="CreateContent" role="button">Add Content</a>
             </div>
         </div>
     </div>
@@ -23,6 +24,7 @@
 <ContentList RetrieveContent="@RetrieveContentInSection"/>
 
 @code{
+
     [Parameter]
     public string SectionId { get; set; }
 
@@ -33,13 +35,19 @@
         await RetrieveSection();
     }
 
-    protected async Task<List<ContentDTO>> RetrieveContentInSection()
+    private async Task<List<ContentDTO>> RetrieveContentInSection()
     {
         List<ContentDTO> contents = new();
 
         try
         {
-            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDTO>>($"Section/{SectionId}/Content");
+            var content = await _httpClient.GetFromJsonAsync<IEnumerable<ContentDTO>>($"Section/{SectionId}/Content");
+            if (content == null)
+            {
+                _toastService.AddToast(new ToastNotification("No Content Found", ToastType.Warning));
+                return contents;
+            }
+
             contents = content.ToList();
         }
         catch (AccessTokenNotAvailableException exception)
@@ -50,11 +58,11 @@
         return contents;
     }
 
-    protected async Task RetrieveSection()
+    private async Task RetrieveSection()
     {
         try
         {
-            var section = await Http.GetFromJsonAsync<SectionDTO>($"Section/{SectionId}");
+            var section = await _httpClient.GetFromJsonAsync<SectionDTO>($"Section/{SectionId}");
             _section = section;
             StateHasChanged();
         }
@@ -63,4 +71,5 @@
             exception.Redirect();
         }
     }
+
 }

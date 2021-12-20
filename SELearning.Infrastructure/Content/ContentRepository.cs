@@ -1,5 +1,3 @@
-using SELearning.Core.Section;
-
 namespace SELearning.Infrastructure.Content;
 
 public class ContentRepository : IContentRepository
@@ -34,9 +32,7 @@ public class ContentRepository : IContentRepository
 
         await _context.SaveChangesAsync();
 
-        var contentDto = ConvertToContentDTO(entity);
-
-        return (OperationResult.Created, contentDto);
+        return (OperationResult.Created, entity.ToContentDTO());
     }
 
     public async Task<OperationResult> UpdateContent(int id, ContentUpdateDTO content)
@@ -64,18 +60,18 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Section)
             .Include(x => x.Author)
             .Where(x => x.Id == contentId)
-            .Select(c => ConvertToContentDTO(c));
+            .Select(c => c.ToContentDTO());
 
         return await content.FirstOrDefaultAsync();
     }
 
     public async Task<IReadOnlyCollection<ContentDTO>> GetContent() =>
         (await _context.Content
-                       .Include(x => x.Section)
-                       .Include(x => x.Author)
-                       .Select(c => ConvertToContentDTO(c))
-                       .ToListAsync())
-                       .AsReadOnly();
+            .Include(x => x.Section)
+            .Include(x => x.Author)
+            .Select(c => c.ToContentDTO())
+            .ToListAsync())
+        .AsReadOnly();
 
     public async Task<OperationResult> DeleteContent(int contentId)
     {
@@ -98,28 +94,8 @@ public class ContentRepository : IContentRepository
             .Include(x => x.Section)
             .Include(x => x.Author)
             .Where(x => x.Author.Id == userId)
-            .Select(c => ConvertToContentDTO(c));
+            .Select(c => c.ToContentDTO());
 
         return (await content.ToListAsync()).AsReadOnly();
     }
-
-    public static ContentDTO ConvertToContentDTO(Content c)
-    {
-        return new ContentDTO
-        {
-            Id = c.Id,
-            Title = c.Title,
-            Description = c.Description,
-            VideoLink = c.VideoLink,
-            Rating = c.Rating,
-            Author = new UserDTO(c.Author.Id, c.Author.Name),
-            Section = new SectionDTO
-            {
-                Id = c.Section.Id,
-                Title = c.Section.Title,
-                Description = c.Section.Description
-            }
-        };
-    }
 }
-

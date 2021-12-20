@@ -11,28 +11,25 @@ public class UserRepository : IUserRepository
 
     public async Task<UserDTO> GetOrAddUser(UserDTO user)
     {
+        var (id, name) = user;
         var retrievedUser = await _context
             .Users
-            .FirstOrDefaultAsync(u => u.Id == user.Id);
+            .FirstOrDefaultAsync(u => u.Id == id);
 
         if (retrievedUser != null)
         {
-            return ConvertToDTO(retrievedUser);
+            return retrievedUser.ToUserDTO();
         }
 
         var createUser = new User
         {
-
-
-            Id = user.Id,
-            Name = user.Name
+            Id = id,
+            Name = name
         };
 
         await _context.Users.AddAsync(createUser);
         await _context.SaveChangesAsync();
 
-        return ConvertToDTO(createUser);
+        return createUser.ToUserDTO();
     }
-
-    private UserDTO ConvertToDTO(User user) => new UserDTO(user.Id, user.Name);
 }

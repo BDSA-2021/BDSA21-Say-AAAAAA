@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using SELearning.Core.Collections;
-using SELearning.Infrastructure.Authorization;
+using SELearning.Infrastructure.Authorization.Rules;
 
-namespace SELearning.Infrastructure.Tests.Authorization;
+namespace SELearning.Infrastructure.Tests.Authorization.Rules;
 
 public class UserCredibilityRuleTests
 {
@@ -14,14 +14,16 @@ public class UserCredibilityRuleTests
         _rule = new UserCredibilityRule();
         _context = new DynamicDictionary();
 
-        _context.Set<int>("UserCredibilityScore", 500);
-        _context.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores", new Dictionary<Permission, int>() { { Permission.CreateComment, 1000 }, { Permission.CreateContent, 500 }, { Permission.EditOwnComment, 499 } });
+        _context.Set("UserCredibilityScore", 500);
+        _context.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores",
+            new Dictionary<Permission, int>
+                {{Permission.CreateComment, 1000}, {Permission.CreateContent, 500}, {Permission.EditOwnComment, 499}});
     }
 
     [Fact]
     public async Task IsAllowed_PermissionCredHigherThanUserCredScore_ReturnFalse()
     {
-        bool result = await _rule.IsAllowed(_context, Permission.CreateComment);
+        var result = await _rule.IsAllowed(_context, Permission.CreateComment);
 
         Assert.False(result);
     }
@@ -29,7 +31,7 @@ public class UserCredibilityRuleTests
     [Fact]
     public async Task IsAllowed_PermissionCredIsLowerThanUserCredScore_ReturnTrue()
     {
-        bool result = await _rule.IsAllowed(_context, Permission.EditOwnComment);
+        var result = await _rule.IsAllowed(_context, Permission.EditOwnComment);
 
         Assert.True(result);
     }
@@ -37,7 +39,7 @@ public class UserCredibilityRuleTests
     [Fact]
     public async Task IsAllowed_PermissionCredIsEqualToUserCredScore_ReturnTrue()
     {
-        bool result = await _rule.IsAllowed(_context, Permission.CreateContent);
+        var result = await _rule.IsAllowed(_context, Permission.CreateContent);
 
         Assert.True(result);
     }
@@ -47,7 +49,7 @@ public class UserCredibilityRuleTests
     [InlineData(1231231)]
     public void IsEvalueateable_ResourceIsAnObject_ReturnTrue(object resource)
     {
-        bool result = _rule.IsEvaluateable(resource);
+        var result = _rule.IsEvaluateable(resource);
 
         Assert.True(result);
     }

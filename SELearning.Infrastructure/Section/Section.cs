@@ -9,11 +9,6 @@ public class Section : IEquatable<Section>
     public string? Description { get; set; }
     public List<Content.Content>? Content { get; set; }
 
-    public List<Content.Content>? GetContent()
-    {
-        return null;
-    }
-
     public bool Equals(Section? other)
     {
         if (other == null) return false;
@@ -26,5 +21,10 @@ public class Section : IEquatable<Section>
         return Equals(other as Section);
     }
 
-    public SectionDTO ToSectionDTO() => new SectionDTO { Id = Id, Title = Title, Description = Description };
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, Title, Description, Content);
+    }
+
+    public SectionDTO ToSectionDTO() => new() { Id = Id, Title = Title, Description = Description };
 }

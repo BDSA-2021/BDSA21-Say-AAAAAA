@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using SELearning.Core.Collections;
 
 namespace SELearning.Core.Permission;
@@ -21,14 +20,14 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
         if (UserIsAModerator(context))
             return true;
 
-        foreach (Permission requestedPermission in requestedPermissions)
+        foreach (var requestedPermission in requestedPermissions)
         {
             if (!PermissionHasRules(requestedPermission, _permissions))
                 return true;
 
-            bool result = (await Task.WhenAll(_permissions[requestedPermission]
-                                                        .Select(rule => rule.IsAllowed(context, requestedPermission))))
-                                                        .All(isAllowed => isAllowed);
+            var result = (await Task.WhenAll(_permissions[requestedPermission]
+                    .Select(rule => rule.IsAllowed(context, requestedPermission))))
+                .All(isAllowed => isAllowed);
 
             if (result)
                 return true;
@@ -37,20 +36,21 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
         return false;
     }
 
-    public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions, object ressource)
+    public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions,
+        object ressource)
     {
         if (UserIsAModerator(context))
             return true;
 
-        foreach (Permission requestedPermission in requestedPermissions)
+        foreach (var requestedPermission in requestedPermissions)
         {
             if (!PermissionHasRules(requestedPermission, _resourcePermissions))
                 return true;
 
-            bool result = (await Task.WhenAll(_resourcePermissions[requestedPermission]
-                                                        .Where(x => x.IsEvaluateable(ressource))
-                                                        .Select(rule => rule.IsAllowed(context, requestedPermission, ressource))))
-                                                        .All(isAllowed => isAllowed);
+            var result = (await Task.WhenAll(_resourcePermissions[requestedPermission]
+                    .Where(x => x.IsEvaluateable(ressource))
+                    .Select(rule => rule.IsAllowed(context, requestedPermission, ressource))))
+                .All(isAllowed => isAllowed);
 
             if (result)
                 return true;
@@ -59,7 +59,8 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
         return false;
     }
 
-    private bool UserIsAModerator(IDynamicDictionaryRead context) => context.Get<bool>("IsModerator");
+    private static bool UserIsAModerator(IDynamicDictionaryRead context) => context.Get<bool>("IsModerator");
 
-    private bool PermissionHasRules<T>(Permission p, IDictionary<Permission, IEnumerable<T>> ruleTables) => ruleTables.ContainsKey(p) && ruleTables[p].Count() != 0;
+    private static bool PermissionHasRules<T>(Permission p, IDictionary<Permission, IEnumerable<T>> ruleTables) =>
+        ruleTables.ContainsKey(p) && ruleTables[p].Any();
 }

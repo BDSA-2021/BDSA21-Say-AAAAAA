@@ -1,6 +1,6 @@
-using SELearning.Core.Content;
+using SELearning.Core.Section;
 
-namespace SELearning.Core.Section;
+namespace SELearning.Infrastructure.Section;
 
 public class SectionManager : ISectionService
 {

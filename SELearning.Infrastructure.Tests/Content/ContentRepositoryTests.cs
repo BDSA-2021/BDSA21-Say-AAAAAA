@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using System.Linq;
-using SELearning.Infrastructure.Content;
 using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
@@ -10,7 +9,8 @@ public class ContentRepositoryTests
     private readonly SELearningContext _context;
     private readonly ContentRepository _repository;
     private readonly Section.Section _section;
-    private static readonly User.User _authorUser = new User.User
+
+    private static readonly User.User AuthorUser = new()
     {
         Id = "author",
         Name = "author"
@@ -29,15 +29,15 @@ public class ContentRepositoryTests
 
         var contentList = new List<Content.Content>
         {
-            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
-            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
-            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
-            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section)
+            new("title", "description", "VideoLink", 3, AuthorUser, _section),
+            new("title", "description", "VideoLink", 3, AuthorUser, _section),
+            new("title", "description", "VideoLink", 3, AuthorUser, _section),
+            new("title", "description", "VideoLink", 3, AuthorUser, _section)
         };
 
         _context.Content.AddRange(contentList);
         _context.Section.Add(_section);
-        _context.Users.Add(_authorUser);
+        _context.Users.Add(AuthorUser);
 
         _context.SaveChanges();
 
@@ -53,7 +53,7 @@ public class ContentRepositoryTests
             Description = "description",
             VideoLink = "video link",
             SectionId = _section.Id,
-            Author = _authorUser.ToUserDTO()
+            Author = AuthorUser.ToUserDTO()
         };
 
         var created = (await _repository.AddContent(content)).Item2;
@@ -75,7 +75,7 @@ public class ContentRepositoryTests
             Description = "description",
             VideoLink = "video link",
             SectionId = _section.Id,
-            Author = _authorUser.ToUserDTO(),
+            Author = AuthorUser.ToUserDTO()
         };
 
         var (status, created) = await _repository.AddContent(content);
@@ -88,7 +88,7 @@ public class ContentRepositoryTests
             VideoLink = "video link",
             Rating = 0,
             Section = _section.ToSectionDTO(),
-            Author = _authorUser.ToUserDTO()
+            Author = AuthorUser.ToUserDTO()
         };
 
         Assert.Equal(contentDto, created);
@@ -124,7 +124,16 @@ public class ContentRepositoryTests
     {
         var option = await _repository.GetContent(1);
 
-        var content = new ContentDTO { Id = 1, Section = _section.ToSectionDTO(), Author = new UserDTO("author", "author"), Title = "title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var content = new ContentDTO
+        {
+            Id = 1,
+            Section = _section.ToSectionDTO(),
+            Author = new UserDTO("author", "author"),
+            Title = "title",
+            Description = "description",
+            VideoLink = "VideoLink",
+            Rating = 3
+        };
 
         Assert.Equal(content, option.Value);
     }
@@ -138,6 +147,7 @@ public class ContentRepositoryTests
         Assert.All(allContent,
             content =>
             {
+                Assert.NotNull(content);
                 Assert.Equal("author", content.Author.Id);
                 Assert.Equal("title", content.Title);
                 Assert.Equal("description", content.Description);
@@ -151,7 +161,8 @@ public class ContentRepositoryTests
     [Fact]
     public async Task UpdateContentAsync_updates_existing_content()
     {
-        var content = new ContentUpdateDTO { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
+        var content = new ContentUpdateDTO
+        { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var updated = await _repository.UpdateContent(1, content);
 
@@ -161,7 +172,8 @@ public class ContentRepositoryTests
     [Fact]
     public async Task UpdateContentAsync_given_non_existing_Content_returns_NotFound()
     {
-        var content = new ContentUpdateDTO { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
+        var content = new ContentUpdateDTO
+        { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var response = await _repository.UpdateContent(42, content);
 
@@ -172,11 +184,12 @@ public class ContentRepositoryTests
     [Fact]
     public async Task UpdateContentAsync_updates_and_returns_Updated()
     {
-        var contentDto = new ContentUpdateDTO { Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
+        var contentDto = new ContentUpdateDTO
+        { Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
         var response = await _repository.UpdateContent(1, contentDto);
 
-        var entity = await _context.Content.FirstAsync(c => c.Title == "new title");
+        await _context.Content.FirstAsync(c => c.Title == "new title");
 
         Assert.Equal(OperationResult.Updated, response);
     }
@@ -203,18 +216,16 @@ public class ContentRepositoryTests
     [Fact]
     public async Task GetContentByAuthor_GivenContent_ReturnsContentFromSpecifiedAuthor()
     {
-        await _context.Content.AddRangeAsync(new[]
-        {
-            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
-            new Content.Content("title", "description", "VideoLink", 3, new User.User { Id = "homer", Name = "homer" }, _section),
-            new Content.Content("title", "description", "VideoLink", 3, _authorUser, _section),
-        });
+        await _context.Content.AddRangeAsync(
+            new Content.Content("title", "description", "VideoLink", 3, AuthorUser, _section), new Content.Content(
+                "title", "description", "VideoLink", 3, new User.User { Id = "homer", Name = "homer" },
+                _section), new Content.Content("title", "description", "VideoLink", 3, AuthorUser, _section));
         await _context.SaveChangesAsync();
 
         var contents = await _repository.GetContentByAuthor("homer");
 
         var expectedIds = new[] { 7 };
-        var actualIds = contents.OrderBy(c => c.Id).Select(c => (int)c.Id!).ToList();
+        var actualIds = contents.OrderBy(c => c.Id).Select(c => c.Id).ToList();
         Assert.Equal(expectedIds, actualIds);
     }
 }

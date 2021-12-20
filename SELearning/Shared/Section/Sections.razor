@@ -2,14 +2,15 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
 
-@inject HttpClient Http
+@inject HttpClient _httpClient
 
-<section class="comment-list container-fluid"> <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
+<section class="comment-list container-fluid">
+    <!-- NOTE: I am not sure the it is necessary to have container fluid... but i am using it just to be sure that this 'component' looks good if no container is supplied -->
     <div class="row">
         <!-- List of comments -->
-        @foreach(SectionDTO sec in _sections)
+        @foreach (var sec in _sections)
         {
-            <SectionTile Sec="@sec" OnDeleted="@OnSectionDeleted" />
+            <SectionTile Sec="@sec" OnDeleted="@OnSectionDeleted"/>
         }
     </div>
 </section>
@@ -17,16 +18,16 @@
 @code{
     private List<SectionDTO> _sections = new();
 
-    protected async override void OnInitialized()
+    protected override async void OnInitialized()
     {
         await RetrieveSections();
     }
 
-    protected async Task RetrieveSections()
+    private async Task RetrieveSections()
     {
         try
         {
-            var sectionDtos = await Http.GetFromJsonAsync<IEnumerable<SectionDTO>>("Section");
+            var sectionDtos = await _httpClient.GetFromJsonAsync<IEnumerable<SectionDTO>>("Section");
             _sections.AddRange(sectionDtos);
             StateHasChanged();
         }
@@ -41,4 +42,5 @@
         _sections.Remove(deletedSection);
         StateHasChanged();
     }
+
 }

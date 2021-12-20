@@ -7,7 +7,6 @@ namespace SELearning.Infrastructure.Tests;
 public class UserRepositoryTests
 {
     private readonly UserRepository _repository;
-    private readonly SELearningContext _context;
 
     public UserRepositoryTests()
     {
@@ -15,13 +14,13 @@ public class UserRepositoryTests
         connection.Open();
         var builder = new DbContextOptionsBuilder<SELearningContext>()
             .UseSqlite(connection);
-        _context = new SELearningContext(builder.Options);
-        _context.Database.EnsureCreated();
+        var context = new SELearningContext(builder.Options);
+        context.Database.EnsureCreated();
 
-        _context.Users.Add(new User.User { Id = "User 1", Name = "User 1" });
+        context.Users.Add(new User.User { Id = "User 1", Name = "User 1" });
 
-        _repository = new UserRepository(_context);
-        _context.SaveChanges();
+        _repository = new UserRepository(context);
+        context.SaveChanges();
     }
 
     [Fact]

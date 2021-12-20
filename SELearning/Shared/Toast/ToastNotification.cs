@@ -4,17 +4,17 @@ namespace SELearning.Shared.Toast;
 
 public delegate void OnDismissHandler();
 
-public partial class ToastNotification : IDisposable
+public class ToastNotification : IDisposable
 {
     public DateTime Created { get; init; } = DateTime.Now;
     public string Title { get; init; }
     public string Body { get; init; }
     public ToastType Type { get; init; }
 
-    private int _duration { get; init; }
-    private Timer _dismissTimer { get; init; }
+    private int Duration { get; init; }
+    private Timer DismissTimer { get; init; }
 
-    private IList<OnDismissHandler> _onDismissHandlers = new List<OnDismissHandler>();
+    private readonly IList<OnDismissHandler> _onDismissHandlers = new List<OnDismissHandler>();
 
     public ToastNotification(string title, string body, ToastType type)
     {
@@ -23,23 +23,30 @@ public partial class ToastNotification : IDisposable
         Type = type;
     }
 
+    public ToastNotification(string body, ToastType type) : this(body, body, type)
+    {
+    }
+
     /// <summary>
     /// Creates an auto dismissing toast notification. It will dismiss after the given duration.
     /// </summary>
-    /// <param name="Duration">Amount of miliseconds that should pass before dismissing</param>
-    public ToastNotification(string title, string body, ToastType type, int Duration)
+    /// <param name="title">Title of notification</param>
+    /// <param name="body">Title of body</param>
+    /// <param name="type">Error level of notification</param>
+    /// <param name="duration">Amount of milliseconds that should pass before dismissing</param>
+    public ToastNotification(string title, string body, ToastType type, int duration)
         : this(title, body, type)
     {
-        _duration = Duration;
-        _dismissTimer = new Timer();
-        _dismissTimer.Interval = Duration;
-        _dismissTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
-        {
-            Dismiss();
-        };
-        _dismissTimer.Start();
+        Duration = duration;
+        DismissTimer = new Timer();
+        DismissTimer.Interval = duration;
+        DismissTimer.Elapsed += (_, _) => { Dismiss(); };
+        DismissTimer.Start();
     }
 
+    public ToastNotification(string body, ToastType type, int duration) : this(body, body, type, duration)
+    {
+    }
 
     public void AddDismissHandler(OnDismissHandler handler)
     {
@@ -56,12 +63,13 @@ public partial class ToastNotification : IDisposable
 
     public void Dispose()
     {
-        _dismissTimer.Dispose();
+        DismissTimer.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public static ToastNotification CreateNoAccessToastNotification() =>
         new("Access not available!", "Unfortunately, our authorization handler was not able " +
-            "to find your access token. Please contact the admin", ToastType.Error, 10_000);
+                                     "to find your access token. Please contact the admin", ToastType.Error, 10_000);
 
     public static ToastNotification CreateGenericErrorToastNotification(string message) =>
         new("Fatal error!", $"An error occurred: {message}", ToastType.Error, 10_000);
@@ -71,7 +79,7 @@ public partial class ToastNotification : IDisposable
 
     public static ToastNotification CreateLoggedError(string message)
     {
-        System.Console.WriteLine(message);
+        Console.WriteLine(message);
         return CreateGenericErrorToastNotification(message);
     }
 }

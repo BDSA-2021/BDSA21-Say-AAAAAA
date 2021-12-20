@@ -3,14 +3,15 @@ using SELearning.Core.Collections;
 using SELearning.Core.Credibility;
 using SELearning.Core.Permission;
 
-namespace SELearning.Infrastructure.Authorization;
+namespace SELearning.Infrastructure.Authorization.Pipeline.Operations;
 
 public class CredibilityOperation : IAuthorizationContextPipelineOperation
 {
     private readonly IProvider<IPermissionCredibilityService> _permCredibilityServiceProvider;
     private readonly IProvider<ICredibilityService> _credServiceProvider;
 
-    public CredibilityOperation(IProvider<IPermissionCredibilityService> permCredibilityServiceProvider, IProvider<ICredibilityService> credServiceProvider)
+    public CredibilityOperation(IProvider<IPermissionCredibilityService> permCredibilityServiceProvider,
+        IProvider<ICredibilityService> credServiceProvider)
     {
         _permCredibilityServiceProvider = permCredibilityServiceProvider;
         _credServiceProvider = credServiceProvider;
@@ -24,18 +25,19 @@ public class CredibilityOperation : IAuthorizationContextPipelineOperation
 
     private async Task GetCredibilityFromUser(IDynamicDictionary data, ClaimsPrincipal user)
     {
-        ICredibilityService credService = _credServiceProvider.Get();
+        var credService = _credServiceProvider.Get();
 
-        int userCredScore = await credService.GetCredibilityScore(user);
+        var userCredScore = await credService.GetCredibilityScore(user);
         data.Set("UserCredibilityScore", userCredScore);
     }
 
-    private async Task GetPermissionCredibilityScores(IDynamicDictionary data, IEnumerable<Permission> requestedPermission)
+    private async Task GetPermissionCredibilityScores(IDynamicDictionary data,
+        IEnumerable<Permission> requestedPermission)
     {
-        IPermissionCredibilityService credService = _permCredibilityServiceProvider.Get();
+        var credService = _permCredibilityServiceProvider.Get();
         Dictionary<Permission, int> credScores = new();
 
-        foreach (Permission permission in requestedPermission)
+        foreach (var permission in requestedPermission)
         {
             credScores.Add(permission, await credService.GetRequiredCredibility(permission));
         }

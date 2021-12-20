@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using SELearning.Core.Collections;
 using SELearning.Core.User;
-using SELearning.Infrastructure.Authorization;
+using SELearning.Infrastructure.Authorization.Rules;
 
-namespace SELearning.Infrastructure.Tests.Authorization;
+namespace SELearning.Infrastructure.Tests.Authorization.Rules;
 
 public class AuthoredResourceRuleTests
 {
@@ -16,8 +16,13 @@ public class AuthoredResourceRuleTests
         _context = new DynamicDictionary();
 
         _context.Set<string>("UserId", "ABC");
-        _context.Set<int>("UserCredibilityScore", 500);
-        _context.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores", new Dictionary<Permission, int>() { { Permission.Rate, 1000 }, { Permission.EditAnyComment, 1000 }, { Permission.DeleteAnyComment, 500 }, { Permission.EditOwnComment, 499 }, { Permission.DeleteOwnComment, 501 } });
+        _context.Set("UserCredibilityScore", 500);
+        _context.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores",
+            new Dictionary<Permission, int>
+            {
+                {Permission.Rate, 1000}, {Permission.EditAnyComment, 1000}, {Permission.DeleteAnyComment, 500},
+                {Permission.EditOwnComment, 499}, {Permission.DeleteOwnComment, 501}
+            });
     }
 
     [Fact]
@@ -25,7 +30,7 @@ public class AuthoredResourceRuleTests
     {
         var user = new MockAuthoredResource(new UserDTO("ABC", "Albert"));
 
-        bool result = await _rule.IsAllowed(_context, Permission.EditOwnComment, user);
+        var result = await _rule.IsAllowed(_context, Permission.EditOwnComment, user);
 
         Assert.True(result);
     }
@@ -37,7 +42,7 @@ public class AuthoredResourceRuleTests
     {
         var user = new MockAuthoredResource(new UserDTO("ABC", "Albert"));
 
-        bool result = await _rule.IsAllowed(_context, p, user);
+        var result = await _rule.IsAllowed(_context, p, user);
 
         Assert.Equal(expectedResult, result);
     }
@@ -47,7 +52,7 @@ public class AuthoredResourceRuleTests
     {
         var user = new MockAuthoredResource(new UserDTO("ABC", "Albert"));
 
-        bool result = await _rule.IsAllowed(_context, Permission.DeleteOwnComment, user);
+        var result = await _rule.IsAllowed(_context, Permission.DeleteOwnComment, user);
 
         Assert.False(result);
     }
@@ -57,7 +62,7 @@ public class AuthoredResourceRuleTests
     {
         var user = new MockAuthoredResource(new UserDTO("AAAAASDADSAD", "Albert"));
 
-        bool result = await _rule.IsAllowed(_context, Permission.Rate, user);
+        var result = await _rule.IsAllowed(_context, Permission.Rate, user);
 
         Assert.False(result);
     }
@@ -65,7 +70,7 @@ public class AuthoredResourceRuleTests
     [Fact]
     public void IsEvalueateable_ResourceThatImplementsRequiredType_ReturnTrue()
     {
-        bool result = _rule.IsEvaluateable(new MockAuthoredResource(null!));
+        var result = _rule.IsEvaluateable(new MockAuthoredResource(null!));
 
         Assert.True(result);
     }
@@ -73,7 +78,7 @@ public class AuthoredResourceRuleTests
     [Fact]
     public void IsEvalueateable_ResourceThatDoesNotImplementRequiredType_ReturnFalse()
     {
-        bool result = _rule.IsEvaluateable(new AuthoredResourceRule());
+        var result = _rule.IsEvaluateable(new AuthoredResourceRule());
 
         Assert.False(result);
     }

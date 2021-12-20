@@ -1,4 +1,3 @@
-
 namespace SELearning.Infrastructure;
 
 public interface ISELearningContext : IDisposable
@@ -7,6 +6,5 @@ public interface ISELearningContext : IDisposable
     DbSet<Section.Section> Section { get; }
     DbSet<Content.Content> Content { get; }
     public DbSet<Comment.Comment> Comments { get; }
-    int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -1,8 +1,5 @@
-using System;
-using SELearning.Core.Content;
 using System.Threading.Tasks;
 using System.Linq;
-using SELearning.Core.User;
 using SELearning.Infrastructure.Section;
 
 namespace SELearning.Infrastructure.Tests;
@@ -11,9 +8,13 @@ public class SectionRepositoryTests
 {
     private readonly SELearningContext _context;
     private readonly SectionRepository _repository;
-    private static Section.Section _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
-    private static Section.Section _sectionEmpty = new Section.Section { Id = 2, Title = "python", Description = "description" };
-    private static User.User _user = new User.User { Id = "ABC", Name = "Adrian" };
+
+    private static readonly Section.Section Section = new() { Id = 1, Title = "python", Description = "description" };
+
+    private static readonly Section.Section
+        SectionEmpty = new() { Id = 2, Title = "python", Description = "description" };
+
+    private static readonly User.User User = new() { Id = "ABC", Name = "Adrian" };
 
     public SectionRepositoryTests()
     {
@@ -24,10 +25,10 @@ public class SectionRepositoryTests
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        var content1 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
-        var content2 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
-        var content3 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
-        var content4 = new Content.Content("title", "description", "VideoLink", 3, _user, _section);
+        var content1 = new Content.Content("title", "description", "VideoLink", 3, User, Section);
+        var content2 = new Content.Content("title", "description", "VideoLink", 3, User, Section);
+        var content3 = new Content.Content("title", "description", "VideoLink", 3, User, Section);
+        var content4 = new Content.Content("title", "description", "VideoLink", 3, User, Section);
 
         var contentList = new List<Content.Content>
         {
@@ -37,7 +38,7 @@ public class SectionRepositoryTests
             content4
         };
 
-        _section.Content = contentList;
+        Section.Content = contentList;
 
         context.Content.AddRange(
             content1,
@@ -47,16 +48,14 @@ public class SectionRepositoryTests
         );
 
         context.Section.AddRange(
-            _section,
-            _sectionEmpty
+            Section,
+            SectionEmpty
         );
 
         context.SaveChanges();
 
         _context = context;
         _repository = new SectionRepository(_context);
-
-
     }
 
     /*
@@ -66,7 +65,6 @@ public class SectionRepositoryTests
     [Fact]
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
-        var contentList = new List<Content.Content>();
         var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var created = (await _repository.AddSection(section)).Item2;
@@ -79,7 +77,6 @@ public class SectionRepositoryTests
     [Fact]
     public async Task CreateSectionAsync_given_Section_returns_Section_with_Section()
     {
-        var contentList = new List<Content.Content>();
         var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var (status, created) = await _repository.AddSection(section);
@@ -103,11 +100,10 @@ public class SectionRepositoryTests
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_id_returns_NotFound()
     {
-        var contentList = new List<Content.Content>();
         var section = new SectionUpdateDTO
         {
             Title = "title",
-            Description = "description",
+            Description = "description"
         };
 
         var reponse = await _repository.UpdateSection(42, section);
@@ -129,11 +125,10 @@ public class SectionRepositoryTests
     [Fact]
     public async Task UpdateSectionAsync_updates_existing_section()
     {
-        var contentList = new List<Content.Content>();
         var section = new SectionUpdateDTO
         {
             Title = "title",
-            Description = "description",
+            Description = "description"
         };
 
         var updated = await _repository.UpdateSection(1, section);
@@ -144,11 +139,10 @@ public class SectionRepositoryTests
     [Fact]
     public async Task UpdateSectionAsync_given_non_existing_Content_returns_NotFound()
     {
-        var contentList = new List<Content.Content>();
         var section = new SectionUpdateDTO
         {
             Title = "title",
-            Description = "description",
+            Description = "description"
         };
 
         var response = await _repository.UpdateSection(42, section);
@@ -159,16 +153,15 @@ public class SectionRepositoryTests
     [Fact]
     public async Task UpdateSectionAsync_updates_and_returns_Updated()
     {
-        var contentList = new List<Content.Content>();
         var section = new SectionUpdateDTO
         {
             Title = "new title",
-            Description = "description",
+            Description = "description"
         };
 
         var response = await _repository.UpdateSection(1, section);
 
-        var entity = await _context.Section.FirstAsync(c => c.Title == "new title");
+        await _context.Section.FirstAsync(c => c.Title == "new title");
 
         Assert.Equal(OperationResult.Updated, response);
     }
@@ -205,7 +198,7 @@ public class SectionRepositoryTests
     {
         var contentInSection = await _repository.GetContentInSection(1);
 
-        var content = from c in _section.Content
+        var content = from c in Section.Content
                       select new ContentDTO
                       {
                           Id = c.Id,

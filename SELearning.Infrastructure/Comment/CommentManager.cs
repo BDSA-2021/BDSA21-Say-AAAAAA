@@ -1,9 +1,9 @@
-using SELearning.Core.Comment;
+namespace SELearning.Infrastructure.Comment;
 
-namespace SELearning.Infrastructure;
 public class CommentManager : ICommentService
 {
-    ICommentRepository _repo;
+    private readonly ICommentRepository _repo;
+
     public CommentManager(ICommentRepository repo)
     {
         _repo = repo;
@@ -46,7 +46,7 @@ public class CommentManager : ICommentService
             throw new CommentNotFoundException(id);
         }
 
-        CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating + 1);
+        var dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating + 1);
         await UpdateComment(id, dto);
     }
 
@@ -59,7 +59,7 @@ public class CommentManager : ICommentService
             throw new CommentNotFoundException(id);
         }
 
-        CommentUpdateDTO dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating - 1);
+        var dto = new CommentUpdateDTO(comment.Value.Text, comment.Value.Rating - 1);
         await UpdateComment(id, dto);
     }
 

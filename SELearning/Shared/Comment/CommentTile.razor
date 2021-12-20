@@ -2,15 +2,15 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Net;
 
-@inject HttpClient Http
-@inject IJSRuntime JsRuntime
-@inject ToastService toasts;
+@inject HttpClient _httpClient
+@inject IJSRuntime _jsRuntime
+@inject ToastService _toastService
 
 <div class="row col-lg-12 comment">
     <div class="col-lg-2 row comment-rating">
         <!--Rating section-->
         <div class="col-lg-4">
-            <p class="row col-lg-12">@VisualCommentRating</p>
+            <p class="row col-lg-12">@_visualCommentRating</p>
             <p class="row col-lg-12">Rating</p>
         </div>
         <div class="col-lg-8">
@@ -48,30 +48,31 @@
 
     [Parameter]
     public CommentDetailsDTO Comment { get; set; }
-    private int VisualCommentRating;
+
+    private int _visualCommentRating;
 
     [Parameter]
     public EventCallback<CommentDetailsDTO> OnCommentDeleted { get; set; }
 
-    protected override void OnInitialized() {
-        VisualCommentRating = Comment.Rating;
+    protected override void OnInitialized()
+    {
+        _visualCommentRating = Comment.Rating;
     }
 
     private async Task Delete()
     {
         try
         {
-            var responseMessage = await Http.DeleteAsync($"Comment/{Comment.Id}");
+            var responseMessage = await _httpClient.DeleteAsync($"Comment/{Comment.Id}");
 
             if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
             {
-                toasts.AddToast(ToastNotification.CreateUnauthorized("delete comments"));
+                _toastService.AddToast(ToastNotification.CreateUnauthorized("delete comments"));
                 return;
             }
 
-            if(OnCommentDeleted.HasDelegate)
+            if (OnCommentDeleted.HasDelegate)
                 await OnCommentDeleted.InvokeAsync(Comment);
-
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -79,7 +80,7 @@
         }
         catch (Exception exception)
         {
-            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
+            _toastService.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 
@@ -87,15 +88,14 @@
     {
         try
         {
-            var responseMessage = await Http.PutAsync($"Comment/{Comment.Id}/Upvote", null);
+            var responseMessage = await _httpClient.PutAsync($"Comment/{Comment.Id}/Upvote", null);
 
             if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
             {
-                toasts.AddToast(ToastNotification.CreateUnauthorized("rate"));
-                return;
+                _toastService.AddToast(ToastNotification.CreateUnauthorized("rate"));
             }
 
-            VisualCommentRating++;
+            _visualCommentRating++;
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)
@@ -104,23 +104,22 @@
         }
         catch (Exception exception)
         {
-            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
+            _toastService.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
 
-    private async Task DownVote() 
+    private async Task DownVote()
     {
         try
         {
-            var responseMessage = await Http.PutAsync($"Comment/{Comment.Id}/Downvote", null);
+            var responseMessage = await _httpClient.PutAsync($"Comment/{Comment.Id}/Downvote", null);
 
             if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
             {
-                toasts.AddToast(ToastNotification.CreateUnauthorized("rate"));
-                return;
+                _toastService.AddToast(ToastNotification.CreateUnauthorized("rate"));
             }
 
-            VisualCommentRating--;
+            _visualCommentRating--;
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)
@@ -129,7 +128,8 @@
         }
         catch (Exception exception)
         {
-            toasts.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
+            _toastService.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
+
 }

@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
-using SELearning.Core.Credibility;
 using SELearning.Core.Permission;
+using SELearning.Infrastructure.Authorization.Pipeline;
 
-namespace SELearning.Infrastructure.Authorization;
+namespace SELearning.Infrastructure.Authorization.Configuration;
 
 /// <summary>
 /// Builds the Permissions and adds them into the dependency injection system.
@@ -13,32 +11,25 @@ namespace SELearning.Infrastructure.Authorization;
 /// </summary>
 public class PermissionBuilder
 {
-    public IServiceCollection Services { get; }
-    private Dictionary<Permission, List<IRule>> _rules = new Dictionary<Permission, List<IRule>>();
-    private Dictionary<Permission, List<IResourceRule>> _resourceRules = new Dictionary<Permission, List<IResourceRule>>();
+    private IServiceCollection Services { get; }
+    private readonly Dictionary<Permission, List<IRule>> _rules = new();
+
+    private readonly Dictionary<Permission, List<IResourceRule>> _resourceRules = new();
 
     public PermissionBuilder(IServiceCollection services)
         => Services = services;
 
-    public PermissionBuilder AddPermissionCredibilityService(IPermissionCredibilityService service)
-    {
-        Services.TryAddSingleton<IPermissionCredibilityService>(service);
-        return this;
-    }
-
-    public PermissionBuilder AddRule<T>(Permission p) where T : IRule, new()
+    public void AddRule<T>(Permission p) where T : IRule, new()
     {
         if (!_rules.ContainsKey(p))
             _rules.Add(p, new List<IRule>());
 
         _rules[p].Add(new T());
-
-        return this;
     }
 
     public PermissionBuilder AddRule<T>() where T : IRule, new()
     {
-        foreach (Permission p in Enum.GetValues<Permission>())
+        foreach (var p in Enum.GetValues<Permission>())
             AddRule<T>(p);
 
         return this;
@@ -56,7 +47,7 @@ public class PermissionBuilder
 
     public PermissionBuilder AddResourceRule<T>() where T : IResourceRule, new()
     {
-        foreach (Permission p in Enum.GetValues<Permission>())
+        foreach (var p in Enum.GetValues<Permission>())
             AddResourceRule<T>(p);
 
         return this;
@@ -78,8 +69,9 @@ public class PermissionBuilder
         var rules = _rules.ToDictionary(y => y.Key, z => z.Value.AsEnumerable());
         var resourceRules = _resourceRules.ToDictionary(y => y.Key, z => z.Value.AsEnumerable());
 
-        Services.AddSingleton<IPermissionService, PermissionDecider>(x => new PermissionDecider(rules, resourceRules));
-        Services.AddSingleton<IResourcePermissionService, PermissionDecider>(x => new PermissionDecider(rules, resourceRules));
+        Services.AddSingleton<IPermissionService, PermissionDecider>(_ => new PermissionDecider(rules, resourceRules));
+        Services.AddSingleton<IResourcePermissionService, PermissionDecider>(_ =>
+            new PermissionDecider(rules, resourceRules));
         Services.TryAddScoped<IPermissionCredibilityService, PermissionCredibilityService>();
     }
 }

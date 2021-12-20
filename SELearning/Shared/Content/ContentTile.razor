@@ -1,55 +1,57 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SELearning.Core.Content
 @using System.Net
-@inject HttpClient Http
-@inject ToastService toasts;
+
+@inject HttpClient _httpClient
+@inject ToastService _toastService;
 
 <div class="card content" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">@content.Title</h5>
-    <p class="card-text">@content.Description</p>
-  </div>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">Author: @content.Author.Name</li>
-    <li class="list-group-item">Video link: @content.VideoLink</li>
-    <li class="list-group-item">Rating: @content.Rating</li>
-  </ul>
-  <div class="card-body">
-    <div class="btn-group">
-        <a href='@string.Format("/content/{0}", content.Id)' class="btn btn-primary">View Content</a>
-        <button @onclick="Delete" class="btn btn-default text-danger">Delete</button>
+    <div class="card-body">
+        <h5 class="card-title">@Content.Title</h5>
+        <p class="card-text">@Content.Description</p>
     </div>
-  </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Author: @Content.Author.Name</li>
+        <li class="list-group-item">Video link: @Content.VideoLink</li>
+        <li class="list-group-item">Rating: @Content.Rating</li>
+    </ul>
+    <div class="card-body">
+        <div class="btn-group">
+            <a href='@($"/content/{Content.Id}")' class="btn btn-primary">View Content</a>
+            <button @onclick="Delete" class="btn btn-default text-danger">Delete</button>
+        </div>
+    </div>
 </div>
 
 @code {
 
     [Parameter]
-    public ContentDTO content { get; set; }
+    public ContentDTO Content { get; set; }
 
     [Parameter]
     public EventCallback<ContentDTO> OnContentDeleted { get; set; }
 
     private async Task Delete()
     {
-      try
+        try
         {
-          var uri = "content/" + content.Id;
-          var responseMessage = await Http.DeleteAsync(uri);
-          StateHasChanged();
+            var uri = "content/" + Content.Id;
+            var responseMessage = await _httpClient.DeleteAsync(uri);
+            StateHasChanged();
 
-          if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
-          {
-            toasts.AddToast(ToastNotification.CreateUnauthorized("delete content"));
-            return;
-          }
+            if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                _toastService.AddToast(ToastNotification.CreateUnauthorized("delete content"));
+                return;
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
 
-        if(OnContentDeleted.HasDelegate)
-          await OnContentDeleted.InvokeAsync(content);
+        if (OnContentDeleted.HasDelegate)
+            await OnContentDeleted.InvokeAsync(Content);
     }
+
 }

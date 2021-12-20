@@ -13,11 +13,12 @@ public class ResourcePermissionService : IResourceAuthorizationPermissionService
         _authService = authService;
     }
 
-    public async Task<AuthorizationResult> Authorize(ClaimsPrincipal user, object resource, params Core.Permission.Permission[] permissions)
+    public async Task<AuthorizationResult> Authorize(ClaimsPrincipal user, object resource,
+        params Permission[] permissions)
     {
         return await _authService.AuthorizeAsync(
-                user,
-                resource,
-                PermissionPolicyProvider.PermissionsToRequirementPolicyName<ResourcePermissionRequirement>(permissions));
+            user,
+            resource,
+            PermissionPolicyProvider.PermissionsToRequirementPolicyName<ResourcePermissionRequirement>(permissions));
     }
 }

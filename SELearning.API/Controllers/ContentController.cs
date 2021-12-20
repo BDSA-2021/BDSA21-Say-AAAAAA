@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using SELearning.Infrastructure.Authorization;
-using static SELearning.Infrastructure.Authorization.PermissionPolicyProvider;
 
 namespace SELearning.API.Controllers;
 
@@ -33,17 +32,17 @@ public class ContentController : ControllerBase
     /// <summary>
     /// <c>GetContent</c> returns the content with the given ID.
     /// </summary>
-    /// <param name="ID">The ID of the content.</param>
+    /// <param name="id">The ID of the content.</param>
     /// <returns>A content with the given ID if it exists, otherwise response type 404: Not Found.</returns>
-    [HttpGet("{ID}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContentDTO), 200)]
     [ProducesResponseType(404)]
     [ActionName(nameof(GetContent))]
-    public async Task<ActionResult<ContentDTO>> GetContent(int ID)
+    public async Task<ActionResult<ContentDTO>> GetContent(int id)
     {
         try
         {
-            return Ok(await _service.GetContent(ID));
+            return Ok(await _service.GetContent(id));
         }
         catch (ContentNotFoundException)
         {
@@ -84,7 +83,7 @@ public class ContentController : ControllerBase
             Description = content.Description,
             VideoLink = content.VideoLink,
             SectionId = int.Parse(content.SectionId!),
-            Author = user,
+            Author = user
         };
 
         var createdContent = await _service.AddContent(entity);
@@ -94,33 +93,30 @@ public class ContentController : ControllerBase
     /// <summary>
     /// <c>UpdateContent</c> updates the content with the given ID.
     /// </summary>
-    /// <param name="ID">The ID of the content.</param>
+    /// <param name="id">The ID of the content.</param>
     /// <param name="content">The record of the updated content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.
     /// If the user is not authorized to update content, a response type 403: Forbidden is returned.</returns>
-    [HttpPut("{ID}")]
+    [HttpPut("{id:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(403)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.EditAnyContent, Permission.EditOwnContent)]
-    public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDTO content)
+    public async Task<IActionResult> UpdateContent(int id, ContentUpdateDTO content)
     {
         try
         {
-            ContentDTO contentToBeUpdated = await _service.GetContent(ID);
+            var contentToBeUpdated = await _service.GetContent(id);
 
             var authResult = await _authService.Authorize(
                 User,
                 contentToBeUpdated,
                 Permission.EditAnyContent, Permission.EditOwnContent);
 
-            if (authResult.Succeeded)
-            {
-                await _service.UpdateContent(ID, content);
-                return NoContent();
-            }
-            else
-                return Forbid();
+            if (!authResult.Succeeded) return Forbid();
+
+            await _service.UpdateContent(id, content);
+            return NoContent();
         }
         catch (ContentNotFoundException)
         {
@@ -131,32 +127,29 @@ public class ContentController : ControllerBase
     /// <summary>
     /// <c>GetContent</c> deletes the content with the given ID, and its associated comments.
     /// </summary>
-    /// <param name="ID">The ID of the content.</param>
+    /// <param name="id">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.
     /// If the user is not authorized to delete content, a response type 403: Forbidden is returned.</returns>
-    [HttpDelete("{ID}")]
+    [HttpDelete("{id:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(403)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.DeleteAnyContent, Permission.DeleteOwnContent)]
-    public async Task<IActionResult> DeleteContent(int ID)
+    public async Task<IActionResult> DeleteContent(int id)
     {
         try
         {
-            ContentDTO contentToBeDeleted = await _service.GetContent(ID);
+            var contentToBeDeleted = await _service.GetContent(id);
 
             var authResult = await _authService.Authorize(
                 User,
                 contentToBeDeleted,
                 Permission.DeleteAnyContent, Permission.DeleteOwnContent);
 
-            if (authResult.Succeeded)
-            {
-                await _service.DeleteContent(ID);
-                return NoContent();
-            }
-            else
-                return Forbid();
+            if (!authResult.Succeeded) return Forbid();
+
+            await _service.DeleteContent(id);
+            return NoContent();
         }
         catch (ContentNotFoundException)
         {
@@ -167,17 +160,17 @@ public class ContentController : ControllerBase
     /// <summary>
     /// <c>UpvoteContent</c> increases the rating of the content with the given ID.
     /// </summary>
-    /// <param name="ID">The ID of the content.</param>
+    /// <param name="id">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [HttpPut("{ID}/Upvote")]
+    [HttpPut("{id:int}/Upvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.Rate)]
-    public async Task<IActionResult> UpvoteContent(int ID)
+    public async Task<IActionResult> UpvoteContent(int id)
     {
         try
         {
-            await _service.IncreaseContentRating(ID);
+            await _service.IncreaseContentRating(id);
             return NoContent();
         }
         catch (ContentNotFoundException)
@@ -189,17 +182,17 @@ public class ContentController : ControllerBase
     /// <summary>
     /// <c>DownvoteContent</c> decreases the rating of the content with the given ID.
     /// </summary>
-    /// <param name="ID">The ID of the content.</param>
+    /// <param name="id">The ID of the content.</param>
     /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
-    [HttpPut("{ID}/Downvote")]
+    [HttpPut("{id:int}/Downvote")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.Rate)]
-    public async Task<IActionResult> DownvoteContent(int ID)
+    public async Task<IActionResult> DownvoteContent(int id)
     {
         try
         {
-            await _service.DecreaseContentRating(ID);
+            await _service.DecreaseContentRating(id);
             return NoContent();
         }
         catch (ContentNotFoundException)

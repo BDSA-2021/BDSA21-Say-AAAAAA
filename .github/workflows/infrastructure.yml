@@ -8,7 +8,7 @@ on:
       - .infrastructure/**
 
 env:
-  RESOURCE_GROUP_NAME: SELearning
+  RESOURCE_GROUP_NAME: SELearningRG
   LOCATION: northeurope
   SQL_SERVER_NAME: selearning
   DATABASE_NAME: SELearning
