@@ -95,7 +95,7 @@ public class CommentController : ControllerBase
                 comment.Text,
                 comment.ContentId
             ));
-            return CreatedAtAction(nameof(GetComment), new {ID = createdComment.Id}, createdComment);
+            return CreatedAtAction(nameof(GetComment), new { ID = createdComment.Id }, createdComment);
         }
         catch (ContentNotFoundException)
         {
