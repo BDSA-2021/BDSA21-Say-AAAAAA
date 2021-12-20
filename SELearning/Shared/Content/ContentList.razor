@@ -14,6 +14,7 @@
 </section>
 
 @code {
+
     [Parameter]
     public Func<Task<List<ContentDTO>>> RetrieveContent { get; set; }
 
@@ -30,4 +31,5 @@
         _contents.Remove(content);
         StateHasChanged();
     }
+
 }

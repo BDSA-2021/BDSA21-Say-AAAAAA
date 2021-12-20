@@ -39,7 +39,8 @@
             {
                 _toastService.AddToast(new ToastNotification("The Section was succesfully posted!", ToastType.Success, 10000));
                 _navManager.NavigateTo("/sections");
-            } else if (response.StatusCode == HttpStatusCode.Forbidden)
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
             {
                 _toastService.AddToast(ToastNotification.CreateUnauthorized("create sections"));
             }
@@ -57,4 +58,5 @@
             _toastService.AddToast(ToastNotification.CreateLoggedError(exception.ToString()));
         }
     }
+
 }

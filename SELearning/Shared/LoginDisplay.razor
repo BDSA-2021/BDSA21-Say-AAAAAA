@@ -21,13 +21,13 @@
 @code{
 
     private UserCredibiityDTO _userCredibility = new(0);
-    
+
     protected override async void OnInitialized()
     {
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
 
         if (!authState.User.Identity!.IsAuthenticated) return;
-        
+
         _userCredibility = await _httpClient.GetFromJsonAsync<UserCredibiityDTO>("User/Me/Credibility");
         StateHasChanged();
     }
@@ -37,4 +37,5 @@
         await _signOutManager.SetSignOutState();
         _navigationManager.NavigateTo("authentication/logout");
     }
+
 }

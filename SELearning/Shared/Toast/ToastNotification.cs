@@ -23,7 +23,9 @@ public class ToastNotification : IDisposable
         Type = type;
     }
 
-    public ToastNotification(string body, ToastType type) : this(body, body, type) {}
+    public ToastNotification(string body, ToastType type) : this(body, body, type)
+    {
+    }
 
     /// <summary>
     /// Creates an auto dismissing toast notification. It will dismiss after the given duration.
@@ -42,7 +44,9 @@ public class ToastNotification : IDisposable
         DismissTimer.Start();
     }
 
-    public ToastNotification(string body, ToastType type, int duration) : this(body, body, type, duration) {}
+    public ToastNotification(string body, ToastType type, int duration) : this(body, body, type, duration)
+    {
+    }
 
     public void AddDismissHandler(OnDismissHandler handler)
     {
