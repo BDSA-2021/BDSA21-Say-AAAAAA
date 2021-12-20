@@ -3,6 +3,7 @@ name: Build and Deploy
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   IMAGE_TAG: ${{ secrets.REGISTRY_SERVER }}/selearning-image:${{ github.sha }}
