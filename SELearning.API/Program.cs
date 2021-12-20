@@ -2,9 +2,11 @@
 using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
 using SELearning.Infrastructure.Credibility;
-using SELearning.Infrastructure.Authorization;
 using SELearning.Infrastructure.User;
 using SELearning.Core.Credibility;
+using SELearning.Infrastructure.Authorization.Configuration;
+using SELearning.Infrastructure.Authorization.Pipeline.Operations;
+using SELearning.Infrastructure.Authorization.Rules;
 
 var builder = WebApplication.CreateBuilder(args);
 

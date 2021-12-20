@@ -31,4 +31,7 @@ public class Comment
         Content = content;
         Author = author;
     }
+
+    public CommentDetailsDTO ToDetailsDTO() => new(new UserDTO(Author.Id, Author.Name),
+        Text, Id, Timestamp, Rating, Content.Id);
 }

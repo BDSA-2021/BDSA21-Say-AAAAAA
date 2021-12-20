@@ -1,4 +1,4 @@
-namespace SELearning.Core.Content;
+namespace SELearning.Infrastructure.Content;
 
 public class ContentManager : IContentService
 {
@@ -63,7 +63,6 @@ public class ContentManager : IContentService
 
     public async Task IncreaseContentRating(int id)
     {
-
         var content = await _repository.GetContent(id);
 
         if (content.IsNone)

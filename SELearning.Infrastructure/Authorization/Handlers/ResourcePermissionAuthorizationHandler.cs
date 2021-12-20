@@ -1,10 +1,9 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using SELearning.Core.Credibility;
 using SELearning.Core.Permission;
+using SELearning.Infrastructure.Authorization.Pipeline;
 
-namespace SELearning.Infrastructure.Authorization;
+namespace SELearning.Infrastructure.Authorization.Handlers;
 
 /// This is an ASP.NET authorization handler that connects ASP.NET to our own
 /// permission-based access rules. This handler specifically handles permissions
@@ -26,17 +25,19 @@ public class ResourcePermissionAuthorizationHandler : AuthorizationHandler<Resou
         _logger = logger;
     }
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourcePermissionRequirement requirement, IAuthored resource)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        ResourcePermissionRequirement requirement, IAuthored resource)
     {
         // Prepare authorization context
         var permissionContext = new PermissionAuthorizationContext(context.User, requirement.Permissions);
-        foreach (IAuthorizationContextPipelineOperation operation in _dataPipeline)
+        foreach (var operation in _dataPipeline)
             await operation.Invoke(permissionContext);
 
         // Evaluate permission
-        bool isPermitted = await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions, resource);
+        var isPermitted =
+            await _permissionService.IsAllowed(permissionContext.Data, requirement.Permissions, resource);
 
-        _logger?.LogDebug($"User {context.User.GetUserId()} has access: {isPermitted}");
+        _logger?.LogDebug("User {userId} has access: {isPermitted}", context.User.GetUserId(), isPermitted);
 
         if (isPermitted)
             context.Succeed(requirement);

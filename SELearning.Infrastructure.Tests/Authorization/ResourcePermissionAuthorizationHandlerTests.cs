@@ -5,6 +5,8 @@ using System.Linq;
 using SELearning.Core.User;
 using SELearning.Core.Credibility;
 using SELearning.Core.Collections;
+using SELearning.Infrastructure.Authorization.Handlers;
+using SELearning.Infrastructure.Authorization.Pipeline;
 
 namespace SELearning.Infrastructure.Tests;
 

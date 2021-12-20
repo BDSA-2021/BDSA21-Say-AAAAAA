@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using SELearning.Core;
 
 namespace SELearning.Infrastructure.Authorization;
 
@@ -16,7 +15,7 @@ public class Provider<T> : IProvider<T>
     {
         var scope = _serviceFactory.CreateScope();
 
-        T? service = scope.ServiceProvider.GetService<T>();
+        var service = scope.ServiceProvider.GetService<T>();
 
         return service!;
     }

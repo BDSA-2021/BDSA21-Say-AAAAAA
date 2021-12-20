@@ -1,7 +1,7 @@
 using SELearning.Core.Collections;
 using SELearning.Core.Permission;
 
-namespace SELearning.Infrastructure.Authorization;
+namespace SELearning.Infrastructure.Authorization.Rules;
 
 public abstract class BaseResourceRule : IResourceRule
 {

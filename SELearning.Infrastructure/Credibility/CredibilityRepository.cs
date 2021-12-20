@@ -4,8 +4,8 @@ namespace SELearning.Infrastructure.Credibility;
 
 public class CredibilityRepository : ICredibilityRepository
 {
-    ICommentService _commentService;
-    IContentService _contentService;
+    readonly ICommentService _commentService;
+    readonly IContentService _contentService;
 
     public CredibilityRepository(ICommentService commentService, IContentService contentService)
     {

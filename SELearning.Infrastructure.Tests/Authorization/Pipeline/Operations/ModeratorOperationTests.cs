@@ -1,6 +1,8 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using SELearning.Infrastructure.Authorization.Pipeline;
+using SELearning.Infrastructure.Authorization.Pipeline.Operations;
 
 namespace SELearning.Infrastructure.Authorization;
 

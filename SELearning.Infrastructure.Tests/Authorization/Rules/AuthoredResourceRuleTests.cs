@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using SELearning.Core.Collections;
 using SELearning.Core.User;
 using SELearning.Infrastructure.Authorization;
+using SELearning.Infrastructure.Authorization.Rules;
 
 namespace SELearning.Infrastructure.Tests.Authorization;
 

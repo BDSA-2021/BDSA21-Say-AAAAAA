@@ -1,3 +1,5 @@
+using SELearning.Core.Section;
+
 #nullable disable
 namespace SELearning.Infrastructure.Content;
 
@@ -25,7 +27,8 @@ public class Content
         Rating = rating;
     }
 
-    public Content(string title, string description, string videoLink, int? rating, User.User author, Section.Section section)
+    public Content(string title, string description, string videoLink, int? rating, User.User author,
+        Section.Section section)
     {
         Title = title;
         Description = description;
@@ -33,5 +36,24 @@ public class Content
         Rating = rating ?? 0;
         Author = author;
         Section = section;
+    }
+
+    public ContentDTO ToContentDTO()
+    {
+        return new ContentDTO
+        {
+            Id = Id,
+            Title = Title,
+            Description = Description,
+            VideoLink = VideoLink,
+            Rating = Rating,
+            Author = new UserDTO(Author.Id, Author.Name),
+            Section = new SectionDTO
+            {
+                Id = Section.Id,
+                Title = Section.Title,
+                Description = Section.Description
+            }
+        };
     }
 }

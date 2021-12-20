@@ -5,14 +5,14 @@ namespace SELearning.Infrastructure.Credibility;
 
 public class CredibilityCalculator : ICredibilityService
 {
-    readonly ICredibilityRepository _credibilityRepository;
+    private readonly ICredibilityRepository _credibilityRepository;
 
     public CredibilityCalculator(ICredibilityRepository repository)
     {
         _credibilityRepository = repository;
     }
 
-    async public Task<int> GetCredibilityScore(ClaimsPrincipal user)
+    public async Task<int> GetCredibilityScore(ClaimsPrincipal user)
     {
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
 

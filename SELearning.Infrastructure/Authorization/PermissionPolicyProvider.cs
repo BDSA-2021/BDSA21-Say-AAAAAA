@@ -39,7 +39,8 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         return policy.Build();
     }
 
-    public static string PermissionsToRequirementPolicyName<R>(params Permission[] permissions) where R : BasePermissionRequirement
+    public static string PermissionsToRequirementPolicyName<R>(params Permission[] permissions)
+        where R : BasePermissionRequirement
         => $"{typeof(R).Name} {PermissionsToPolicyName(permissions)}";
 
     public static string PermissionsToPolicyName(params Permission[] permissions)
@@ -48,7 +49,8 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
             permissions.Select(p => $"{AuthorizationConstants.POLICY_PREFIX}{Enum.GetName(typeof(Permission), p)}")
         );
 
-    public static bool TryParsePolicyPermissionsRequirement(string policyName, out BasePermissionRequirement parsedRequirement)
+    public static bool TryParsePolicyPermissionsRequirement(string policyName,
+        out BasePermissionRequirement parsedRequirement)
     {
         parsedRequirement = null!;
 
@@ -56,11 +58,11 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         if (reqNameEndIndex < 0)
             return false;
 
-        var reqName = policyName.Substring(0, reqNameEndIndex);
+        var reqName = policyName[..reqNameEndIndex];
         if (!policyName.StartsWith(reqName))
             return false;
 
-        var permissionsPolicyPart = policyName.Substring(reqNameEndIndex + 1);
+        var permissionsPolicyPart = policyName[(reqNameEndIndex + 1)..];
         if (!TryParsePolicyPermissions(permissionsPolicyPart, out var parsedPermissions))
             return false;
 
@@ -98,6 +100,7 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
             else
                 return false;
         }
+
         return true;
     }
 
@@ -112,11 +115,11 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         // Permission name
         if (!policyName.StartsWith(AuthorizationConstants.POLICY_PREFIX))
         {
-            parsedPermission = default(Permission);
+            parsedPermission = default;
             return false;
         }
 
-        string permissionName = policyName.Substring(AuthorizationConstants.POLICY_PREFIX.Length);
-        return Enum.TryParse<Permission>(permissionName, false, out parsedPermission);
+        var permissionName = policyName[AuthorizationConstants.POLICY_PREFIX.Length..];
+        return Enum.TryParse(permissionName, false, out parsedPermission);
     }
 }
