@@ -74,8 +74,8 @@ public class SectionRepository : ISectionRepository
     public async Task<Option<SectionDTO>> GetSection(int id)
     {
         var section = from s in _context.Section
-            where s.Id == id
-            select s.ToSectionDTO();
+                      where s.Id == id
+                      select s.ToSectionDTO();
 
         return await section.FirstOrDefaultAsync();
     }

@@ -26,5 +26,5 @@ public class Section : IEquatable<Section>
         return HashCode.Combine(Id, Title, Description, Content);
     }
 
-    public SectionDTO ToSectionDTO() => new() {Id = Id, Title = Title, Description = Description};
+    public SectionDTO ToSectionDTO() => new() { Id = Id, Title = Title, Description = Description };
 }
