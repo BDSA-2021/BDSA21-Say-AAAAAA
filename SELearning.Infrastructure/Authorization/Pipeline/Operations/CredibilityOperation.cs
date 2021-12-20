@@ -5,7 +5,7 @@ using SELearning.Core.Permission;
 
 namespace SELearning.Infrastructure.Authorization;
 
-public class CredibilityOperation : BasePipelineOperation
+public class CredibilityOperation : IAuthorizationContextPipelineOperation
 {
     private readonly IProvider<IPermissionCredibilityService> _permCredibilityServiceProvider;
     private readonly IProvider<ICredibilityService> _credServiceProvider;
@@ -16,7 +16,7 @@ public class CredibilityOperation : BasePipelineOperation
         _credServiceProvider = credServiceProvider;    
     }
 
-    public override async Task Invoke(PermissionAuthorizationContext context)
+    public async Task Invoke(PermissionAuthorizationContext context)
     {
         await GetPermissionCredibilityScores(context.Data, context.RequestedPermissions);
         await GetCredibilityFromUser(context.Data, context.User);

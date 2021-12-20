@@ -7,7 +7,7 @@ namespace SELearning.Infrastructure.Authorization;
 /// <summary>
 /// Defines methods for the policy pipeline operation module
 /// </summary>
-public interface IPolicyPipelineOperation
+public interface IAuthorizationContextPipelineOperation
 {
 
     /// <summary>
