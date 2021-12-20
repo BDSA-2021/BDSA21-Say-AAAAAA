@@ -7,36 +7,41 @@ public class ContentControllerTest
     private readonly ContentController _controller;
     private readonly Mock<IContentService> _service;
     private readonly Mock<IResourceAuthorizationPermissionService> _auth;
-    private readonly UserDTO _user;
 
     public ContentControllerTest()
     {
         var logger = new Mock<ILogger<ContentController>>();
 
-        _user = new UserDTO("ABC", "Joachim");
+        var user = new UserDTO("ABC", "Joachim");
 
         _auth = new Mock<IResourceAuthorizationPermissionService>();
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
+        _auth.Setup(x =>
+                x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<IContentService>();
-        _service.Setup(x => x.GetContent(It.Is<int>(x => x != 0)))
-                .ReturnsAsync(new ContentDTO());
+        _service.Setup(x => x.GetContent(It.Is<int>(t => t != 0)))
+            .ReturnsAsync(new ContentDTO());
         _service.Setup(m => m.AddContent(It.IsNotNull<ContentCreateDto>()))
-                .ReturnsAsync(new ContentDTO { Title = "Title", Id = 1 });
+            .ReturnsAsync(new ContentDTO {Title = "Title", Id = 1});
 
         var userRepo = new Mock<IUserRepository>();
-        userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(_user);
+        userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(user);
 
-        _controller = new ContentController(logger.Object, _service.Object, userRepo.Object, _auth.Object);
-        _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
+        _controller = new ContentController(logger.Object, _service.Object, userRepo.Object, _auth.Object)
+        {
+            ControllerContext =
+            {
+                HttpContext = new DefaultHttpContext {User = new ClaimsPrincipal()}
+            }
+        };
     }
 
     [Fact]
     public async Task GetContent_Given_Valid_ID_Returns_ContentDTO()
     {
         // Arrange
-        var expected = new ContentDTO { Id = 1 };
+        var expected = new ContentDTO {Id = 1};
         _service.Setup(m => m.GetContent(1)).ReturnsAsync(expected);
 
         // Act
@@ -77,22 +82,22 @@ public class ContentControllerTest
     public async Task CreateContent_Returns_CreatedAtRoute()
     {
         // Arrange
-        var toCreate = new ContentUserDTO { Title = "Title", SectionId = "1" };
+        var toCreate = new ContentUserDTO {Title = "Title", SectionId = "1"};
 
         // Act
         var actual = (await _controller.CreateContent(toCreate) as CreatedAtActionResult)!;
 
         // Assert
-        Assert.Equal(new ContentDTO { Title = "Title", Id = 1 }, actual.Value);
+        Assert.Equal(new ContentDTO {Title = "Title", Id = 1}, actual.Value);
         Assert.Equal("GetContent", actual.ActionName);
-        Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
+        Assert.Equal(KeyValuePair.Create("ID", (object?) 1), actual.RouteValues?.Single());
     }
 
     [Fact]
     public async Task UpdateContent_Given_Valid_ID_Returns_NoContent()
     {
         // Act
-        var response = await _controller.UpdateContent(1, new ContentUpdateDTO { Title = "Title" });
+        var response = await _controller.UpdateContent(1, new ContentUpdateDTO {Title = "Title"});
 
         // Assert
         Assert.IsType<NoContentResult>(response);
@@ -102,7 +107,7 @@ public class ContentControllerTest
     public async Task UpdateContent_Given_Invalid_ID_Returns_NotFound()
     {
         // Arrange
-        var content = new ContentUpdateDTO { Title = "Title" };
+        var content = new ContentUpdateDTO {Title = "Title"};
         _service.Setup(m => m.UpdateContent(-1, content)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
@@ -116,11 +121,12 @@ public class ContentControllerTest
     public async Task UpdateContent_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
+        _auth.Setup(x =>
+                x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act
-        var response = await _controller.UpdateContent(1, new ContentUpdateDTO { Title = "Title" });
+        var response = await _controller.UpdateContent(1, new ContentUpdateDTO {Title = "Title"});
 
         // Assert
         Assert.IsType<ForbidResult>(response);
@@ -153,7 +159,8 @@ public class ContentControllerTest
     public async Task DeleteContent_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
+        _auth.Setup(x =>
+                x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act

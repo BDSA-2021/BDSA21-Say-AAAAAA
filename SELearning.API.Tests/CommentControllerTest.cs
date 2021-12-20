@@ -16,20 +16,26 @@ public class CommentControllerTest
         _user = new UserDTO("ABC", "Joachim");
 
         _auth = new Mock<IResourceAuthorizationPermissionService>();
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
+        _auth.Setup(x =>
+                x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<ICommentService>();
-        _service.Setup(x => x.GetCommentFromCommentId(It.Is<int>(x => x != 0)))
-                .ReturnsAsync(new CommentDetailsDTO(_user, "Hej", 1, DateTime.Now, 100, 1));
+        _service.Setup(x => x.GetCommentFromCommentId(It.Is<int>(t => t != 0)))
+            .ReturnsAsync(new CommentDetailsDTO(_user, "Hej", 1, DateTime.Now, 100, 1));
         _service.Setup(m => m.PostComment(It.Is<CommentCreateDTO>(x => x.ContentId <= 0)))
-                .ThrowsAsync(new ContentNotFoundException(-1));
+            .ThrowsAsync(new ContentNotFoundException(-1));
 
         var userRepo = new Mock<IUserRepository>();
         userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(_user);
 
-        _controller = new CommentController(logger.Object, _service.Object, userRepo.Object, _auth.Object);
-        _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
+        _controller = new CommentController(logger.Object, _service.Object, userRepo.Object, _auth.Object)
+        {
+            ControllerContext =
+            {
+                HttpContext = new DefaultHttpContext {User = new ClaimsPrincipal()}
+            }
+        };
     }
 
     [Fact]
@@ -100,7 +106,7 @@ public class CommentControllerTest
         // Assert
         Assert.Equal(expected, actual.Value);
         Assert.Equal("GetComment", actual.ActionName);
-        Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
+        Assert.Equal(KeyValuePair.Create("ID", (object?) 1), actual.RouteValues?.Single());
     }
 
     [Fact]
@@ -141,7 +147,8 @@ public class CommentControllerTest
     public async Task UpdateComment_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
+        _auth.Setup(x =>
+                x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act
@@ -178,7 +185,8 @@ public class CommentControllerTest
     public async Task DeleteComment_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
+        _auth.Setup(x =>
+                x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act
