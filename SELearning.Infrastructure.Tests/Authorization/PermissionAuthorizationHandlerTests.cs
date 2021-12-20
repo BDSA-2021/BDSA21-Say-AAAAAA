@@ -3,58 +3,40 @@ using Microsoft.AspNetCore.Authorization;
 using SELearning.Infrastructure.Authorization;
 using System.Linq;
 using SELearning.Core.Credibility;
+using SELearning.Core.Collections;
 
 namespace SELearning.Infrastructure.Tests;
 
-public class CredibilityAuthorizationHandlerTests
+public class PermissionAuthorizationHandlerTests
 {
-    AuthorizationHandlerContext HandleAsync_WithUserScore(ClaimsPrincipal user, int score, IEnumerable<(Permission, int)> requiredScores)
+    AuthorizationHandlerContext HandleAsync_WithUserScore(ClaimsPrincipal user, bool returnPermissionService)
     {
-        var requirement = new CredibilityPermissionRequirement(requiredScores.ToArray());
+        var requirement = new PermissionRequirement(new Permission[]{Permission.CreateComment});
 
         var authContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, null);
 
-        var permissionService = new Mock<ICredibilityService>();
-        permissionService.Setup(m => m.GetCredibilityScore(user)).ReturnsAsync(score);
+        var permissionService = new Mock<IPermissionService>();
+        permissionService.Setup(m => m.IsAllowed(It.IsNotNull<IDynamicDictionaryRead>(), It.IsNotNull<IEnumerable<Permission>>())).ReturnsAsync(returnPermissionService);
 
-        var provider = new Mock<IProvider<ICredibilityService>>();
-        provider.Setup(x => x.Get()).Returns(permissionService.Object);
-
-        var authHandler = new PermissionAuthorizationHandler(provider.Object);
+        var authHandler = new PermissionAuthorizationHandler(permissionService.Object, Enumerable.Empty<IAuthorizationContextPipelineOperation>());
         authHandler.HandleAsync(authContext).Wait();
 
         return authContext;
     }
 
     [Fact]
-    public void HandleAsync_GivenPermittedUser_YieldsHasSucceeded()
+    public void HandleAsync_PermissionServiceReturnsTrue_YieldsHasSucceeded()
     {
         var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson") }));
-        var authContext = HandleAsync_WithUserScore(user, 1001, new[] { (Permission.CreateContent, 1000) });
+        var authContext = HandleAsync_WithUserScore(user, true);
         Assert.True(authContext.HasSucceeded);
     }
 
     [Fact]
-    public void HandleAsync_GivenUnpermittedUser_YieldsHasFailed()
+    public void HandleAsync_PermissionServiceReturnsFalse_YieldsHasFailed()
     {
         var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson") }));
-        var authContext = HandleAsync_WithUserScore(user, 999, new[] { (Permission.EditOwnComment, 1000), (Permission.EditAnyComment, 1200) });
+        var authContext = HandleAsync_WithUserScore(user, false);
         Assert.True(authContext.HasFailed);
-    }
-
-    [Fact]
-    public void HandleAsync_UserHasRoleModerator_YieldHasSucceeded()
-    {
-        var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson"), new Claim(ClaimTypes.Role, "Moderator"), new Claim(ClaimTypes.Role, "AnotherOne") }));
-        var authContext = HandleAsync_WithUserScore(user, 0, new[] { (Permission.EditOwnComment, 450) });
-        Assert.True(authContext.HasSucceeded);
-    }
-
-    [Fact]
-    public void HandleAsync_GivenPermittedUserForOneOfMultipleRequirements_YieldsHasSucceeded()
-    {
-        var user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson") }));
-        var authContext = HandleAsync_WithUserScore(user, 1000, new[] { (Permission.EditOwnComment, 1200), (Permission.EditAnyComment, 1000) });
-        Assert.True(authContext.HasSucceeded);
     }
 }

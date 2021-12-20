@@ -16,7 +16,7 @@ public class CommentControllerTest
         _user = new UserDTO("ABC", "Joachim");
 
         _auth = new Mock<IResourceAuthorizationPermissionService>();
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<Permission>()))
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<ICommentService>();
@@ -141,7 +141,7 @@ public class CommentControllerTest
     public async Task UpdateComment_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<Permission>()))
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act
@@ -178,7 +178,7 @@ public class CommentControllerTest
     public async Task DeleteComment_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<Permission>()))
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act

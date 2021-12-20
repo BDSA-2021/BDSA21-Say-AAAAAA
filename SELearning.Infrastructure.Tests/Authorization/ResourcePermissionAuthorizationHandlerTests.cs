@@ -4,12 +4,13 @@ using SELearning.Infrastructure.Authorization;
 using System.Linq;
 using SELearning.Core.User;
 using SELearning.Core.Credibility;
+using SELearning.Core.Collections;
 
 namespace SELearning.Infrastructure.Tests;
 
 record AuthoredResource(UserDTO Author) : IAuthored;
 
-public class PermissionAuthorizationHandlerTests
+public class ResourcePermissionAuthorizationHandlerTests
 {
     ClaimsPrincipal _user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "homer.simpson") }));
 
@@ -18,71 +19,36 @@ public class PermissionAuthorizationHandlerTests
 
     AuthorizationHandlerContext HandleAsync_WithPermissionsAndResource(
         ClaimsPrincipal user,
-        int score,
-        IEnumerable<(Permission, int)> requiredScores,
+        bool returnPermissionService,
         IAuthored resource)
     {
-        var requirement = new CredibilityPermissionRequirement(requiredScores.ToArray());
+        var requirement = new ResourcePermissionRequirement(Permission.CreateComment);
 
         var authContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, resource);
 
-        var permissionService = new Mock<ICredibilityService>();
-        permissionService.Setup(m => m.GetCredibilityScore(user)).ReturnsAsync(score);
+        var permissionService = new Mock<IResourcePermissionService>();
+        permissionService.Setup(m => m.IsAllowed(It.IsNotNull<IDynamicDictionaryRead>(), It.IsNotNull<IEnumerable<Permission>>(), It.IsNotNull<object>()))
+                            .ReturnsAsync(returnPermissionService);
 
-        var provider = new Mock<IProvider<ICredibilityService>>();
-        provider.Setup(x => x.Get()).Returns(permissionService.Object);
-
-        var authHandler = new ResourcePermissionAuthorizationHandler(provider.Object);
+        var authHandler = new ResourcePermissionAuthorizationHandler(permissionService.Object, Enumerable.Empty<IAuthorizationContextPipelineOperation>());
         authHandler.HandleAsync(authContext).Wait();
 
         return authContext;
     }
 
     [Fact]
-    public void HandleAsync_GivenWrongAuthor_YieldsHasFailed()
+    public void HandleAsync_PermissionServiceReturnFalse_YieldsHasFailed()
     {
         var resource = new AuthoredResource(_userBart);
-        var authContext = HandleAsync_WithPermissionsAndResource(_user, 1001, new[] { (Permission.EditOwnComment, 1000) }, resource);
+        var authContext = HandleAsync_WithPermissionsAndResource(_user, false, resource);
         Assert.True(authContext.HasFailed);
     }
 
     [Fact]
-    public void HandleAsync_GivenCorrectAuthor_YieldsHasSucceeded()
+    public void HandleAsync_PermissionServiceReturnTrue_YieldsHasSucceeded()
     {
         var resource = new AuthoredResource(_userHomer);
-        var authContext = HandleAsync_WithPermissionsAndResource(_user, 1001, new[] { (Permission.EditOwnComment, 1000) }, resource);
+        var authContext = HandleAsync_WithPermissionsAndResource(_user, true, resource);
         Assert.True(authContext.HasSucceeded);
-    }
-
-    [Fact]
-    public void HandleAsync_GivenCorrectAuthorButInsufficientCredibility_YieldsHasFailed()
-    {
-        var resource = new AuthoredResource(_userHomer);
-        var authContext = HandleAsync_WithPermissionsAndResource(_user, 999, new[] { (Permission.EditOwnComment, 1000) }, resource);
-        Assert.True(authContext.HasFailed);
-    }
-
-    [Fact]
-    public void HandleAsync_GivenWrongAuthorAndInsufficientCredibility_YieldsHasFailed()
-    {
-        var resource = new AuthoredResource(_userBart);
-        var authContext = HandleAsync_WithPermissionsAndResource(_user, 999, new[] { (Permission.EditOwnComment, 1000) }, resource);
-        Assert.True(authContext.HasFailed);
-    }
-
-    [Fact]
-    public void HandleAsync_GivenWrongAuthorButHasEditAccess_YieldsHasSucceeded()
-    {
-        var resource = new AuthoredResource(_userBart);
-        var authContext = HandleAsync_WithPermissionsAndResource(_user, 10000, new[] { (Permission.EditOwnComment, 1000), (Permission.EditAnyComment, 10000) }, resource);
-        Assert.True(authContext.HasSucceeded);
-    }
-
-    [Fact]
-    public void HandleAsync_GivenWrongAuthorAndNoEditAccess_YieldsHasFailed()
-    {
-        var resource = new AuthoredResource(_userBart);
-        var authContext = HandleAsync_WithPermissionsAndResource(_user, 2000, new[] { (Permission.EditOwnComment, 1000), (Permission.EditAnyComment, 10000) }, resource);
-        Assert.True(authContext.HasFailed);
     }
 }
