@@ -1,10 +1,12 @@
-﻿namespace SELearning.API.Tests;
+﻿using SELearning.Infrastructure.Authorization;
+
+namespace SELearning.API.Tests;
 
 public class CommentControllerTest
 {
     private readonly CommentController _controller;
     private readonly Mock<ICommentService> _service;
-    private readonly Mock<IAuthorizationService> _auth;
+    private readonly Mock<IResourceAuthorizationPermissionService> _auth;
     private readonly UserDTO _user;
 
     public CommentControllerTest()
@@ -13,8 +15,8 @@ public class CommentControllerTest
 
         _user = new UserDTO("ABC", "Joachim");
 
-        _auth = new Mock<IAuthorizationService>();
-        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+        _auth = new Mock<IResourceAuthorizationPermissionService>();
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<ICommentService>();
@@ -139,7 +141,7 @@ public class CommentControllerTest
     public async Task UpdateComment_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act
@@ -176,7 +178,7 @@ public class CommentControllerTest
     public async Task DeleteComment_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.IsNotNull<object>(), It.IsNotNull<Permission[]>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act

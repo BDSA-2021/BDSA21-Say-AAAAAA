@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using SELearning.Core.Collections;
 
 namespace SELearning.Core.Permission;
 
@@ -8,10 +9,11 @@ namespace SELearning.Core.Permission;
 public interface IPermissionService
 {
     /// <summary>
-    /// Checks if the user is allowed to perform an action with the specified permission.
+    /// Checks if the user is allowed to perform an action with the specified permissions.
+    /// The permission provided is checked as an or relation.
     /// </summary>
-    /// <param name="user">Instance of the user</param>
-    /// <param name="requestedPermission">The requested permission</param>
+    /// <param name="context">The context that the permissions is evaluated in</param>
+    /// <param name="requestedPermissions">The requested permissions</param>
     /// <returns>Returns true if the user is allowed and false if not</returns>
-    Task<bool> IsAllowed(ClaimsPrincipal user, Permission requestedPermission);
+    Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions);
 }

@@ -55,7 +55,13 @@ builder.Services.AddScoped<ICommentService, CommentManager>();
 builder.Services.AddScoped<ICredibilityRepository, CredibilityRepository>();
 builder.Services.AddScoped<ICredibilityService, CredibilityCalculator>();
 
-builder.Services.AddPermissionAuthorization().Build();
+builder.Services.AddPermissionAuthorization()
+                    .AddRule<UserCredibilityRule>()
+                    .AddResourceRule<UserCredibilityRule>()
+                    .AddResourceRule<AuthoredResourceRule>()
+                    .AddPermissionPipeline<CredibilityOperation>()
+                    .AddPermissionPipeline<ModeratorOperation>()
+                    .Build();
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<SELearningContext>();

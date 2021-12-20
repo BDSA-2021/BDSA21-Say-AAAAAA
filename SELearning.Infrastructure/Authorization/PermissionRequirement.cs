@@ -4,12 +4,22 @@ using SELearning.Core.Permission;
 namespace SELearning.Infrastructure.Authorization;
 
 /// <summary>
-/// Permission requirement for authorization
+/// Permission requirement for authorization that requires one of the given
+/// permissions to have been granted.
 /// </summary>
-/// <value></value>
-public record PermissionRequirement : IAuthorizationRequirement
+public abstract record BasePermissionRequirement : IAuthorizationRequirement
 {
-    public PermissionRequirement(Permission p) => this.Permission = p;
+    public BasePermissionRequirement(params Permission[] p) => this.Permissions = p;
 
-    public Permission Permission { get; init; }
+    public IEnumerable<Permission> Permissions { get; init; }
+}
+
+public record PermissionRequirement : BasePermissionRequirement
+{
+    public PermissionRequirement(params Permission[] p) => Permissions = p;
+}
+
+public record ResourcePermissionRequirement : BasePermissionRequirement
+{
+    public ResourcePermissionRequirement(params Permission[] p) => Permissions = p;
 }

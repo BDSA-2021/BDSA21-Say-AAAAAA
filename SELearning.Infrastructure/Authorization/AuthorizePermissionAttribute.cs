@@ -37,6 +37,6 @@ public class AuthorizePermissionAttribute : AuthorizeAttribute
         if (permissions.Length < 1)
             throw new ArgumentException("A permission requirement attribute must have at least one required permission");
 
-        Policy = PermissionPolicyProvider.PermissionsToPolicyName(permissions);
+        Policy = PermissionPolicyProvider.PermissionsToRequirementPolicyName<PermissionRequirement>(permissions);
     }
 }
