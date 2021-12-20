@@ -16,7 +16,7 @@ public class PermissionAuthorizationHandlerTests
         var requirement = new PermissionRequirement(Permission.CreateComment);
 
         var authContext =
-            new AuthorizationHandlerContext(new List<IAuthorizationRequirement> {requirement}, user, null);
+            new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, null);
 
         var permissionService = new Mock<IPermissionService>();
         permissionService
@@ -34,7 +34,7 @@ public class PermissionAuthorizationHandlerTests
     public void HandleAsync_PermissionServiceReturnsTrue_YieldsHasSucceeded()
     {
         var user = new ClaimsPrincipal(
-            new ClaimsIdentity(new List<Claim> {new(ClaimTypes.Name, "homer.simpson")}));
+            new ClaimsIdentity(new List<Claim> { new(ClaimTypes.Name, "homer.simpson") }));
         var authContext = HandleAsync_WithUserScore(user, true);
         Assert.True(authContext.HasSucceeded);
     }
@@ -43,7 +43,7 @@ public class PermissionAuthorizationHandlerTests
     public void HandleAsync_PermissionServiceReturnsFalse_YieldsHasFailed()
     {
         var user = new ClaimsPrincipal(
-            new ClaimsIdentity(new List<Claim> {new(ClaimTypes.Name, "homer.simpson")}));
+            new ClaimsIdentity(new List<Claim> { new(ClaimTypes.Name, "homer.simpson") }));
         var authContext = HandleAsync_WithUserScore(user, false);
         Assert.True(authContext.HasFailed);
     }

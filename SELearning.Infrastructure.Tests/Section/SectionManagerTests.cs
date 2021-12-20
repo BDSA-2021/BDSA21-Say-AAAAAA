@@ -23,9 +23,9 @@ public class SectionManagerTests
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        _section = new Section.Section {Id = 1, Title = "python", Description = "description"};
-        var sectionEmpty = new Section.Section {Id = 2, Title = "python", Description = "description"};
-        var user = new User.User {Id = "ABC", Name = "Adrian"};
+        _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
+        var sectionEmpty = new Section.Section { Id = 2, Title = "python", Description = "description" };
+        var user = new User.User { Id = "ABC", Name = "Adrian" };
 
         var content1 = new Content.Content("title", "description", "VideoLink", 3, user, _section);
         var content2 = new Content.Content("title", "description", "VideoLink", 3, user, _section);
@@ -67,16 +67,16 @@ public class SectionManagerTests
         var contentInSection = await _repository.GetContentInSection(1);
 
         var content = from c in _section.Content
-            select new ContentDTO
-            {
-                Id = c.Id,
-                Author = c.Author.ToUserDTO(),
-                Title = c.Title,
-                Description = c.Description,
-                Section = c.Section.ToSectionDTO(),
-                VideoLink = c.VideoLink,
-                Rating = c.Rating
-            };
+                      select new ContentDTO
+                      {
+                          Id = c.Id,
+                          Author = c.Author.ToUserDTO(),
+                          Title = c.Title,
+                          Description = c.Description,
+                          Section = c.Section.ToSectionDTO(),
+                          VideoLink = c.VideoLink,
+                          Rating = c.Rating
+                      };
 
         Assert.Equal(content, contentInSection);
     }
@@ -133,7 +133,7 @@ public class SectionManagerTests
     [Fact]
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
-        var section = new SectionCreateDTO {Title = "title", Description = "description"};
+        var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var created = (await _repository.AddSection(section)).Item2;
 
@@ -153,11 +153,11 @@ public class SectionManagerTests
     [Fact]
     public async Task CreateSectionAsync_given_Section_returns_Section_with_Section()
     {
-        var section = new SectionCreateDTO {Title = "title", Description = "description"};
+        var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDTO {Id = 3, Title = "title", Description = "description"};
+        var sectionDto = new SectionDTO { Id = 3, Title = "title", Description = "description" };
 
         Assert.Equal(sectionDto.Id, created.Id);
         Assert.Equal(sectionDto.Title, created.Title);

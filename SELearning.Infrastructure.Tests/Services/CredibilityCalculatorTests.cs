@@ -17,7 +17,7 @@ public class CredibilityCalculatorTests
     public async void GetCredibilityScore_GivenUser_ReturnSumOfCommentAndContentCredibilityScore(int contentScore,
         int commentScore, int expectedScore)
     {
-        var claimIdentity = new ClaimsIdentity(new List<Claim> {new(ClaimTypes.NameIdentifier, "userId")});
+        var claimIdentity = new ClaimsIdentity(new List<Claim> { new(ClaimTypes.NameIdentifier, "userId") });
         var user = new ClaimsPrincipal(claimIdentity);
 
         var repository = new Mock<ICredibilityRepository>();

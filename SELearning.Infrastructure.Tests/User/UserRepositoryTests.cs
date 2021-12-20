@@ -17,7 +17,7 @@ public class UserRepositoryTests
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        context.Users.Add(new User.User {Id = "User 1", Name = "User 1"});
+        context.Users.Add(new User.User { Id = "User 1", Name = "User 1" });
 
         _repository = new UserRepository(context);
         context.SaveChanges();

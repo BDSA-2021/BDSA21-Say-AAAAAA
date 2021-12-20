@@ -57,7 +57,7 @@ public class CredibilityOperationTests
     public async Task Invoke_WithRequiredPermissionsAndUser_ReturnsRequiredCredAndUserCredFromContextData()
     {
         var context = new PermissionAuthorizationContext(_user,
-            new List<Permission> {Permission.CreateComment, Permission.CreateContent});
+            new List<Permission> { Permission.CreateComment, Permission.CreateContent });
 
         await _testPipelineOperation.Invoke(context);
 
@@ -67,7 +67,7 @@ public class CredibilityOperationTests
 
         Assert.Equal(1000, resultUserScore);
         Assert.Equal(
-            new Dictionary<Permission, int> {{Permission.CreateComment, 500}, {Permission.CreateContent, 500}},
+            new Dictionary<Permission, int> { { Permission.CreateComment, 500 }, { Permission.CreateContent, 500 } },
             resultCredScores);
     }
 }

@@ -27,7 +27,7 @@ public class ResourcePermissionAuthorizationHandlerTests
         var requirement = new ResourcePermissionRequirement(Permission.CreateComment);
 
         var authContext =
-            new AuthorizationHandlerContext(new List<IAuthorizationRequirement> {requirement}, user, resource);
+            new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, resource);
 
         var permissionService = new Mock<IResourcePermissionService>();
         permissionService.Setup(m => m.IsAllowed(It.IsNotNull<IDynamicDictionaryRead>(),

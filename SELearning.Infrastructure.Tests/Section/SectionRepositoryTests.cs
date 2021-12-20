@@ -9,12 +9,12 @@ public class SectionRepositoryTests
     private readonly SELearningContext _context;
     private readonly SectionRepository _repository;
 
-    private static readonly Section.Section Section = new() {Id = 1, Title = "python", Description = "description"};
+    private static readonly Section.Section Section = new() { Id = 1, Title = "python", Description = "description" };
 
     private static readonly Section.Section
-        SectionEmpty = new() {Id = 2, Title = "python", Description = "description"};
+        SectionEmpty = new() { Id = 2, Title = "python", Description = "description" };
 
-    private static readonly User.User User = new() {Id = "ABC", Name = "Adrian"};
+    private static readonly User.User User = new() { Id = "ABC", Name = "Adrian" };
 
     public SectionRepositoryTests()
     {
@@ -65,7 +65,7 @@ public class SectionRepositoryTests
     [Fact]
     public async Task CreateSectionAsync_creates_new_content_with_generated_id()
     {
-        var section = new SectionCreateDTO {Title = "title", Description = "description"};
+        var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var created = (await _repository.AddSection(section)).Item2;
 
@@ -77,11 +77,11 @@ public class SectionRepositoryTests
     [Fact]
     public async Task CreateSectionAsync_given_Section_returns_Section_with_Section()
     {
-        var section = new SectionCreateDTO {Title = "title", Description = "description"};
+        var section = new SectionCreateDTO { Title = "title", Description = "description" };
 
         var (status, created) = await _repository.AddSection(section);
 
-        var sectionDto = new SectionDTO {Id = 3, Title = "title", Description = "description"};
+        var sectionDto = new SectionDTO { Id = 3, Title = "title", Description = "description" };
 
         Assert.Equal(sectionDto.Id, created.Id);
         Assert.Equal(sectionDto.Title, created.Title);
@@ -199,16 +199,16 @@ public class SectionRepositoryTests
         var contentInSection = await _repository.GetContentInSection(1);
 
         var content = from c in Section.Content
-            select new ContentDTO
-            {
-                Id = c.Id,
-                Author = c.Author.ToUserDTO(),
-                Title = c.Title,
-                Description = c.Description,
-                Section = c.Section.ToSectionDTO(),
-                VideoLink = c.VideoLink,
-                Rating = c.Rating
-            };
+                      select new ContentDTO
+                      {
+                          Id = c.Id,
+                          Author = c.Author.ToUserDTO(),
+                          Title = c.Title,
+                          Description = c.Description,
+                          Section = c.Section.ToSectionDTO(),
+                          VideoLink = c.VideoLink,
+                          Rating = c.Rating
+                      };
 
         Assert.Equal(content, contentInSection);
     }

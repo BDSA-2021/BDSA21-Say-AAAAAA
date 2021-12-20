@@ -30,7 +30,7 @@ public class CommentRepositoryTests
     );
 
     private readonly IEnumerable<Comment.Comment> _comments;
-    private readonly User.User _userAmalie = new() {Id = "Amalie", Name = "Amalie"};
+    private readonly User.User _userAmalie = new() { Id = "Amalie", Name = "Amalie" };
 
     public CommentRepositoryTests()
     {
@@ -176,7 +176,7 @@ public class CommentRepositoryTests
 
         Assert.Equal(OperationResult.Succes, opResult);
 
-        var expectedIds = new[] {1, 5};
+        var expectedIds = new[] { 1, 5 };
         var actualIds = comments.OrderBy(c => c.Id).Select(c => c.Id).ToList();
         Assert.Equal(expectedIds, actualIds);
     }

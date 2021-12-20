@@ -9,6 +9,6 @@ public class PermissionRequirementTests
     {
         PermissionRequirement req = new(Permission.DeleteAnyComment);
 
-        Assert.Equal(new List<Permission> {Permission.DeleteAnyComment}, req.Permissions);
+        Assert.Equal(new List<Permission> { Permission.DeleteAnyComment }, req.Permissions);
     }
 }

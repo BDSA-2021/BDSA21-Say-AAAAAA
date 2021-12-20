@@ -16,7 +16,7 @@ public class CommentManagerTests
         Content = new List<Content.Content>()
     };
 
-    private static readonly User.User User = new() {Id = "ABC", Name = "Asger"};
+    private static readonly User.User User = new() { Id = "ABC", Name = "Asger" };
 
     private static readonly Content.Content Content = new("Video on Entity Core", "Nice", "www.hej.dk", 1);
 

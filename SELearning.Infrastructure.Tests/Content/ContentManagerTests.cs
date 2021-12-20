@@ -22,7 +22,7 @@ public class ContentManagerTests
         var context = new SELearningContext(builder.Options);
         context.Database.EnsureCreated();
 
-        _user = new User.User {Id = "toucan", Name = "Næbdyr"};
+        _user = new User.User { Id = "toucan", Name = "Næbdyr" };
 
         var content1 = new Infrastructure.Content.Content("title", "description", "link", 3, _user, _section);
         var content2 = new Infrastructure.Content.Content("title", "description", "link", 3, _user, _section);
@@ -35,7 +35,9 @@ public class ContentManagerTests
 
         _section = new Section.Section
         {
-            Id = 1, Title = "python", Description = "description",
+            Id = 1,
+            Title = "python",
+            Description = "description",
             Content = new List<Infrastructure.Content.Content>
             {
                 content1,

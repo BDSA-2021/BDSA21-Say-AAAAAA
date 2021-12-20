@@ -27,7 +27,7 @@ public class PermissionPolicyProviderTests
 
         Assert.IsType<PermissionRequirement>(result?.Requirements[0]);
 
-        var requirement = (PermissionRequirement) result?.Requirements[0]!;
+        var requirement = (PermissionRequirement)result?.Requirements[0]!;
         Assert.Equal(expectedNumPermissions, requirement.Permissions.Count());
     }
 

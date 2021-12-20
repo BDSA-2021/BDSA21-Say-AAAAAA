@@ -25,7 +25,7 @@ public class ContentRepositoryTests
         _context = new SELearningContext(builder.Options);
         _context.Database.EnsureCreated();
 
-        _section = new Section.Section {Id = 1, Title = "python", Description = "description"};
+        _section = new Section.Section { Id = 1, Title = "python", Description = "description" };
 
         var contentList = new List<Content.Content>
         {
@@ -126,8 +126,13 @@ public class ContentRepositoryTests
 
         var content = new ContentDTO
         {
-            Id = 1, Section = _section.ToSectionDTO(), Author = new UserDTO("author", "author"), Title = "title",
-            Description = "description", VideoLink = "VideoLink", Rating = 3
+            Id = 1,
+            Section = _section.ToSectionDTO(),
+            Author = new UserDTO("author", "author"),
+            Title = "title",
+            Description = "description",
+            VideoLink = "VideoLink",
+            Rating = 3
         };
 
         Assert.Equal(content, option.Value);
@@ -157,7 +162,7 @@ public class ContentRepositoryTests
     public async Task UpdateContentAsync_updates_existing_content()
     {
         var content = new ContentUpdateDTO
-            {Title = "title", Description = "description", VideoLink = "video link", Rating = 3};
+        { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var updated = await _repository.UpdateContent(1, content);
 
@@ -168,7 +173,7 @@ public class ContentRepositoryTests
     public async Task UpdateContentAsync_given_non_existing_Content_returns_NotFound()
     {
         var content = new ContentUpdateDTO
-            {Title = "title", Description = "description", VideoLink = "video link", Rating = 3};
+        { Title = "title", Description = "description", VideoLink = "video link", Rating = 3 };
 
         var response = await _repository.UpdateContent(42, content);
 
@@ -180,7 +185,7 @@ public class ContentRepositoryTests
     public async Task UpdateContentAsync_updates_and_returns_Updated()
     {
         var contentDto = new ContentUpdateDTO
-            {Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3};
+        { Title = "new title", Description = "description", VideoLink = "VideoLink", Rating = 3 };
 
         var response = await _repository.UpdateContent(1, contentDto);
 
@@ -213,13 +218,13 @@ public class ContentRepositoryTests
     {
         await _context.Content.AddRangeAsync(
             new Content.Content("title", "description", "VideoLink", 3, AuthorUser, _section), new Content.Content(
-                "title", "description", "VideoLink", 3, new User.User {Id = "homer", Name = "homer"},
+                "title", "description", "VideoLink", 3, new User.User { Id = "homer", Name = "homer" },
                 _section), new Content.Content("title", "description", "VideoLink", 3, AuthorUser, _section));
         await _context.SaveChangesAsync();
 
         var contents = await _repository.GetContentByAuthor("homer");
 
-        var expectedIds = new[] {7};
+        var expectedIds = new[] { 7 };
         var actualIds = contents.OrderBy(c => c.Id).Select(c => c.Id).ToList();
         Assert.Equal(expectedIds, actualIds);
     }
