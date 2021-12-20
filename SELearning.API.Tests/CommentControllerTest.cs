@@ -106,7 +106,7 @@ public class CommentControllerTest
         // Assert
         Assert.Equal(expected, actual.Value);
         Assert.Equal("GetComment", actual.ActionName);
-        Assert.Equal(KeyValuePair.Create("ID", (object?) 1), actual.RouteValues?.Single());
+        Assert.Equal(KeyValuePair.Create("ID", (object?)1), actual.RouteValues?.Single());
     }
 
     [Fact]

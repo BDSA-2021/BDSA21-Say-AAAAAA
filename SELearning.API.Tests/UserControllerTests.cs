@@ -26,7 +26,7 @@ public class UserControllerTests
         {
             ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext {User = identity}
+                HttpContext = new DefaultHttpContext { User = identity }
             }
         };
     }
