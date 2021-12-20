@@ -96,9 +96,11 @@ public class ContentController : ControllerBase
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
     /// <param name="content">The record of the updated content.</param>
-    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
+    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.
+    /// If the user is not authorized to update content, a response type 403: Forbidden is returned.</returns>
     [HttpPut("{ID}")]
     [ProducesResponseType(204)]
+    [ProducesResponseType(403)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.EditAnyContent, Permission.EditOwnContent)]
     public async Task<IActionResult> UpdateContent(int ID, ContentUpdateDTO content)
@@ -130,9 +132,11 @@ public class ContentController : ControllerBase
     /// <c>GetContent</c> deletes the content with the given ID, and its associated comments.
     /// </summary>
     /// <param name="ID">The ID of the content.</param>
-    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.</returns>
+    /// <returns>A response type 204: No Content if the content exists, otherwise response type 404: Not Found.
+    /// If the user is not authorized to delete content, a response type 403: Forbidden is returned.</returns>
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
+    [ProducesResponseType(403)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.DeleteAnyContent, Permission.DeleteOwnContent)]
     public async Task<IActionResult> DeleteContent(int ID)

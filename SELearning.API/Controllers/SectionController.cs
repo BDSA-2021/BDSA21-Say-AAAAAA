@@ -114,11 +114,10 @@ public class SectionController : ControllerBase
     /// <c>DeleteSection</c> deletes the section with the given ID.
     /// </summary>
     /// <param name="ID">The ID of the section.</param>
-    /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found. If the user is not allowed then a 403 forbidden will be returned</returns>
+    /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
     [HttpDelete("{ID}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    [ProducesResponseType(403)]
     [AuthorizePermission(Permission.DeleteSection)]
     public async Task<IActionResult> DeleteSection(int ID)
     {

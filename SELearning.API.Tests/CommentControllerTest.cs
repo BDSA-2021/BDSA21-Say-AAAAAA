@@ -1,47 +1,32 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-using SELearning.API.Controllers;
-using SELearning.Core;
-using SELearning.Core.Comment;
-using SELearning.Core.Permission;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Xunit;
-using SELearning.Core.User;
-
-namespace SELearning.API.Tests;
+﻿namespace SELearning.API.Tests;
 
 public class CommentControllerTest
 {
     private readonly CommentController _controller;
     private readonly Mock<ICommentService> _service;
+    private readonly Mock<IAuthorizationService> _auth;
     private readonly UserDTO _user;
 
     public CommentControllerTest()
     {
         var logger = new Mock<ILogger<CommentController>>();
-        var auth = new Mock<IAuthorizationService>();
+
         _user = new UserDTO("ABC", "Joachim");
-        auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+
+        _auth = new Mock<IAuthorizationService>();
+        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<ICommentService>();
         _service.Setup(x => x.GetCommentFromCommentId(It.Is<int>(x => x != 0)))
                 .ReturnsAsync(new CommentDetailsDTO(_user, "Hej", 1, DateTime.Now, 100, 1));
-        var expected = new CommentDetailsDTO(_user, "Text", 1, DateTime.Now, 0, default!);
-        _service.Setup(m => m.PostComment(It.IsNotNull<CommentCreateDTO>())).ReturnsAsync(new CommentDetailsDTO(_user, "Text", 1, DateTime.Now, 0, default!));
-        _service.Setup(m => m.PostComment(It.Is<CommentCreateDTO>(x => x.ContentId <= 0))).ThrowsAsync(new ContentNotFoundException(-1));
+        _service.Setup(m => m.PostComment(It.Is<CommentCreateDTO>(x => x.ContentId <= 0)))
+                .ThrowsAsync(new ContentNotFoundException(-1));
 
         var userRepo = new Mock<IUserRepository>();
         userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(_user);
 
-        _controller = new CommentController(logger.Object, _service.Object, userRepo.Object, auth.Object);
+        _controller = new CommentController(logger.Object, _service.Object, userRepo.Object, _auth.Object);
         _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
     }
 
@@ -49,7 +34,7 @@ public class CommentControllerTest
     public async Task GetComment_Given_Valid_ID_Returns_Comment()
     {
         // Arrange
-        var expected = new CommentDetailsDTO(_user, "Hallooooo", 1, System.DateTime.Now, 1000, 0);
+        var expected = new CommentDetailsDTO(_user, "Hallooooo", 1, DateTime.Now, 1000, 0);
         _service.Setup(m => m.GetCommentFromCommentId(1)).ReturnsAsync(expected);
 
         // Act
@@ -151,6 +136,20 @@ public class CommentControllerTest
     }
 
     [Fact]
+    public async Task UpdateComment_Without_Authorization_Returns_Forbid()
+    {
+        // Arrange
+        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+            .ReturnsAsync(AuthorizationResult.Failed);
+
+        // Act
+        var response = await _controller.UpdateComment(-1, new CommentUpdateDTO("Text", 1));
+
+        // Assert
+        Assert.IsType<ForbidResult>(response);
+    }
+
+    [Fact]
     public async Task DeleteComment_Given_Valid_ID_Returns_NoContent()
     {
         // Act
@@ -171,6 +170,20 @@ public class CommentControllerTest
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
+    }
+
+    [Fact]
+    public async Task DeleteComment_Without_Authorization_Returns_Forbid()
+    {
+        // Arrange
+        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+            .ReturnsAsync(AuthorizationResult.Failed);
+
+        // Act
+        var response = await _controller.DeleteComment(1);
+
+        // Assert
+        Assert.IsType<ForbidResult>(response);
     }
 
     [Fact]
