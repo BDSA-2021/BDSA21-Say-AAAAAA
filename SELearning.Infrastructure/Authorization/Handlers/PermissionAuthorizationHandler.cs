@@ -18,8 +18,8 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 {
     private readonly IPermissionService _permissionService;
     private readonly IEnumerable<IPolicyPipelineOperation> _dataPipeline;
-    private readonly ILogger<CredibilityAuthorizationHandler>? _logger;
-    public PermissionAuthorizationHandler(IPermissionService permissionService, IEnumerable<IPolicyPipelineOperation> dataPipeline, ILogger<CredibilityAuthorizationHandler>? logger = null)
+    private readonly ILogger<PermissionAuthorizationHandler>? _logger;
+    public PermissionAuthorizationHandler(IPermissionService permissionService, IEnumerable<IPolicyPipelineOperation> dataPipeline, ILogger<PermissionAuthorizationHandler>? logger = null)
     {
         _permissionService = permissionService;
         _dataPipeline = dataPipeline;

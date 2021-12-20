@@ -9,7 +9,7 @@ namespace SELearning.Infrastructure.Tests;
 
 record AuthoredResource(UserDTO Author) : IAuthored;
 
-public class AuthoredCredibilityAuthorizationHandlerTests
+public class PermissionAuthorizationHandlerTests
 {
     ClaimsPrincipal _user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "homer.simpson") }));
 
@@ -32,7 +32,7 @@ public class AuthoredCredibilityAuthorizationHandlerTests
         var provider = new Mock<IProvider<ICredibilityService>>();
         provider.Setup(x => x.Get()).Returns(permissionService.Object);
 
-        var authHandler = new AuthoredCredibilityAuthorizationHandler(provider.Object);
+        var authHandler = new ResourcePermissionAuthorizationHandler(provider.Object);
         authHandler.HandleAsync(authContext).Wait();
 
         return authContext;
