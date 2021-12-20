@@ -59,6 +59,8 @@ builder.Services.AddPermissionAuthorization()
                     .AddRule<UserCredibilityRule>()
                     .AddResourceRule<UserCredibilityRule>()
                     .AddResourceRule<AuthoredResourceRule>()
+                    .AddPermissionPipeline<CredibilityOperation>()
+                    .AddPermissionPipeline<ModeratorOperation>()
                     .Build();
 
 builder.Services.AddHealthChecks()

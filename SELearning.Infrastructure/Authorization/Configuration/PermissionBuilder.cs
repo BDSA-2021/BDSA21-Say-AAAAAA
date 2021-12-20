@@ -14,8 +14,6 @@ namespace SELearning.Infrastructure.Authorization;
 public class PermissionBuilder
 {
     public IServiceCollection Services { get; }
-
-    private IPolicyPipelineOperation? _pipeline;
     private Dictionary<Permission, List<IRule>> _rules = new Dictionary<Permission, List<IRule>>();
     private Dictionary<Permission, List<IResourceRule>> _resourceRules = new Dictionary<Permission, List<IResourceRule>>();
 
@@ -64,8 +62,10 @@ public class PermissionBuilder
         return this;
     }
 
-    private PermissionBuilder AddPermissionPipeline(IPolicyPipelineOperation operation)
+    public PermissionBuilder AddPermissionPipeline<T>() where T : class, IAuthorizationContextPipelineOperation
     {
+        Services.AddSingleton<IAuthorizationContextPipelineOperation, T>();
+
         return this;
     }
 
@@ -74,10 +74,12 @@ public class PermissionBuilder
     /// </summary>
     public void Build()
     {
-        Services.AddSingleton<IPolicyPipelineOperation, ModeratorOperation>();
-        Services.AddSingleton<IPolicyPipelineOperation, CredibilityOperation>();
-        Services.AddSingleton<IPermissionService, PermissionDecider>(x => new PermissionDecider(_rules.AsEnumerable().AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable()), _resourceRules.AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable())));
-        Services.AddSingleton<IResourcePermissionService, PermissionDecider>(x => new PermissionDecider(_rules.AsEnumerable().AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable()), _resourceRules.AsEnumerable().ToDictionary(y => y.Key, z => z.Value.AsEnumerable())));
+        // NOTE: We have to transform the List<Rules> to and IEnumerable because the compiler cannot figure this out on its own
+        var rules = _rules.ToDictionary(y => y.Key, z => z.Value.AsEnumerable());
+        var resourceRules = _resourceRules.ToDictionary(y => y.Key, z => z.Value.AsEnumerable());
+
+        Services.AddSingleton<IPermissionService, PermissionDecider>(x => new PermissionDecider(rules, resourceRules));
+        Services.AddSingleton<IResourcePermissionService, PermissionDecider>(x => new PermissionDecider(rules, resourceRules));
         Services.TryAddScoped<IPermissionCredibilityService, PermissionCredibilityService>();
     }
 }
