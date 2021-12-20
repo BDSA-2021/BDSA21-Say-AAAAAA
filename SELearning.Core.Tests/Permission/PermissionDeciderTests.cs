@@ -49,58 +49,6 @@ public class PermissionDeciderTests
     }
 
     [Fact]
-    public async Task IsAllowed_NoRulesForRequestedPermission_ReturnTrue()
-    {
-        // Arrange
-        IDictionary<perm.Permission, IEnumerable<IRule>> permissions = new Dictionary<perm.Permission, IEnumerable<IRule>>();
-        perm.PermissionDecider permissionDecider = new perm.PermissionDecider(permissions, null!);
-
-        // Act
-        bool result = await permissionDecider.IsAllowed(new ClaimsPrincipal(), CreateComment);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Theory]
-    [MemberData(nameof(PermissionDeciderFalseScenarios))]
-    public async Task IsAllowed_OneOrMoreRulesEvaluatedToFalse_ReturnFalse(IEnumerable<MockRule> rules)
-    {
-        // Arrange
-        IDictionary<perm.Permission, IEnumerable<IRule>> permissions = new Dictionary<perm.Permission, IEnumerable<IRule>>();
-        permissions.Add(CreateComment, rules);
-        PermissionDecider permissionDecider = new PermissionDecider(permissions, null!);
-
-        // Act
-        bool result = await permissionDecider.IsAllowed(new ClaimsPrincipal(), CreateComment);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task IsAllowed_AllRulesEvaluatedToTrue_ReturnTrue()
-    {
-        // Arrange
-        IDictionary<perm.Permission, IEnumerable<IRule>> permissions = new Dictionary<perm.Permission, IEnumerable<IRule>>();
-        List<IRule> rules = new List<IRule>();
-        rules.Add(new MockRule(true));
-        rules.Add(new MockRule(true));
-        rules.Add(new MockRule(true));
-        rules.Add(new MockRule(true));
-
-        permissions.Add(CreateComment, rules);
-
-        PermissionDecider permissionDecider = new PermissionDecider(permissions, null!);
-
-        // Act
-        bool result = await permissionDecider.IsAllowed(new ClaimsPrincipal(), CreateComment);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
     public async Task IsAllowed_OneResourcePermissionEvaluatedToTrue_ReturnTrue()
     {
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);

@@ -16,15 +16,6 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
         _resourcePermissions = resourcePermissions;
     }
 
-    public async Task<bool> IsAllowed(ClaimsPrincipal user, Permission requestedPermission)
-    {
-        if (!PermissionHasRules(requestedPermission, _permissions))
-            return true;
-
-        return (await Task.WhenAll(_permissions[requestedPermission].Select(rule => rule.IsAllowed(user, requestedPermission))))
-                                                                    .All(isAllowed => isAllowed);
-    }
-
     public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions)
     {
         if(UserIsAModerator(context))
