@@ -1,9 +1,66 @@
-@page "/section/{sectionId}"
+@page "/section/{SectionId}"
 
-<SELearning.Shared.Content.ContentInSection SectionId=@sectionId/>
+@using Core.Section
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SELearning.Core.Content
+@using SELearning.Shared.Content;
 
-@code {
+@inject HttpClient Http
+
+<div class="container">
+    <div class="get-quote">
+        <div class="row">
+            <div class="col-sm-10 col-12">
+                <h1 class="left-block float-left">@_section.Title</h1>
+            </div>
+            <div class="col-sm-2 col-12">
+                <a class="btn btn-primary right-block float-right" href="createcontent" role="button">Add Content</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ContentList RetrieveContent="@RetrieveContentInSection"/>
+
+@code{
     [Parameter]
-    public string sectionId { get; set; }
+    public string SectionId { get; set; }
 
+    private SectionDTO _section = new();
+
+    protected override async void OnInitialized()
+    {
+        await RetrieveSection();
+    }
+
+    protected async Task<List<ContentDTO>> RetrieveContentInSection()
+    {
+        List<ContentDTO> contents = new();
+
+        try
+        {
+            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDTO>>($"Section/{SectionId}/Content");
+            contents = content.ToList();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+        return contents;
+    }
+
+    protected async Task RetrieveSection()
+    {
+        try
+        {
+            var section = await Http.GetFromJsonAsync<SectionDTO>($"Section/{SectionId}");
+            _section = section;
+            StateHasChanged();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
 }
