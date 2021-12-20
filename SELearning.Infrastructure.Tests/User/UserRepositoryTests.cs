@@ -23,7 +23,7 @@ public class UserRepositoryTests
         _repository = new UserRepository(_context);
         _context.SaveChanges();
     }
-    
+
     [Fact]
     public async Task GetOrAddUser_given_non_existing_user_return_user()
     {
@@ -31,7 +31,7 @@ public class UserRepositoryTests
         Assert.Equal("User 2", id);
         Assert.Equal("User 2", name);
     }
-    
+
     [Fact]
     public async Task GetOrAddUser_given_existing_user_return_user()
     {
