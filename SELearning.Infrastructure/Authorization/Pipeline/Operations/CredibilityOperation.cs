@@ -13,7 +13,7 @@ public class CredibilityOperation : IAuthorizationContextPipelineOperation
     public CredibilityOperation(IProvider<IPermissionCredibilityService> permCredibilityServiceProvider, IProvider<ICredibilityService> credServiceProvider)
     {
         _permCredibilityServiceProvider = permCredibilityServiceProvider;
-        _credServiceProvider = credServiceProvider;    
+        _credServiceProvider = credServiceProvider;
     }
 
     public async Task Invoke(PermissionAuthorizationContext context)

@@ -10,7 +10,7 @@ public class UserCredibilityRule : BaseResourceRule, IRule
     public UserCredibilityRule()
         : base(typeof(object))
     {
-        
+
     }
 
     [Obsolete]
@@ -25,13 +25,13 @@ public class UserCredibilityRule : BaseResourceRule, IRule
         int requiredCredScore = permissionScores[permission];
 
         int userCredScore = context.Get<int>("UserCredibilityScore");
-        
+
         return await Task.Run<bool>(() => userCredScore >= requiredCredScore);
     }
 
     public async override Task<bool> IsAllowed(IDynamicDictionaryRead context, Permission permission, object resource)
     {
-        if(!IsEvaluateable(resource))
+        if (!IsEvaluateable(resource))
             return await Task.Run<bool>(() => false);
 
         return await IsAllowed(context, permission);

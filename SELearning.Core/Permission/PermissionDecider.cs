@@ -9,7 +9,7 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
     private readonly IDictionary<Permission, IEnumerable<IResourceRule>> _resourcePermissions;
 
     public PermissionDecider(
-        IDictionary<Permission, IEnumerable<IRule>> permissionRules, 
+        IDictionary<Permission, IEnumerable<IRule>> permissionRules,
         IDictionary<Permission, IEnumerable<IResourceRule>> resourcePermissions)
     {
         _permissions = permissionRules;
@@ -18,10 +18,10 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
 
     public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions)
     {
-        if(UserIsAModerator(context))
+        if (UserIsAModerator(context))
             return true;
 
-        foreach(Permission requestedPermission in requestedPermissions)
+        foreach (Permission requestedPermission in requestedPermissions)
         {
             if (!PermissionHasRules(requestedPermission, _permissions))
                 return true;
@@ -30,7 +30,7 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
                                                         .Select(rule => rule.IsAllowed(context, requestedPermission))))
                                                         .All(isAllowed => isAllowed);
 
-            if(result)
+            if (result)
                 return true;
         }
 
@@ -39,10 +39,10 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
 
     public async Task<bool> IsAllowed(IDynamicDictionaryRead context, IEnumerable<Permission> requestedPermissions, object ressource)
     {
-        if(UserIsAModerator(context))
+        if (UserIsAModerator(context))
             return true;
 
-        foreach(Permission requestedPermission in requestedPermissions)
+        foreach (Permission requestedPermission in requestedPermissions)
         {
             if (!PermissionHasRules(requestedPermission, _resourcePermissions))
                 return true;
@@ -52,7 +52,7 @@ public class PermissionDecider : IPermissionService, IResourcePermissionService
                                                         .Select(rule => rule.IsAllowed(context, requestedPermission, ressource))))
                                                         .All(isAllowed => isAllowed);
 
-            if(result)
+            if (result)
                 return true;
         }
 

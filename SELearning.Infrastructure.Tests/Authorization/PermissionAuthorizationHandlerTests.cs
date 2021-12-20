@@ -11,7 +11,7 @@ public class PermissionAuthorizationHandlerTests
 {
     AuthorizationHandlerContext HandleAsync_WithUserScore(ClaimsPrincipal user, bool returnPermissionService)
     {
-        var requirement = new PermissionRequirement(new Permission[]{Permission.CreateComment});
+        var requirement = new PermissionRequirement(new Permission[] { Permission.CreateComment });
 
         var authContext = new AuthorizationHandlerContext(new List<IAuthorizationRequirement> { requirement }, user, null);
 

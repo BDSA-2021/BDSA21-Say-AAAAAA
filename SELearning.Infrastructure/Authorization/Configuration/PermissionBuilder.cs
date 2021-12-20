@@ -28,7 +28,7 @@ public class PermissionBuilder
 
     public PermissionBuilder AddRule<T>(Permission p) where T : IRule, new()
     {
-        if(!_rules.ContainsKey(p))
+        if (!_rules.ContainsKey(p))
             _rules.Add(p, new List<IRule>());
 
         _rules[p].Add(new T());
@@ -38,7 +38,7 @@ public class PermissionBuilder
 
     public PermissionBuilder AddRule<T>() where T : IRule, new()
     {
-        foreach(Permission p in Enum.GetValues<Permission>())
+        foreach (Permission p in Enum.GetValues<Permission>())
             AddRule<T>(p);
 
         return this;
@@ -46,8 +46,8 @@ public class PermissionBuilder
 
     public PermissionBuilder AddResourceRule<T>(Permission p) where T : IResourceRule, new()
     {
-        if(!_resourceRules.ContainsKey(p))
-                _resourceRules.Add(p, new List<IResourceRule>());
+        if (!_resourceRules.ContainsKey(p))
+            _resourceRules.Add(p, new List<IResourceRule>());
 
         _resourceRules[p].Add(new T());
 
@@ -56,7 +56,7 @@ public class PermissionBuilder
 
     public PermissionBuilder AddResourceRule<T>() where T : IResourceRule, new()
     {
-        foreach(Permission p in Enum.GetValues<Permission>())
+        foreach (Permission p in Enum.GetValues<Permission>())
             AddResourceRule<T>(p);
 
         return this;

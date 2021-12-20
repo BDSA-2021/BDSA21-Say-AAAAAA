@@ -53,7 +53,7 @@ public class PermissionDeciderTests
     {
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
 
-        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection}, "Abe");
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission> { CreateComment, EditAnyComment, Rate, EditSection, CreateSection }, "Abe");
 
         Assert.True(result);
     }
@@ -63,7 +63,7 @@ public class PermissionDeciderTests
     {
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
 
-        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{DeleteAnyComment}, "Abe");
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission> { DeleteAnyComment }, "Abe");
 
         Assert.True(result);
     }
@@ -73,7 +73,7 @@ public class PermissionDeciderTests
     {
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
 
-        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, Rate, EditSection}, "Abe");
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission> { CreateComment, Rate, EditSection }, "Abe");
 
         Assert.False(result);
     }
@@ -84,7 +84,7 @@ public class PermissionDeciderTests
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(null!, _resourceRules);
         _context.Set<bool>("IsModerator", true);
 
-        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection}, "Abe");
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission> { CreateComment, EditAnyComment, Rate, EditSection, CreateSection }, "Abe");
 
         Assert.True(result);
     }
@@ -94,7 +94,7 @@ public class PermissionDeciderTests
     {
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(_permissionRules, null!);
 
-        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection});
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission> { CreateComment, EditAnyComment, Rate, EditSection, CreateSection });
 
         Assert.True(result);
     }
@@ -104,7 +104,7 @@ public class PermissionDeciderTests
     {
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(_permissionRules, null!);
 
-        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, Rate, EditSection});
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission> { CreateComment, Rate, EditSection });
 
         Assert.False(result);
     }
@@ -115,7 +115,7 @@ public class PermissionDeciderTests
         perm.PermissionDecider permissionDecider = new perm.PermissionDecider(_permissionRules, null!);
         _context.Set<bool>("IsModerator", true);
 
-        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission>{CreateComment, EditAnyComment, Rate, EditSection, CreateSection});
+        bool result = await permissionDecider.IsAllowed(_context, new List<perm.Permission> { CreateComment, EditAnyComment, Rate, EditSection, CreateSection });
 
         Assert.True(result);
     }
@@ -151,6 +151,6 @@ public class MockRule : perm.IRule, perm.IResourceRule
 
     public bool IsEvaluateable(object resource)
     {
-        return  _returnTypeEvaluationResult;
+        return _returnTypeEvaluationResult;
     }
 }

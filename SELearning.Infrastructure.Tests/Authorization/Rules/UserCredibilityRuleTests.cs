@@ -15,7 +15,7 @@ public class UserCredibilityRuleTests
         _context = new DynamicDictionary();
 
         _context.Set<int>("UserCredibilityScore", 500);
-        _context.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores", new Dictionary<Permission, int>(){ {Permission.CreateComment, 1000}, {Permission.CreateContent, 500}, {Permission.EditOwnComment, 499}});
+        _context.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores", new Dictionary<Permission, int>() { { Permission.CreateComment, 1000 }, { Permission.CreateContent, 500 }, { Permission.EditOwnComment, 499 } });
     }
 
     [Fact]

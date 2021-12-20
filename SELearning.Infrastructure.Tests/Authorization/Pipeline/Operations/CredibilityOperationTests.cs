@@ -22,7 +22,7 @@ public class CredibilityOperationTests
 
         var credServiceProvider = new Mock<IProvider<ICredibilityService>>();
         credServiceProvider.Setup(x => x.Get()).Returns(permissionService.Object);
-        
+
         _testPipelineOperation = new CredibilityOperation(permissionCredServiceProvider.Object, credServiceProvider.Object);
         _user = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.Name, "homer.simpson"), new Claim(ClaimTypes.Role, "Moderator"), new Claim(ClaimTypes.Role, "AnotherOne") }));
     }
@@ -30,7 +30,7 @@ public class CredibilityOperationTests
     [Fact]
     public async Task Invoke_ContextWithNoRequestedPermission_AnEmptyEnumerableWithNoItemsIsAddedToData()
     {
-        
+
         PermissionAuthorizationContext context = new PermissionAuthorizationContext(_user, Enumerable.Empty<Permission>());
 
         await _testPipelineOperation.Invoke(context);
@@ -45,7 +45,7 @@ public class CredibilityOperationTests
     [Fact]
     public async Task Invoke_WithRequiredPermissionsAndUser_ReturnsRequiredCredAndUserCredFromContextData()
     {
-        PermissionAuthorizationContext context = new PermissionAuthorizationContext(_user, new List<Permission>{Permission.CreateComment, Permission.CreateContent});
+        PermissionAuthorizationContext context = new PermissionAuthorizationContext(_user, new List<Permission> { Permission.CreateComment, Permission.CreateContent });
 
         await _testPipelineOperation.Invoke(context);
 
@@ -53,6 +53,6 @@ public class CredibilityOperationTests
         int resultUserScore = context.Data.Get<int>("UserCredibilityScore");
 
         Assert.Equal(1000, resultUserScore);
-        Assert.Equal(new Dictionary<Permission, int>(){ {Permission.CreateComment, 500}, {Permission.CreateContent, 500}}, resultCredScores);
+        Assert.Equal(new Dictionary<Permission, int>() { { Permission.CreateComment, 500 }, { Permission.CreateContent, 500 } }, resultCredScores);
     }
 }
