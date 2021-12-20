@@ -1,5 +1,12 @@
 @page "/AllContent"
 
+@using Core.Section
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SELearning.Core.Content
+@using SELearning.Shared.Content;
+
+@inject HttpClient Http
+
 <div class="container">
     <div class="get-quote">
         <div class="row">
@@ -13,4 +20,23 @@
     </div>
 </div>
 
-<SELearning.Shared.Content.AllContent/>
+<ContentList RetrieveContent="@RetrieveContent" />
+
+@code {
+    protected async Task<List<ContentDTO>> RetrieveContent()
+    {
+        List<ContentDTO> contents = new();
+        
+        try
+        {
+            var content = await Http.GetFromJsonAsync<IEnumerable<ContentDTO>>("Content");
+            return content.ToList();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+        return contents;
+    }
+}

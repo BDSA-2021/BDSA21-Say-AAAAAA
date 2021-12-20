@@ -1,47 +1,32 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-using SELearning.API.Controllers;
-using SELearning.Core;
-using SELearning.Core.Content;
-using SELearning.Core.Permission;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Xunit;
-using SELearning.Core.User;
-
 namespace SELearning.API.Tests;
 
 public class ContentControllerTest
 {
-    private readonly Mock<IContentService> _service;
-
     private readonly ContentController _controller;
-
+    private readonly Mock<IContentService> _service;
+    private readonly Mock<IAuthorizationService> _auth;
     private readonly UserDTO _user;
 
     public ContentControllerTest()
     {
         var logger = new Mock<ILogger<ContentController>>();
-        var authService = new Mock<IAuthorizationService>();
+
         _user = new UserDTO("ABC", "Joachim");
-        authService.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+
+        _auth = new Mock<IAuthorizationService>();
+        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<IContentService>();
         _service.Setup(x => x.GetContent(It.Is<int>(x => x != 0)))
                 .ReturnsAsync(new ContentDTO());
-        _service.Setup(m => m.AddContent(It.IsNotNull<ContentCreateDto>())).ReturnsAsync(new ContentDTO { Title = "Title", Id = 1 });
+        _service.Setup(m => m.AddContent(It.IsNotNull<ContentCreateDto>()))
+                .ReturnsAsync(new ContentDTO { Title = "Title", Id = 1 });
 
         var userRepo = new Mock<IUserRepository>();
         userRepo.Setup(x => x.GetOrAddUser(It.IsNotNull<UserDTO>())).ReturnsAsync(_user);
 
-        _controller = new ContentController(logger.Object, _service.Object, userRepo.Object, authService.Object);
+        _controller = new ContentController(logger.Object, _service.Object, userRepo.Object, _auth.Object);
         _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() };
     }
 
@@ -126,6 +111,20 @@ public class ContentControllerTest
     }
 
     [Fact]
+    public async Task UpdateContent_Without_Authorization_Returns_Forbid()
+    {
+        // Arrange
+        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+            .ReturnsAsync(AuthorizationResult.Failed);
+
+        // Act
+        var response = await _controller.UpdateContent(1, new ContentUpdateDTO { Title = "Title" });
+
+        // Assert
+        Assert.IsType<ForbidResult>(response);
+    }
+
+    [Fact]
     public async Task DeleteContent_Given_Valid_ID_Returns_NoContent()
     {
         // Act
@@ -146,6 +145,20 @@ public class ContentControllerTest
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
+    }
+
+    [Fact]
+    public async Task DeleteContent_Without_Authorization_Returns_Forbid()
+    {
+        // Arrange
+        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+            .ReturnsAsync(AuthorizationResult.Failed);
+
+        // Act
+        var response = await _controller.DeleteContent(1);
+
+        // Assert
+        Assert.IsType<ForbidResult>(response);
     }
 
     [Fact]

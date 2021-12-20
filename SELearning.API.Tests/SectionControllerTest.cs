@@ -1,16 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-using SELearning.API.Controllers;
-using SELearning.Core;
-using SELearning.Core.Content;
-using SELearning.Core.Section;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
-
 namespace SELearning.API.Tests;
 
 public class SectionControllerTest
