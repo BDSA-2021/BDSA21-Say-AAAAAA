@@ -29,6 +29,8 @@ docker-compose -f docker-compose.dev.yml up --force-recreate --build
 ```
 
 ### Production build and run
+**WARNING: Building the production image usually takes ~25 minutes due to WebAssembly**
+
 To run a database and the program run
 ```
 docker-compose -f docker-compose.prod.yml up
