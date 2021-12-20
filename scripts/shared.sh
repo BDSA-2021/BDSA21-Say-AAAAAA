@@ -13,9 +13,3 @@ file_env() {
    export "$var"="$(cat $file)"
    unset "$fileVar"
 }
-
-file_env "ConnectionStrings__SELearning"
-file_env "ASPNETCORE_Kestrel__Certificates__Default__Password"
-file_env "ConnectionStrings__ProductionConnectionString"
-
-exec dotnet SELearning.API.dll

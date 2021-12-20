@@ -30,8 +30,8 @@ RUN dotnet publish -c Release -o /app
 FROM base as serve
 WORKDIR /app
 COPY --from=publish /app .
-COPY ./scripts/entrypoint.sh .
+COPY ./scripts/ .
 
 EXPOSE 80
 
-CMD /bin/bash ./entrypoint.sh
+CMD /bin/bash ./entrypoint.prod.sh
