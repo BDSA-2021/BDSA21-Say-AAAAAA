@@ -9,14 +9,9 @@ public record SectionDTO
 
 public record SectionCreateDTO
 {
-    [StringLength(50)]
-    public string? Title { get; set; }
+    [StringLength(50)] public string? Title { get; set; }
 
-    [StringLength(50)]
-    public string? Description { get; set; }
+    [StringLength(50)] public string? Description { get; set; }
 }
 
-public record SectionUpdateDTO : SectionCreateDTO
-{
-    public int Id { get; init; }
-}
+public record SectionUpdateDTO : SectionCreateDTO;

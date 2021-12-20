@@ -1,4 +1,4 @@
-namespace SELearning.Infrastructure.Authorization;
+namespace SELearning.Core;
 
 public interface IProvider<T>
 {

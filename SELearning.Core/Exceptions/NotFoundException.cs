@@ -1,19 +1,9 @@
-namespace SELearning.Core
+namespace SELearning.Core.Exceptions;
+
+public class NotFoundException : Exception
 {
-    public class NotFoundException : Exception
+    protected NotFoundException(string message)
+        : base(message)
     {
-        public NotFoundException()
-        {
-        }
-
-        public NotFoundException(string message)
-            : base(message)
-        {
-        }
-
-        public NotFoundException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
     }
 }

@@ -1,10 +1,9 @@
-using System.Security.Claims;
 using SELearning.Core.Collections;
 
 namespace SELearning.Core.Permission;
 
 /// <summary>
-/// Defines a service to decide if a user is allowed to a perform an action where an associated permission is requried
+/// Defines a service to decide if a user is allowed to a perform an action where an associated permission is required
 /// </summary>
 public interface IPermissionService
 {

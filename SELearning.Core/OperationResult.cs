@@ -1,13 +1,12 @@
-namespace SELearning.Core
+namespace SELearning.Core;
+
+public enum OperationResult
 {
-    public enum OperationResult
-    {
-        Created,
-        Updated,
-        Deleted,
-        NotFound,
-        BadRequest,
-        Conflict,
-        Succes
-    }
+    Created,
+    Updated,
+    Deleted,
+    NotFound,
+    BadRequest,
+    Conflict,
+    Succes
 }

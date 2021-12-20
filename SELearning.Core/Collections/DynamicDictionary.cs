@@ -8,7 +8,7 @@ namespace SELearning.Core.Collections;
 /// </summary>
 public class DynamicDictionary : IDynamicDictionary
 {
-    private IDictionary<(string, string), object> _dict = new Dictionary<(string, string), object>();
+    private readonly IDictionary<(string, string), object> _dict = new Dictionary<(string, string), object>();
 
     public T Get<T>(string key)
     {
@@ -17,11 +17,11 @@ public class DynamicDictionary : IDynamicDictionary
         if (!_dict.ContainsKey(fullKey))
             throw new KeyNotFoundException($"there was no key '{key}' of type {GetTypeName<T>()} in the dictionary");
 
-        return (T)_dict[fullKey];
+        return (T) _dict[fullKey];
     }
 
     public void Set<T>(string key, T value)
         => _dict[(key, GetTypeName<T>())] = value ?? throw new ArgumentNullException(nameof(value));
 
-    private string GetTypeName<T>() => typeof(T).FullName ?? typeof(T).Name;
+    private static string GetTypeName<T>() => typeof(T).FullName ?? typeof(T).Name;
 }
