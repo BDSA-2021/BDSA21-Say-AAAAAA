@@ -1,10 +1,12 @@
+using SELearning.Infrastructure.Authorization;
+
 namespace SELearning.API.Tests;
 
 public class ContentControllerTest
 {
     private readonly ContentController _controller;
     private readonly Mock<IContentService> _service;
-    private readonly Mock<IAuthorizationService> _auth;
+    private readonly Mock<IResourceAuthorizationPermissionService> _auth;
     private readonly UserDTO _user;
 
     public ContentControllerTest()
@@ -13,8 +15,8 @@ public class ContentControllerTest
 
         _user = new UserDTO("ABC", "Joachim");
 
-        _auth = new Mock<IAuthorizationService>();
-        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+        _auth = new Mock<IResourceAuthorizationPermissionService>();
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<Permission>()))
             .ReturnsAsync(AuthorizationResult.Success);
 
         _service = new Mock<IContentService>();
@@ -114,7 +116,7 @@ public class ContentControllerTest
     public async Task UpdateContent_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<Permission>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act
@@ -151,7 +153,7 @@ public class ContentControllerTest
     public async Task DeleteContent_Without_Authorization_Returns_Forbid()
     {
         // Arrange
-        _auth.Setup(x => x.AuthorizeAsync(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<string>()))
+        _auth.Setup(x => x.Authorize(It.IsNotNull<ClaimsPrincipal>(), It.Is<object>(x => x is IAuthored), It.IsNotNull<Permission>()))
             .ReturnsAsync(AuthorizationResult.Failed);
 
         // Act
