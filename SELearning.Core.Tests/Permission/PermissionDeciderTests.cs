@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SELearning.Core.Collections;
+using SELearning.Core.Permission;
 using perm = SELearning.Core.Permission;
 using static SELearning.Core.Permission.Permission;
-using SELearning.Core.Permission;
-using SELearning.Core.Collections;
 
-namespace SELearning.Core.Tests;
+namespace SELearning.Core.Tests.Permission;
 
 public class PermissionDeciderTests
 {

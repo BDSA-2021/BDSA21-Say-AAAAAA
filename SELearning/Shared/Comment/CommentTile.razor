@@ -10,7 +10,7 @@
     <div class="col-lg-2 row comment-rating">
         <!--Rating section-->
         <div class="col-lg-4">
-            <p class="row col-lg-12">@VisualCommentRating</p>
+            <p class="row col-lg-12">@_visualCommentRating</p>
             <p class="row col-lg-12">Rating</p>
         </div>
         <div class="col-lg-8">
@@ -48,13 +48,15 @@
 
     [Parameter]
     public CommentDetailsDTO Comment { get; set; }
-    private int VisualCommentRating;
+
+    private int _visualCommentRating;
 
     [Parameter]
     public EventCallback<CommentDetailsDTO> OnCommentDeleted { get; set; }
 
-    protected override void OnInitialized() {
-        VisualCommentRating = Comment.Rating;
+    protected override void OnInitialized()
+    {
+        _visualCommentRating = Comment.Rating;
     }
 
     private async Task Delete()
@@ -93,7 +95,7 @@
                 _toastService.AddToast(ToastNotification.CreateUnauthorized("rate"));
             }
 
-            VisualCommentRating++;
+            _visualCommentRating++;
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)
@@ -117,7 +119,7 @@
                 _toastService.AddToast(ToastNotification.CreateUnauthorized("rate"));
             }
 
-            VisualCommentRating--;
+            _visualCommentRating--;
             StateHasChanged();
         }
         catch (AccessTokenNotAvailableException exception)

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using SELearning.Core.Collections;
 
-namespace SELearning.Core.Tests;
+namespace SELearning.Core.Tests.Collections;
 
 public class DynamicDictionaryTests
 {
