@@ -1,19 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using SELearning.API.Models;
 using SELearning.Infrastructure.Credibility;
 using SELearning.Infrastructure.Authorization;
-using SELearning.Core.Section;
-using SELearning.Core.Content;
-using SELearning.Core.Comment;
-using SELearning.Core.Permission;
-using SELearning.Core.User;
 using SELearning.Infrastructure.User;
 using SELearning.Core.Credibility;
 
 var builder = WebApplication.CreateBuilder(args);
+
 #region Configuration
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
@@ -24,7 +20,6 @@ string connectionString;
 
 if (builder.Environment.IsDevelopment())
 {
-
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "SELearning.API", Version = "v1" });
@@ -56,29 +51,29 @@ builder.Services.AddScoped<ICredibilityRepository, CredibilityRepository>();
 builder.Services.AddScoped<ICredibilityService, CredibilityCalculator>();
 
 builder.Services.AddPermissionAuthorization()
-                    .AddRule<UserCredibilityRule>()
-                    .AddResourceRule<UserCredibilityRule>()
-                    .AddResourceRule<AuthoredResourceRule>()
-                    .AddPermissionPipeline<CredibilityOperation>()
-                    .AddPermissionPipeline<ModeratorOperation>()
-                    .Build();
+    .AddRule<UserCredibilityRule>()
+    .AddResourceRule<UserCredibilityRule>()
+    .AddResourceRule<AuthoredResourceRule>()
+    .AddPermissionPipeline<CredibilityOperation>()
+    .AddPermissionPipeline<ModeratorOperation>()
+    .Build();
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<SELearningContext>();
+
 #endregion
 
 var app = builder.Build();
+
 #region Serve
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseWebAssemblyDebugging();
 
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("v1/swagger.json", "SELearning.API V1");
-    });
+    app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "SELearning.API V1"); });
 }
 else
 {
@@ -106,4 +101,5 @@ app.UseEndpoints(endpoints =>
 
 app.Migrate();
 app.Run();
+
 #endregion

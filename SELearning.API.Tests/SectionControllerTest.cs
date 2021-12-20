@@ -20,7 +20,7 @@ public class SectionControllerTest
         _service.Setup(m => m.GetContentInSection(-1)).ThrowsAsync(new SectionNotFoundException(-1));
 
         // Act
-        var response = (await _controller.GetContentsBySectionID(-1)).Result;
+        var response = (await _controller.GetContentsBySectionId(-1)).Result;
 
         // Assert
         Assert.IsType<NotFoundResult>(response);

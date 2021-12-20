@@ -23,16 +23,16 @@ public class SectionController : ControllerBase
     /// <summary>
     /// <c>GetContentsBySectionID</c> returns all contents in the section with the given section ID.
     /// </summary>
-    /// <param name="sectionID">The ID of the section.</param>
+    /// <param name="id">The ID of the section.</param>
     /// <returns>A collection of contents in the section if it exists, otherwise response type 404: Not Found.</returns>
-    [HttpGet("{ID}/Content")]
+    [HttpGet("{id:int}/Content")]
     [ProducesResponseType(typeof(IReadOnlyCollection<ContentDTO>), 200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<IReadOnlyCollection<ContentDTO>>> GetContentsBySectionID(int ID)
+    public async Task<ActionResult<IReadOnlyCollection<ContentDTO>>> GetContentsBySectionId(int id)
     {
         try
         {
-            return Ok(await _service.GetContentInSection(ID));
+            return Ok(await _service.GetContentInSection(id));
         }
         catch (SectionNotFoundException)
         {
@@ -43,17 +43,17 @@ public class SectionController : ControllerBase
     /// <summary>
     /// <c>GetSection</c> returns the section with the given ID.
     /// </summary>
-    /// <param name="ID">The ID of the section.</param>
+    /// <param name="id">The ID of the section.</param>
     /// <returns>A section with the given ID if it exists, otherwise response type 404: Not Found.</returns>
-    [HttpGet("{ID}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(SectionDTO), 200)]
     [ProducesResponseType(404)]
     [ActionName(nameof(GetSection))]
-    public async Task<ActionResult<SectionDTO>> GetSection(int ID)
+    public async Task<ActionResult<SectionDTO>> GetSection(int id)
     {
         try
         {
-            return Ok(await _service.GetSection(ID));
+            return Ok(await _service.GetSection(id));
         }
         catch (SectionNotFoundException)
         {
@@ -90,18 +90,18 @@ public class SectionController : ControllerBase
     /// <summary>
     /// <c>UpdateSection</c> updates the section with the given ID.
     /// </summary>
-    /// <param name="ID">The ID of the section.</param>
+    /// <param name="id">The ID of the section.</param>
     /// <param name="section">The record of the updated section.</param>
     /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
-    [HttpPut("{ID}")]
+    [HttpPut("{id:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.EditSection)]
-    public async Task<IActionResult> UpdateSection(int ID, SectionUpdateDTO section)
+    public async Task<IActionResult> UpdateSection(int id, SectionUpdateDTO section)
     {
         try
         {
-            await _service.UpdateSection(ID, section);
+            await _service.UpdateSection(id, section);
             return NoContent();
         }
         catch (SectionNotFoundException)
@@ -113,17 +113,17 @@ public class SectionController : ControllerBase
     /// <summary>
     /// <c>DeleteSection</c> deletes the section with the given ID.
     /// </summary>
-    /// <param name="ID">The ID of the section.</param>
+    /// <param name="id">The ID of the section.</param>
     /// <returns>A response type 204: No Content if the section exists, otherwise response type 404: Not Found.</returns>
-    [HttpDelete("{ID}")]
+    [HttpDelete("{id:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [AuthorizePermission(Permission.DeleteSection)]
-    public async Task<IActionResult> DeleteSection(int ID)
+    public async Task<IActionResult> DeleteSection(int id)
     {
         try
         {
-            await _service.DeleteSection(ID);
+            await _service.DeleteSection(id);
             return NoContent();
         }
         catch (SectionNotFoundException)

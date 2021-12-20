@@ -67,7 +67,7 @@ public class CommentControllerTest
         _service.Setup(m => m.GetCommentsFromContentId(1)).ReturnsAsync(expected);
 
         // Act
-        var actual = ((await _controller.GetCommentsByContentID(1)).Result as OkObjectResult)!.Value;
+        var actual = ((await _controller.GetCommentsByContentId(1)).Result as OkObjectResult)!.Value;
 
         // Assert
         Assert.Equal(expected, actual);
@@ -80,7 +80,7 @@ public class CommentControllerTest
         _service.Setup(m => m.GetCommentsFromContentId(-1)).ThrowsAsync(new ContentNotFoundException(-1));
 
         // Act
-        var response = (await _controller.GetCommentsByContentID(-1)).Result;
+        var response = (await _controller.GetCommentsByContentId(-1)).Result;
 
         // Assert
         Assert.IsType<NotFoundResult>(response);
