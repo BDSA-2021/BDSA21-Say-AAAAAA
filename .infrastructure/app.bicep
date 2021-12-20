@@ -48,7 +48,7 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
       {
         name: 'app.ituwu.dk'
         sslState: 'SniEnabled'
-        thumbprint: '423984340985BEFFC88384A5B27E9548563BF9A7'
+        thumbprint: 'E17148A9F582A0B3B0661F103B3EC7A565EB2BDC'
         hostType: 'Standard'
       }
       {
@@ -62,7 +62,7 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
         hostType: 'Repository'
       }
     ]
-    customDomainVerificationId: 'F73471EB0F83711DEDB3B2FE0661AF29BCDD35AD75B9ACC9B26F138FDE60C824'
+    customDomainVerificationId: 'BD89702B2DBD69E3327D4CD217BA87EB8A2851D82B9E35DC470885D0E0AC4FE3'
     clientAffinityEnabled: true
     clientCertEnabled: false
     clientCertMode: 'Required'
@@ -75,7 +75,7 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
       siteName: appName
       hostNameType: 'Verified'
       sslState: 'SniEnabled'
-      thumbprint: '423984340985BEFFC88384A5B27E9548563BF9A7'
+      thumbprint: 'E17148A9F582A0B3B0661F103B3EC7A565EB2BDC'
     }
   }
 
