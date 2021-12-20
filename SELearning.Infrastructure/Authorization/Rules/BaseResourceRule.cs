@@ -7,7 +7,7 @@ public abstract class BaseResourceRule : IResourceRule
 {
     public Type EvaluateableType { get; }
 
-    public BaseResourceRule(Type evaluateableType)
+    protected BaseResourceRule(Type evaluateableType)
     {
         EvaluateableType = evaluateableType;
     }

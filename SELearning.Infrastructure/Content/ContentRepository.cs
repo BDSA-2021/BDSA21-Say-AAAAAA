@@ -1,5 +1,3 @@
-using SELearning.Core.Section;
-
 namespace SELearning.Infrastructure.Content;
 
 public class ContentRepository : IContentRepository

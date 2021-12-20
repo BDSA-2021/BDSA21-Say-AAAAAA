@@ -15,9 +15,16 @@ public class AuthoredResourceRule : BaseResourceRule
         if (!IsEvaluateable(resource))
             return await Task.Run(() => false);
 
-        var authoredRessource = (IAuthored) resource;
+        var authoredResource = (IAuthored) resource;
         var userId = context.Get<string>("UserId");
+        var userCredibilityScore = context.Get<int>("UserCredibilityScore");
+        var permissionCredScoreLevels = context.Get<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores");
 
-        return userId == authoredRessource.Author.Id;
+        var isPermitted = permissionCredScoreLevels[permission] <= userCredibilityScore;
+        if (permission.ActsOnAuthorOnly())
+            isPermitted &= authoredResource.Author.Id == userId;
+
+
+        return isPermitted;
     }
 }

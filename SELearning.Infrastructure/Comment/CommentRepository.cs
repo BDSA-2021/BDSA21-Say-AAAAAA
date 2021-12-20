@@ -47,8 +47,8 @@ public class CommentRepository : ICommentRepository
             return (OperationResult.NotFound, null);
         }
 
-        c.Text = cmt.Text;
-        c.Rating = cmt.Rating;
+
+        (c.Text, c.Rating) = cmt;
 
         await _context.SaveChangesAsync();
 

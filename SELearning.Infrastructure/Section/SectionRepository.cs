@@ -1,5 +1,4 @@
 using SELearning.Core.Section;
-using SELearning.Infrastructure.Content;
 
 namespace SELearning.Infrastructure.Section;
 

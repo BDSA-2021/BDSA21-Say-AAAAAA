@@ -11,19 +11,13 @@ namespace SELearning.Infrastructure.Authorization.Configuration;
 /// </summary>
 public class PermissionBuilder
 {
-    public IServiceCollection Services { get; }
-    private Dictionary<Permission, List<IRule>> _rules = new();
+    private IServiceCollection Services { get; }
+    private readonly Dictionary<Permission, List<IRule>> _rules = new();
 
     private readonly Dictionary<Permission, List<IResourceRule>> _resourceRules = new();
 
     public PermissionBuilder(IServiceCollection services)
         => Services = services;
-
-    public PermissionBuilder AddPermissionCredibilityService(IPermissionCredibilityService service)
-    {
-        Services.TryAddSingleton(service);
-        return this;
-    }
 
     public void AddRule<T>(Permission p) where T : IRule, new()
     {
@@ -35,7 +29,7 @@ public class PermissionBuilder
 
     public PermissionBuilder AddRule<T>() where T : IRule, new()
     {
-        foreach (Permission p in Enum.GetValues<Permission>())
+        foreach (var p in Enum.GetValues<Permission>())
             AddRule<T>(p);
 
         return this;
@@ -53,7 +47,7 @@ public class PermissionBuilder
 
     public PermissionBuilder AddResourceRule<T>() where T : IResourceRule, new()
     {
-        foreach (Permission p in Enum.GetValues<Permission>())
+        foreach (var p in Enum.GetValues<Permission>())
             AddResourceRule<T>(p);
 
         return this;
@@ -75,7 +69,7 @@ public class PermissionBuilder
         var rules = _rules.ToDictionary(y => y.Key, z => z.Value.AsEnumerable());
         var resourceRules = _resourceRules.ToDictionary(y => y.Key, z => z.Value.AsEnumerable());
 
-        Services.AddSingleton<IPermissionService, PermissionDecider>(x => new PermissionDecider(rules, resourceRules));
+        Services.AddSingleton<IPermissionService, PermissionDecider>(_ => new PermissionDecider(rules, resourceRules));
         Services.AddSingleton<IResourcePermissionService, PermissionDecider>(_ =>
             new PermissionDecider(rules, resourceRules));
         Services.TryAddScoped<IPermissionCredibilityService, PermissionCredibilityService>();
