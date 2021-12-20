@@ -1,16 +1,27 @@
 .arrow-up, .arrow-down {
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     margin: 0.5rem;
     cursor: pointer;
 }
 
-.arrow-up { border-bottom: 12px solid grey; }
-.arrow-down { border-top: 12px solid grey; }
-.arrow-up.active { border-bottom-color: lime; }
-.arrow-down.active { border-top-color: red; }
+.arrow-up {
+    border-bottom: 12px solid grey;
+}
+
+.arrow-down {
+    border-top: 12px solid grey;
+}
+
+.arrow-up.active {
+    border-bottom-color: lime;
+}
+
+.arrow-down.active {
+    border-top-color: red;
+}
 
 .about-section {
     margin-top: 2rem;

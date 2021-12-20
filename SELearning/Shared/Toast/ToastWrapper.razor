@@ -1,25 +1,27 @@
-@inject ToastService Service
+@inject ToastService _toastService
 
 <div style="position: relative;">
-    <div style="position: fixed; top: 60; right: 0; width: 22rem; z-index: 1">
-        @foreach (var notification in _notifications)
+    <div style="position: fixed; top: 60px; right: 0; width: 22rem; z-index: 1">
+        @foreach (var notification in Notifications)
         {
-            <ToastNotificationComponent Notification="@notification" />
+            <ToastNotificationComponent Notification="@notification"/>
         }
     </div>
 </div>
 
 @code {
-    private IList<ToastNotification> _notifications { get; set; }
+    private IList<ToastNotification> Notifications { get; set; }
 
     protected override void OnInitialized()
     {
         GetNotifications();
-        Service.AddHandler(() => GetNotifications());
+        _toastService.AddHandler(GetNotifications);
     }
 
-    protected void GetNotifications() {
-        _notifications = Service.Notifications;
+    private void GetNotifications()
+    {
+        Notifications = _toastService.Notifications;
         StateHasChanged();
     }
+
 }
