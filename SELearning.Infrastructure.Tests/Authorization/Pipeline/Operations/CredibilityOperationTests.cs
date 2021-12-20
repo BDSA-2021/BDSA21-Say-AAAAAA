@@ -7,7 +7,7 @@ namespace SELearning.Infrastructure.Authorization;
 
 public class CredibilityOperationTests
 {
-    private BasePipelineOperation _testPipelineOperation;
+    private IAuthorizationContextPipelineOperation _testPipelineOperation;
     private ClaimsPrincipal _user;
     public CredibilityOperationTests()
     {

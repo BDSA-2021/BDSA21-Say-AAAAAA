@@ -7,7 +7,7 @@ namespace SELearning.Infrastructure.Authorization;
 
 public class ModeratorOperationTests
 {
-    private BasePipelineOperation _testPipelineOperation;
+    private IAuthorizationContextPipelineOperation _testPipelineOperation;
     public ModeratorOperationTests()
     {
         _testPipelineOperation = new ModeratorOperation();
