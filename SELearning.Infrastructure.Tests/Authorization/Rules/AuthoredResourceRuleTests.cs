@@ -16,6 +16,8 @@ public class AuthoredResourceRuleTests
         _context = new DynamicDictionary();
 
         _context.Set<string>("UserId", "ABC");
+        _context.Set<int>("UserCredibilityScore", 500);
+        _context.Set<IReadOnlyDictionary<Permission, int>>("RequiredCredibilityScores", new Dictionary<Permission, int>() { { Permission.Rate, 1000 }, { Permission.EditAnyComment, 1000 }, { Permission.DeleteAnyComment, 500 }, { Permission.EditOwnComment, 499 }, { Permission.DeleteOwnComment, 501 } });
     }
 
     [Fact]
@@ -23,9 +25,31 @@ public class AuthoredResourceRuleTests
     {
         var user = new MockAuthoredResource(new UserDTO("ABC", "Albert"));
 
-        bool result = await _rule.IsAllowed(_context, Permission.Rate, user);
+        bool result = await _rule.IsAllowed(_context, Permission.EditOwnComment, user);
 
         Assert.True(result);
+    }
+
+    [Theory]
+    [InlineData(Permission.DeleteAnyComment, true)]
+    [InlineData(Permission.EditAnyComment, false)]
+    public async Task IsAllowed_AnyPermission_ReturnCorrectResult(Permission p, bool expectedResult)
+    {
+        var user = new MockAuthoredResource(new UserDTO("ABC", "Albert"));
+
+        bool result = await _rule.IsAllowed(_context, p, user);
+
+        Assert.Equal(expectedResult, result);
+    }
+
+    [Fact]
+    public async Task IsAllowed_ResourceWithSameUserIdButCredibilityNotHighEnough_ReturnFalse()
+    {
+        var user = new MockAuthoredResource(new UserDTO("ABC", "Albert"));
+
+        bool result = await _rule.IsAllowed(_context, Permission.DeleteOwnComment, user);
+
+        Assert.False(result);
     }
 
     [Fact]
