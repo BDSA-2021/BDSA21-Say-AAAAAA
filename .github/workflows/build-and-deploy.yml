@@ -1,9 +1,9 @@
 name: Build and Deploy
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
-  workflow_dispatch:
 
 env:
   IMAGE_TAG: ${{ secrets.REGISTRY_SERVER }}/selearning-image:${{ github.sha }}
