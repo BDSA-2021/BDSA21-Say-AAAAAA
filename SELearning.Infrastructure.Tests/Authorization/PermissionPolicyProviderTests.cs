@@ -9,23 +9,25 @@ namespace SELearning.Infrastructure.Tests.Authorization;
 
 public class PermissionPolicyProviderTests
 {
-    private IAuthorizationPolicyProvider _policyProvider;
+    private readonly IAuthorizationPolicyProvider _policyProvider;
 
     public PermissionPolicyProviderTests()
     {
-        _policyProvider = new PermissionPolicyProvider(Options.Create<AuthorizationOptions>(new AuthorizationOptions()));
+        _policyProvider =
+            new PermissionPolicyProvider(Options.Create(new AuthorizationOptions()));
     }
 
     [Theory]
     [InlineData("PermissionRequirement PermissionCreateComment", 1)]
     [InlineData("PermissionRequirement PermissionCreateComment OR PermissionCreateContent", 2)]
-    public async Task GetPolicyAsync_ProvideKnownPolicy_ReturnPolicyWithPermissionRequirement(string permissions, int expectedNumPermissions)
+    public async Task GetPolicyAsync_ProvideKnownPolicy_ReturnPolicyWithPermissionRequirement(string permissions,
+        int expectedNumPermissions)
     {
         var result = await _policyProvider.GetPolicyAsync(permissions);
 
         Assert.IsType<PermissionRequirement>(result?.Requirements[0]);
 
-        var requirement = (PermissionRequirement)result?.Requirements[0]!;
+        var requirement = (PermissionRequirement) result?.Requirements[0]!;
         Assert.Equal(expectedNumPermissions, requirement.Permissions.Count());
     }
 
@@ -42,9 +44,11 @@ public class PermissionPolicyProviderTests
     [InlineData("PermissionEditAnyComment", EditAnyComment)]
     [InlineData("PermissionCreateContent", CreateContent)]
     [InlineData("PermissionCreateComment OR PermissionEditAnyComment", CreateComment, EditAnyComment)]
-    [InlineData("PermissionEditAnyComment OR PermissionRate OR PermissionDeleteAnyContent", EditAnyComment, Rate, DeleteAnyContent)]
+    [InlineData("PermissionEditAnyComment OR PermissionRate OR PermissionDeleteAnyContent", EditAnyComment, Rate,
+        DeleteAnyContent)]
     [InlineData("")]
-    public void PermissionsToPolicyName_GivenPermissions_CreatesProperPolicyName(string expectedPolicyName, params Permission[] p)
+    public void PermissionsToPolicyName_GivenPermissions_CreatesProperPolicyName(string expectedPolicyName,
+        params Permission[] p)
     {
         var policyName = PermissionPolicyProvider.PermissionsToPolicyName(p);
         Assert.Equal(expectedPolicyName, policyName);
@@ -55,9 +59,11 @@ public class PermissionPolicyProviderTests
     [InlineData("PermissionEditAnyComment", EditAnyComment)]
     [InlineData("PermissionCreateContent", CreateContent)]
     [InlineData("PermissionCreateComment OR PermissionEditAnyComment", CreateComment, EditAnyComment)]
-    [InlineData("PermissionEditAnyComment OR PermissionRate OR PermissionDeleteAnyContent", EditAnyComment, Rate, DeleteAnyContent)]
+    [InlineData("PermissionEditAnyComment OR PermissionRate OR PermissionDeleteAnyContent", EditAnyComment, Rate,
+        DeleteAnyContent)]
     [InlineData("")]
-    public void TryParsePolicyPermissions_GivenPolicyName_ParsesProperPermissions(string policyName, params Permission[] expectedPermissions)
+    public void TryParsePolicyPermissions_GivenPolicyName_ParsesProperPermissions(string policyName,
+        params Permission[] expectedPermissions)
     {
         var succeeded = PermissionPolicyProvider.TryParsePolicyPermissions(policyName, out var permissions);
         Assert.True(succeeded, $"Failed on '{policyName}'");
@@ -69,16 +75,17 @@ public class PermissionPolicyProviderTests
     [InlineData("EditOwnComment")]
     public void TryParsePolicyPermissions_GivenInvalidPolicyName_Fails(string policyName)
     {
-        var succeeded = PermissionPolicyProvider.TryParsePolicyPermissions(policyName, out var permissions);
+        var succeeded = PermissionPolicyProvider.TryParsePolicyPermissions(policyName, out _);
         Assert.False(succeeded);
     }
 
     [Fact]
     public void TryParsePolicyPermissionsRequirement_GivenPermissionRequirementPolicy_ReturnsPermissionRequirement()
     {
-        var policyName = "PermissionRequirement PermissionCreateComment OR PermissionEditAnyComment";
+        const string policyName = "PermissionRequirement PermissionCreateComment OR PermissionEditAnyComment";
         var expectedRequirement = new PermissionRequirement(CreateComment, EditAnyComment);
-        var success = PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
+        var success =
+            PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
 
         Assert.True(success);
         Assert.IsType<PermissionRequirement>(parsedRequirement);
@@ -86,11 +93,13 @@ public class PermissionPolicyProviderTests
     }
 
     [Fact]
-    public void TryParsePolicyPermissionsRequirement_GivenResourcePermissionRequirementPolicy_ReturnsResourcePermissionRequirement()
+    public void
+        TryParsePolicyPermissionsRequirement_GivenResourcePermissionRequirementPolicy_ReturnsResourcePermissionRequirement()
     {
-        var policyName = "ResourcePermissionRequirement PermissionCreateComment OR PermissionEditAnyComment";
+        const string policyName = "ResourcePermissionRequirement PermissionCreateComment OR PermissionEditAnyComment";
         var expectedRequirement = new ResourcePermissionRequirement(CreateComment, EditAnyComment);
-        var success = PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
+        var success =
+            PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
 
         Assert.True(success);
         Assert.IsType<ResourcePermissionRequirement>(parsedRequirement);
@@ -100,9 +109,9 @@ public class PermissionPolicyProviderTests
     [Fact]
     public void TryParsePolicyPermissionsRequirement_GivenNoRequirementPolicy_Fails()
     {
-        var policyName = "PermissionCreateComment OR PermissionEditAnyComment";
-        var expectedRequirement = new PermissionRequirement(CreateComment, EditAnyComment);
-        var success = PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out var parsedRequirement);
+        const string policyName = "PermissionCreateComment OR PermissionEditAnyComment";
+        var success =
+            PermissionPolicyProvider.TryParsePolicyPermissionsRequirement(policyName, out _);
 
         Assert.False(success);
     }
@@ -110,7 +119,8 @@ public class PermissionPolicyProviderTests
     [Fact]
     public void PermissionsToRequirementPolicyName_GivenRequirement_PrependsRequirementName()
     {
-        var policyName = PermissionPolicyProvider.PermissionsToRequirementPolicyName<ResourcePermissionRequirement>(CreateComment);
+        var policyName =
+            PermissionPolicyProvider.PermissionsToRequirementPolicyName<ResourcePermissionRequirement>(CreateComment);
         Assert.Equal("ResourcePermissionRequirement PermissionCreateComment", policyName);
     }
 }

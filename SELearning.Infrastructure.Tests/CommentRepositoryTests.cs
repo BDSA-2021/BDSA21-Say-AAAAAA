@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using SELearning.Core.User;
 
 namespace SELearning.Infrastructure.Tests;
+
 public class CommentRepositoryTests
 {
     private readonly CommentRepository _repository;
-    private readonly SELearningContext _context;
 
-    private static readonly Section.Section section = new()
+    private static readonly Section.Section Section = new()
     {
         Id = 1,
         Title = "C#",
@@ -16,7 +16,7 @@ public class CommentRepositoryTests
         Content = new List<Content.Content>()
     };
 
-    private static readonly Content.Content content = new(
+    private static readonly Content.Content Content = new(
         "Video on Entity Core",
         "Nice",
         "www.hej.dk",
@@ -26,11 +26,11 @@ public class CommentRepositoryTests
             Id = "Sarah",
             Name = "Sarah"
         },
-        section
+        Section
     );
 
     private readonly IEnumerable<Comment.Comment> _comments;
-    private readonly User.User _userAmalie = new User.User { Id = "Amalie", Name = "Amalie" };
+    private readonly User.User _userAmalie = new() {Id = "Amalie", Name = "Amalie"};
 
     public CommentRepositoryTests()
     {
@@ -39,28 +39,30 @@ public class CommentRepositoryTests
         connection.Open();
         var builder = new DbContextOptionsBuilder<SELearningContext>();
         builder.UseSqlite(connection);
-        _context = new SELearningContext(builder.Options);
-        _context.Database.EnsureCreated();
+        var context = new SELearningContext(builder.Options);
+        context.Database.EnsureCreated();
 
-        _comments = new List<Comment.Comment>()
+        _comments = new List<Comment.Comment>
         {
-            new Comment.Comment("Nice", null, null, content, _userAmalie),
-            new Comment.Comment("Cool but boring", null, null, content, new User.User { Id = "Albert", Name = "Albert" }),
-            new Comment.Comment("This is a great video", null, null, content, new User.User { Id = "Paolo", Name = "Paolo" }),
-            new Comment.Comment("Very inappropriate", null, null, content, new User.User { Id = "Rasmus", Name = "Rasmus" }),
-            new Comment.Comment("Nicer", null, null, content, _userAmalie),
+            new("Nice", null, null, Content, _userAmalie),
+            new("Cool but boring", null, null, Content, new User.User {Id = "Albert", Name = "Albert"}),
+            new("This is a great video", null, null, Content,
+                new User.User {Id = "Paolo", Name = "Paolo"}),
+            new("Very inappropriate", null, null, Content,
+                new User.User {Id = "Rasmus", Name = "Rasmus"}),
+            new("Nicer", null, null, Content, _userAmalie)
         };
 
 
-        _repository = new CommentRepository(_context);
+        _repository = new CommentRepository(context);
 
-        section.Content!.Add(content);
+        Section.Content!.Add(Content);
 
-        _context.Comments.AddRange(
+        context.Comments.AddRange(
             _comments
         );
 
-        _context.SaveChanges();
+        context.SaveChanges();
     }
 
     [Fact]
@@ -68,12 +70,12 @@ public class CommentRepositoryTests
     {
         CommentCreateDTO comment = new(_userAmalie.ToUserDTO(), "Nice content", 1);
 
-        var created = await _repository.AddComment(comment);
+        var (operationResult, commentDetailsDto) = await _repository.AddComment(comment);
 
-        Assert.Equal(6, created.Item2.Id);
-        Assert.Equal("Amalie", created.Item2.Author.Name);
-        Assert.Equal("Nice content", created.Item2.Text);
-        Assert.Equal(OperationResult.Created, created.Item1);
+        Assert.Equal(6, commentDetailsDto.Id);
+        Assert.Equal("Amalie", commentDetailsDto.Author.Name);
+        Assert.Equal("Nice content", commentDetailsDto.Text);
+        Assert.Equal(OperationResult.Created, operationResult);
     }
 
     [Fact]
@@ -150,10 +152,13 @@ public class CommentRepositoryTests
     [Fact]
     public async Task GetCommentsByContentId_given_existing_id_returns_comments()
     {
-        var read = await _repository.GetCommentsByContentId(1);
+        var (commentDetailDtos, operationResult) = await _repository.GetCommentsByContentId(1);
 
-        Assert.Equal(OperationResult.Succes, read.Item2);
-        Assert.Equal(_comments.Select(x => new CommentDetailsDTO(x.Author.ToUserDTO(), x.Text, x.Id, x.Timestamp, x.Rating, x.Content.Id)), read.Item1);
+        Assert.Equal(OperationResult.Succes, operationResult);
+        Assert.Equal(
+            _comments.Select(x =>
+                new CommentDetailsDTO(x.Author.ToUserDTO(), x.Text, x.Id, x.Timestamp, x.Rating, x.Content.Id)),
+            commentDetailDtos);
     }
 
     [Fact]
@@ -171,8 +176,8 @@ public class CommentRepositoryTests
 
         Assert.Equal(OperationResult.Succes, opResult);
 
-        var expectedIds = new[] { 1, 5 };
-        var actualIds = comments.OrderBy(c => c.Id).Select(c => (int)c.Id!).ToList();
+        var expectedIds = new[] {1, 5};
+        var actualIds = comments.OrderBy(c => c.Id).Select(c => c.Id).ToList();
         Assert.Equal(expectedIds, actualIds);
     }
 }

@@ -2,7 +2,7 @@ using System.Security.Claims;
 using SELearning.Core.Credibility;
 using SELearning.Infrastructure.Credibility;
 
-namespace SELearning.Infrastructure.Tests;
+namespace SELearning.Infrastructure.Tests.Services;
 
 public class CredibilityCalculatorTests
 {
@@ -14,9 +14,10 @@ public class CredibilityCalculatorTests
     [InlineData(-1, -4, -5)]
     [InlineData(10, -13, -3)]
     [InlineData(-11, 11, 0)]
-    async public void GetCredibilityScore_GivenUser_ReturnSumOfCommentAndContentCredibilityScore(int contentScore, int commentScore, int expectedScore)
+    public async void GetCredibilityScore_GivenUser_ReturnSumOfCommentAndContentCredibilityScore(int contentScore,
+        int commentScore, int expectedScore)
     {
-        var claimIdentity = new ClaimsIdentity(new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "userId") });
+        var claimIdentity = new ClaimsIdentity(new List<Claim> {new(ClaimTypes.NameIdentifier, "userId")});
         var user = new ClaimsPrincipal(claimIdentity);
 
         var repository = new Mock<ICredibilityRepository>();
