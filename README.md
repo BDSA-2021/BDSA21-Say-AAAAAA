@@ -4,10 +4,12 @@ BDSA2021 final project
 This app has been deployed to an Azure app service [here](https://app.ituwu.dk) or [here](https://selearningapp.azurewebsites.net)
 
 ## Build and run
+**Warning: Due to SSL certificate issues, docker-compose does not work on Mac**
+
 For both docker-compose setups a few files are needed, there exists a script to generate these:
 Both of these scripts require dotnet to be installed to run, as they generate a https certificate
 
-### Windows (WSL) or Linux/Mac
+### Windows (WSL) or Linux
 ```
 sh scripts/docker-compose-init.sh
 ```
