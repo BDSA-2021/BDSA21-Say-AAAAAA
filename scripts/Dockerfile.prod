@@ -7,7 +7,7 @@ ENV PATH="/root/.dotnet/tools:${PATH}"
 ENV ASPNETCORE_URLS=http://localhost:80
 
 # Multi-stage dependencies
-RUN apt-get update && apt-get install -y python3
+RUN apt-get update && apt-get install -y python3 dos2unix
 RUN dotnet workload install wasm-tools
 
 # Restore
@@ -31,6 +31,9 @@ FROM base as serve
 WORKDIR /app
 COPY --from=publish /app .
 COPY ./scripts/ .
+
+RUN dos2unix entrypoint.prod.sh
+RUN dos2unix shared.sh
 
 EXPOSE 80
 

@@ -1,9 +1,18 @@
-FROM mcr.microsoft.com/mssql/server:2019-latest
-
-ENV ACCEPT_EULA=Y
+FROM ubuntu:16.04 as base
+WORKDIR /scripts
+RUN apt-get update && apt-get install -y dos2unix
 
 COPY ./scripts/entrypoint.db.sh .
 COPY ./scripts/create-db.sql .
+
+RUN dos2unix entrypoint.db.sh
+RUN dos2unix create-db.sql
+
+
+FROM mcr.microsoft.com/mssql/server:2019-latest
+COPY --from=base /scripts .
+
+ENV ACCEPT_EULA=Y
 
 ENTRYPOINT [ "/bin/bash", "entrypoint.db.sh" ]
 CMD [ "/opt/mssql/bin/sqlservr" ]
