@@ -5,7 +5,7 @@ $cert_file = "$folder/cert.pfx"
 $cert_password_file = "$folder/cert_password.txt"
 
 $db_password = New-Guid
-$database = SELearning
+$database = 'SELearning'
 
 $cert_password = New-Guid
 
@@ -26,7 +26,7 @@ if (Test-Path $connection_string_file) {
     Remove-Item $connection_string_file -Force
 }
 
-connection_string = "Server=db;Database=$database;User Id=sa;Password=$db_password;TrustServerCertificate=True"
+$connection_string = "Server=db;Database=$database;User Id=sa;Password=$db_password;TrustServerCertificate=True"
 Set-Content $connection_string_file $connection_string
 
 # If cert_password_file exists, read the password from it
