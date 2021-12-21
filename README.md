@@ -4,16 +4,26 @@ BDSA2021 final project
 This app has been deployed to an Azure app service [here](https://app.ituwu.dk) or [here](https://selearningapp.azurewebsites.net)
 
 ## Build and run
-For both docker-compose setups a few files are needed, in WSL or linux/mac run the command below to generate these files.
+For both docker-compose setups a few files are needed, there exists a script to generate these:
+Both of these scripts require dotnet to be installed to run, as they generate a https certificate
+
+### Windows (WSL) or Linux/Mac
 ```
 sh scripts/docker-compose-init.sh
 ```
+If you run into issues, run it as root:
+```
+sudo sh scripts/docker-compose-init.sh
+```
+
+### Windows (Powershell)
+
 On windows, in PowerShell run:
 ```
 scripts/docker-compose-init.ps1
 ```
-Both of these scripts require dotnet to be installed to run, as they generate a http certificate
 
+### The files
 The generated files are:
 - `db_password.txt`: A password to use for the MSSQL server database
 - `connection_string.txt`: Connection string for the program to use, contains the db_password contents
