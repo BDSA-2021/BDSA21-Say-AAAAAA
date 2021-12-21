@@ -1,0 +1,29 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 as base
+# Multi-stage enviroment variables
+ENV ASPNETCORE_ENVIRONMENT="Development"
+ENV ConnectionStrings:SELearning=""
+ENV ConnectionStrings:ProductionConnectionString=""
+ENV PATH="/root/.dotnet/tools:${PATH}"
+ENV ASPNETCORE_URLS=http://+:80;https://+:443
+
+# Multi-stage dependencies
+RUN apt-get update && apt-get install -y python3 dos2unix
+RUN dotnet workload install wasm-tools
+
+# Restore
+FROM base as restore
+WORKDIR /source
+
+COPY . .
+
+RUN dotnet restore
+
+# Serve built files
+FROM restore as run
+WORKDIR /source
+COPY ./scripts .
+
+RUN dos2unix entrypoint.dev.sh
+RUN dos2unix shared.sh
+
+CMD /bin/bash ./entrypoint.dev.sh

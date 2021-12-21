@@ -1,64 +1,70 @@
 # BDSA21-Say-AAAAAA
 BDSA2021 final project
 
-This app has been deployed to an Azure app service [here.](https://selearningapp.azurewebsites.net)
+This app has been deployed to an Azure app service [here](https://app.ituwu.dk) or [here](https://selearningapp.azurewebsites.net)
 
 ## Build and run
+**Warning: Due to SSL certificate issues, docker-compose does not work on Mac**
+
+For both docker-compose setups a few files are needed, there exists a script to generate these:
+Both of these scripts require dotnet to be installed to run, as they generate a https certificate
+
+### Windows (WSL) or Linux
+```
+sh scripts/docker-compose-init.sh
+```
+If you run into issues, run it as root:
+```
+sudo sh scripts/docker-compose-init.sh
+```
+
+### Windows (Powershell)
+
+On windows, in PowerShell run:
+```
+scripts/docker-compose-init.ps1
+```
+
+### The files
+The generated files are:
+- `db_password.txt`: A password to use for the MSSQL server database
+- `connection_string.txt`: Connection string for the program to use, contains the db_password contents
+- `cert_password.txt`: Certificate password
+- `cert.pfx`: A HTTPS certifcate, locked with the certificate password
+
 ### Local development
-[Shamelessly ripped from ondfisk](https://github.com/ondfisk/BDSA2021/blob/main/Notes.md)
+For manual setup see [docs/manual-setup.md](./docs/manual-setup.md)
 
-Assume the location these commands are run from is the root of the project, unless specifically stated.
+To run a database and the program run
+```
+docker-compose -f docker-compose.dev.yml up
+```
+The command above will create a database server, a database and build the app for development as well as serving it on `https://localhost:5001`
 
-Run sql server in docker (Windows):
+In case the newest changes arent included use:
 ```
-$password = New-Guid
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=$password" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
-$database = "SELearning"
-$connectionString = "Server=localhost;Database=$database;User Id=sa;Password=$password;TrustServerCertificate=true"
+docker-compose -f docker-compose.dev.yml up --force-recreate --build
 ```
-
-Run sql server in docker (Linux):
-```
-export password=$(uuidgen)
-sudo docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=$password" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
-export database=SELearning
-export connectionString=$(echo "server=localhost;database=${database};user id=sa;password=${password};TrustServerCertificate=true")
-```
-
-#### Enable User Secrets
-```powershell
-dotnet user-secrets init --project SELearning.API
-dotnet user-secrets set "ConnectionStrings:SELearning" "$connectionString" --project SELearning.API
-```
-
-#### Migrate database
-Note of notes: The below note is not applicable when running the program locally using the docker command described above (i have no idea why)
-Note: The migrations are done automatically after the first one. The first migration also creates the database which is necessary for the system to run.
-```
-dotnet tool install --global --version 6.0.0 dotnet-ef
-dotnet ef database update --project SELearning.Infrastructure --startup-project SELearning.API
-```
-
-#### Set enviroment to development
-```
-$Env:ASPNETCORE_ENVIRONMENT = "Development" (Windows powershell)
-export ASPNETCORE_ENVIRONMENT="Development"  (Linux)
-```
-
-#### Run the system
-```
-dotnet run --project SELearning.API
-```
-This will build the Blazor project and serve it along with the API
 
 ### Production build and run
+**WARNING: Building the production image usually takes ~25 minutes due to WebAssembly**
+
+To run a database and the program run
 ```
-docker-compose up
+docker-compose -f docker-compose.prod.yml up
 ```
-The command above will create a database server, a database and build the app for production as well as serving it on port 7207
+The command above will create a database server, a database and build the app for production as well as serving it on `https://localhost:5001`
+
+In case the newest changes arent included use:
+```
+docker-compose -f docker-compose.prod.yml up --force-recreate --build
+```
 
 ## Documentation
-
 We have embedded some examples and explanations in source code documentation comments, following [the guidelines from the official docs](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments#seealso).
 
 Unfortunately, many of the extra suggested tags do not show up when hovering over the symbol name in Visual Studio Code or Visual Studio. For example, see `SELearning.Infrastructure.Authorization.AuthorizePermissionAttribute`.
+
+## Known issues
+### Recursive page embedding
+New content has to have the url format `https://youtube.com/embed/{id}`, taking a normal youtube url such as `https://www.youtube.com/watch?v=dQw4w9WgXcQ` format it as `https://youtube.com/embed/dQw4w9WgXcQ`. If a valid url is not pasted it will recursively embed the page inside itself.
