@@ -8,7 +8,13 @@ For both docker-compose setups a few files are needed, in WSL or linux/mac run t
 ```
 sh scripts/docker-compose-init.sh
 ```
-The files are:
+On windows, in PowerShell run:
+```
+scripts/docker-compose-init.ps1
+```
+Both of these scripts require dotnet to be installed to run, as they generate a http certificate
+
+The generated files are:
 - `db_password.txt`: A password to use for the MSSQL server database
 - `connection_string.txt`: Connection string for the program to use, contains the db_password contents
 - `cert_password.txt`: Certificate password
